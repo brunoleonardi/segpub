@@ -38,6 +38,16 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
         </p>
       </div>
       <div className={`h-[1px] ${isDarkMode ? 'bg-gray-700' : 'bg-[#00000029]'}`} />
+            <button
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            }`}
+          >
+            <PlusIcon size={14} />
+            <span>Criar Ponto de Interesse</span>
+          </button>
       <div className="space-y-1 mt-4">
         {data.map((category) => (
           <div key={category.id} className="mb-0 last:mb-0">
