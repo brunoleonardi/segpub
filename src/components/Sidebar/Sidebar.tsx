@@ -153,7 +153,6 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
         transition={{ duration: 0.3 }}
       >
         <div className={`p-2 flex ${stage === 'closed' ? 'justify-center' : 'justify-between items-center'}`}>
-          TESTE
           <div className={`flex items-center ${stage === 'closed' ? '' : 'gap-3'}`}>
             <Avatar className="w-[45px] h-[45px] border-2 border-white">
               <AvatarFallback className="bg-[#95C0FF] text-white text-lg">BL</AvatarFallback>
