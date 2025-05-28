@@ -31,16 +31,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
             </div>
             <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Pontos de Interesse</p>
           </div>
-          <button
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg transition-colors ${
-              isDarkMode 
-                ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                : 'bg-blue-500 text-white hover:bg-blue-600'
-            }`}
-          >
-            <PlusIcon size={14} />
-            <span>Criar Ponto de Interesse</span>
-          </button>
+    
         </div>
         <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
           Confira abaixo os pontos de interesse que foram cadastrados para acompanhamento e monitoramento.
