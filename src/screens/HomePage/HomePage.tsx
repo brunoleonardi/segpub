@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sidebar } from "../../components/Sidebar";
+import { VideoHistory } from "../../components/VideoHistory/VideoHistory";
 
 export const HomePage = (): JSX.Element => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showVideoHistory, setShowVideoHistory] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export const HomePage = (): JSX.Element => {
   };
 
   const handleHistoryClick = () => {
-    navigate('/video-history');
+    setShowVideoHistory(true);
   };
 
   const handleControlConsultarClick = (itemLabel: string) => {
@@ -33,6 +35,12 @@ export const HomePage = (): JSX.Element => {
               onControlConsultarClick={handleControlConsultarClick}
             />
           </div>
+          {showVideoHistory && (
+            <VideoHistory 
+              isDarkMode={isDarkMode} 
+              onClose={() => setShowVideoHistory(false)} 
+            />
+          )}
         </div>
       </div>
     </div>
