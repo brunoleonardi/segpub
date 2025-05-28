@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapIcon, MapPinIcon } from 'lucide-react';
+import { MapIcon, MapPinIcon, PlusIcon } from 'lucide-react';
 
 interface LocationItem {
   id: string;
@@ -24,11 +24,23 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
   return (
     <div className="p-2 mt-1 h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500">
       <div className="gap-3 mb-2">
-        <div className="flex items-center mb-2">
-          <div className="rounded-lg mr-2">
-            <MapIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">
+            <div className="rounded-lg mr-2">
+              <MapIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+            </div>
+            <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Pontos de Interesse</p>
           </div>
-          <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Pontos de Interesse</p>
+          <button
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+              isDarkMode 
+                ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            }`}
+          >
+            <PlusIcon size={14} />
+            <span>Criar Ponto de Interesse</span>
+          </button>
         </div>
         <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
           Confira abaixo os pontos de interesse que foram cadastrados para acompanhamento e monitoramento.
