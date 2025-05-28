@@ -1,6 +1,12 @@
 import React from 'react';
-import { MapIcon, MapPinIcon, PlusIcon } from 'lucide-react';
+import { MapIcon, MapPinIcon, MoreHorizontal } from 'lucide-react';
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 interface LocationItem {
   id: string;
@@ -32,24 +38,39 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
             </div>
             <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Pontos de Interesse</p>
           </div>
-          <TooltipProvider>
-            <TooltipRoot>
-              <TooltipTrigger asChild>
-                <button
-                  className={`p-1.5 rounded-lg transition-colors ${
-                    isDarkMode 
-                      ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                      : 'bg-blue-500 text-white hover:bg-blue-600'
-                  }`}
-                >
-                  <PlusIcon size={14} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="theme-aware-tooltip">
-                Criar Ponto de Interesse
-              </TooltipContent>
-            </TooltipRoot>
-          </TooltipProvider>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={`p-1.5 rounded-lg transition-colors ${
+                  isDarkMode 
+                    ? 'hover:bg-zinc-700' 
+                    : 'hover:bg-gray-100'
+                }`}
+              >
+                <MoreHorizontal size={16} className={isDarkMode ? 'text-gray-300' : 'text-gray-600'} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white'}
+              align="end"
+            >
+              <DropdownMenuItem
+                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+              >
+                Criar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+              >
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+              >
+                Excluir
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
           Confira abaixo os pontos de interesse que foram cadastrados para acompanhamento e monitoramento.
