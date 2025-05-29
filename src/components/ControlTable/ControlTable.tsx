@@ -216,73 +216,83 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                 </tr>
               </thead>
               <tbody>
-                {paginatedData.map((item, index) => (
-                  <motion.tr
-                    key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className={`border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}
-                  >
-                    <td className="px-4 py-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.includes(item.id)}
-                        onChange={() => handleSelectItem(item.id)}
-                        className={`h-4 w-4 rounded ${isDarkMode
-                          ? 'text-blue-500 bg-zinc-700 border-zinc-600'
-                          : 'text-blue-600 bg-gray-100 border-gray-300'
-                          }`}
-                      />
+                {paginatedData.length > 0 ? (
+                  paginatedData.map((item, index) => (
+                    <motion.tr
+                      key={item.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}
+                    >
+                      <td className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedItems.includes(item.id)}
+                          onChange={() => handleSelectItem(item.id)}
+                          className={`h-4 w-4 rounded ${isDarkMode
+                            ? 'text-blue-500 bg-zinc-700 border-zinc-600'
+                            : 'text-blue-600 bg-gray-100 border-gray-300'
+                            }`}
+                        />
+                      </td>
+                      <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                        }`}>{item.project}</td>
+                      <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                        }`}>{item.email}</td>
+                      <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                        }`}>{item.name}</td>
+                      <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                        }`}>{item.active ? 'Ativo' : 'Inativo'}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center gap-2">
+                          <button 
+                            className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+                            onClick={() => handleEdit(item)}
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                          </button>
+                          <button 
+                            className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+                            onClick={() => handleDeleteClick(item.id)}
+                          >
+                            <Trash2Icon className="w-4 h-4 text-destructive" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      Nenhum dado encontrado na tabela.
                     </td>
-                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.project}</td>
-                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.email}</td>
-                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.name}</td>
-                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.active ? 'Ativo' : 'Inativo'}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <button 
-                          className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
-                          onClick={() => handleEdit(item)}
-                        >
-                          <PencilIcon className="w-4 h-4" />
-                        </button>
-                        <button 
-                          className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
-                          onClick={() => handleDeleteClick(item.id)}
-                        >
-                          <Trash2Icon className="w-4 h-4 text-destructive" />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
 
-          <div className="flex justify-center mt-4">
-            <div className={`flex gap-1 rounded-lg shadow-md p-0.5 ${isDarkMode ? 'bg-zinc-800' : 'bg-white'}`}>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i + 1}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 rounded-md ${currentPage === i + 1
-                    ? 'bg-blue-500 text-white'
-                    : isDarkMode
-                      ? 'text-gray-300 hover:bg-zinc-700'
-                      : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
+          {paginatedData.length > 0 && (
+            <div className="flex justify-center mt-4">
+              <div className={`flex gap-1 rounded-lg shadow-md p-0.5 ${isDarkMode ? 'bg-zinc-800' : 'bg-white'}`}>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-3 py-1 rounded-md ${currentPage === i + 1
+                      ? 'bg-blue-500 text-white'
+                      : isDarkMode
+                        ? 'text-gray-300 hover:bg-zinc-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                      }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
