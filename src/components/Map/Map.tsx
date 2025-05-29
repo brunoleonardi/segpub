@@ -182,7 +182,6 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         controller={true}
         layers={layers}
-        style={{ position: 'absolute', width: '100%', height: '100%' }}
       >
         <Map
           mapboxAccessToken={MAPBOX_TOKEN}
@@ -194,17 +193,24 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
             <Popup
               longitude={popupInfo.poi.longitude}
               latitude={popupInfo.poi.latitude}
-              offset={20}
+              offset={[0, -20]}
               closeButton={true}
               closeOnClick={false}
               onClose={() => setPopupInfo(null)}
-              className={isDarkMode ? 'dark' : ''}
+              className={`z-[999] ${isDarkMode ? 'dark' : ''}`}
+              anchor="bottom"
             >
-              <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
-                <h3 className="font-semibold mb-1">{popupInfo.poi.name}</h3>
-                <p className="text-sm mb-1">Tipo: {popupInfo.poi.type_name}</p>
-                <p className="text-sm">
-                  Coordenadas: {popupInfo.poi.latitude.toFixed(6)}, {popupInfo.poi.longitude.toFixed(6)}
+              <div className={`p-3 rounded-lg shadow-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
+                <h3 className="font-semibold mb-2">{popupInfo.poi.name}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: popupInfo.poi.type_color }}
+                  />
+                  <p className="text-sm">{popupInfo.poi.type_name}</p>
+                </div>
+                <p className="text-sm opacity-70">
+                  {popupInfo.poi.latitude.toFixed(6)}, {popupInfo.poi.longitude.toFixed(6)}
                 </p>
               </div>
             </Popup>
