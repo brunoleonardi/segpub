@@ -164,7 +164,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   ];
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full" onContextMenu={(e) => e.preventDefault()}>
       <DeckGL
         viewState={viewState}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
