@@ -1,11 +1,12 @@
 import React from 'react';
-import { Dialog, DialogContent } from '../ui/dialog';
+import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../../components/ui/form';
 import { useForm } from 'react-hook-form';
-import { z, ZodTypeAny } from 'zod';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, PencilIcon, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 const fieldConfigs = [
   { name: 'projeto', label: 'Projeto', placeholder: 'Insira o Projeto', type: 'text', colSpan: 1, validation: z.string().min(1, 'Projeto é obrigatório'), defaultValue: '' },
@@ -14,7 +15,7 @@ const fieldConfigs = [
   { name: 'ativo', label: 'Ativo', type: 'checkbox', colSpan: 1, validation: z.boolean().default(true), defaultValue: true },
 ] as const;
 
-const schemaShape: Record<string, ZodTypeAny> = {};
+const schemaShape: Record<string, z.ZodTypeAny> = {};
 const defaultValues: Record<string, unknown> = {};
 
 fieldConfigs.forEach((field) => {
@@ -39,9 +40,23 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ open, onOpenChange, 
     defaultValues,
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    onOpenChange(false);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const { error } = await supabase
+        .from('email_reports')
+        .insert([{
+          project: values.projeto,
+          email: values.email,
+          name: values.nome,
+          active: values.ativo,
+        }]);
+
+      if (error) throw error;
+
+      navigate('/control/e-Mails Relatório');
+    } catch (error) {
+      console.error('Error saving email report:', error);
+    }
   };
 
   return (
@@ -117,7 +132,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ open, onOpenChange, 
                     Cancelar
                   </button>
                   <button
-                    type="submit"
+                    onClick={form.handleSubmit(onSubmit)}
                     className="px-3 py-1.5 text-sm rounded-full bg-[#4D94FF] text-white hover:bg-[#3B82F6]"
                   >
                     <Check size={14} className="inline-block mr-1" />

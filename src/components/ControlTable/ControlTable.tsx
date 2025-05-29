@@ -1,24 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon, Plus, SquareCheckBigIcon, SquareIcon } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface ControlTableProps {
   isDarkMode?: boolean;
   title: string;
 }
 
-const mockData = [
-  { id: 'P08', tipo: 'Móvel', logradouro: '', local: 'DT-2700' },
-  { id: 'P07', tipo: 'Móvel', logradouro: '', local: 'DT-2700' },
-  { id: 'P10', tipo: 'Móvel', logradouro: '', local: 'DT-2700' },
-  { id: 'P12', tipo: 'Fixo', logradouro: 'Rua das Laranjeiras, 123 - Vila Mariana', local: 'DT-2699' },
-  { id: 'P13', tipo: 'Fixo', logradouro: 'Rua das Laranjeiras, 123 - Vila Mariana', local: 'DT-2699' },
-  { id: 'P17', tipo: 'Móvel', logradouro: '', local: 'DT-2700' },
-  { id: 'P20', tipo: 'Fixo', logradouro: 'Rua das Laranjeiras, 123 - Vila Mariana', local: 'DT-2699' },
-  { id: 'P21', tipo: 'Móvel', logradouro: '', local: 'DT-2700' },
-  { id: 'P24', tipo: 'Móvel', logradouro: '', local: 'DT-2700' },
-  { id: 'P25', tipo: 'Móvel', logradouro: '', local: 'DT-2700' }
-];
+interface EmailReport {
+  id: string;
+  project: string;
+  email: string;
+  name: string;
+  active: boolean;
+  created_at: string;
+}
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,17 +23,38 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState<EmailReport[]>([]);
+
+  const fetchEmailReports = async () => {
+    try {
+      const { data: emailReports, error } = await supabase
+        .from('email_reports')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setData(emailReports || []);
+    } catch (error) {
+      console.error('Error fetching email reports:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (title === 'e-Mails Relatório') {
+      fetchEmailReports();
+    }
+  }, [title]);
 
   const filteredData = React.useMemo(() => {
-    if (!searchTerm) return mockData;
+    if (!searchTerm) return data;
 
     const searchLower = searchTerm.toLowerCase();
-    return mockData.filter(item =>
+    return data.filter(item =>
       Object.values(item).some(value =>
         value.toString().toLowerCase().includes(searchLower)
       )
     );
-  }, [searchTerm]);
+  }, [searchTerm, data]);
 
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
@@ -125,13 +143,13 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                   <th className="w-12 px-4 py-3">
                   </th>
                   <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Projeto</th>
+                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Email</th>
+                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}>Nome</th>
                   <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>Tipo</th>
-                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>Logradouro</th>
-                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>Local de Instalação</th>
+                    }`}>Status</th>
                   <th className={`px-4 py-3 text-center text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}>Ações</th>
                 </tr>
@@ -157,13 +175,13 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                       />
                     </td>
                     <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.id}</td>
+                      }`}>{item.project}</td>
                     <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.tipo}</td>
+                      }`}>{item.email}</td>
                     <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.logradouro}</td>
+                      }`}>{item.name}</td>
                     <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                      }`}>{item.local}</td>
+                      }`}>{item.active ? 'Ativo' : 'Inativo'}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">
                         <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
