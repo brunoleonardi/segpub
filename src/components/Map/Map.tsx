@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import DeckGL from '@deck.gl/react';
-import { ScatterplotLayer } from '@deck.gl/layers';
+import { IconLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
 import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
@@ -15,6 +15,10 @@ const INITIAL_VIEW_STATE = {
   zoom: 12,
   pitch: 0,
   bearing: 0
+};
+
+const ICON_MAPPING = {
+  marker: {x: 0, y: 0, width: 128, height: 128, mask: true}
 };
 
 interface MapComponentProps {
@@ -134,27 +138,23 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   }, []);
 
   const layers = [
-    new ScatterplotLayer({
+    new IconLayer({
       id: 'poi-layer',
       data: pois,
       pickable: true,
-      opacity: 0.8,
-      stroked: true,
-      filled: true,
-      radiusScale: 6,
-      radiusMinPixels: 3,
-      radiusMaxPixels: 30,
-      lineWidthMinPixels: 1,
+      iconAtlas: '/map-pin.svg',
+      iconMapping: ICON_MAPPING,
+      getIcon: d => 'marker',
+      sizeScale: 15,
       getPosition: d => [d.longitude, d.latitude],
-      getFillColor: d => {
+      getSize: d => 5,
+      getColor: d => {
         const color = d.type_color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)?.[0] || '#000000';
         const r = parseInt(color.slice(1, 3), 16);
         const g = parseInt(color.slice(3, 5), 16);
         const b = parseInt(color.slice(5, 7), 16);
         return [r, g, b, 255];
       },
-      getLineColor: [0, 0, 0],
-      getRadius: 5,
       onHover: ({ object }) => {
         if (object) {
           console.log(`Hovering over ${object.name} (${object.type_name})`);
