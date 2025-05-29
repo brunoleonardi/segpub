@@ -18,7 +18,7 @@ const INITIAL_VIEW_STATE = {
 };
 
 const ICON_MAPPING = {
-  marker: {x: 0, y: 0, width: 128, height: 128, mask: true}
+  marker: {x: 0, y: 0, width: 24, height: 24, mask: true}
 };
 
 interface MapComponentProps {
@@ -145,9 +145,9 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
       iconAtlas: '/map-pin.svg',
       iconMapping: ICON_MAPPING,
       getIcon: d => 'marker',
-      sizeScale: 15,
+      sizeScale: 2,
       getPosition: d => [d.longitude, d.latitude],
-      getSize: d => 5,
+      getSize: d => 24,
       getColor: d => {
         const color = d.type_color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)?.[0] || '#000000';
         const r = parseInt(color.slice(1, 3), 16);
