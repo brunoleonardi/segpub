@@ -68,7 +68,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
           {title}
         </h2>
 
-        <div className="flex flex-col pt-14">
+        <div className="flex flex-col">
           <div className="flex justify-center mb-6">
             <div className="relative">
               <input
