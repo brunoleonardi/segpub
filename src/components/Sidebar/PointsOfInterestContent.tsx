@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapIcon, MapPinIcon, MoreHorizontal } from 'lucide-react';
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import {
@@ -8,28 +8,76 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { CreatePOIModal } from '../POI/CreatePOIModal';
+import { supabase } from '../../lib/supabase';
 
 interface LocationItem {
   id: string;
   name: string;
-  coordinates: string;
+  latitude: number;
+  longitude: number;
 }
 
-interface LocationPin {
-  id: number;
-  label: string;
-  count: number;
+interface POIType {
+  id: string;
+  name: string;
   color: string;
   items: LocationItem[];
+  count: number;
 }
 
 interface PointsOfInterestContentProps {
-  data: LocationPin[];
+  data?: POIType[];
   isDarkMode?: boolean;
 }
 
-export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ data, isDarkMode }) => {
+export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ isDarkMode }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [poiData, setPoiData] = useState<POIType[]>([]);
+
+  const fetchPOIData = async () => {
+    try {
+      // Fetch POI types
+      const { data: typesData, error: typesError } = await supabase
+        .from('poi_types')
+        .select('*')
+        .order('name');
+
+      if (typesError) throw typesError;
+
+      // Fetch POIs
+      const { data: poisData, error: poisError } = await supabase
+        .from('pois')
+        .select('*')
+        .order('name');
+
+      if (poisError) throw poisError;
+
+      // Group POIs by type
+      const groupedData = typesData.map(type => {
+        const typeItems = poisData.filter(poi => poi.type_id === type.id);
+        return {
+          id: type.id,
+          name: type.name,
+          color: type.color,
+          count: typeItems.length,
+          items: typeItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            latitude: item.latitude,
+            longitude: item.longitude
+          }))
+        };
+      });
+
+      setPoiData(groupedData);
+    } catch (error) {
+      console.error('Error fetching POI data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPOIData();
+  }, []);
 
   return (
     <div className="p-2 mt-1 h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500">
@@ -82,12 +130,12 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
       </div>
       <div className={`h-[1px] ${isDarkMode ? 'bg-gray-700' : 'bg-[#00000029]'}`} />
       <div className="space-y-1 mt-4">
-        {data.map((category) => (
+        {poiData.map((category) => (
           <div key={category.id} className="mb-0 last:mb-0">
             <div className={`flex items-center gap-2 mb-3 sticky top-[-8px] rounded-lg p-1 z-10 ${isDarkMode ? 'bg-[#303031]' : 'bg-[#E9F0FA]'}`}>
               <MapPinIcon size={16} strokeWidth={1.5} style={{ fill: category.color, color: category.color }} />
               <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
-                {category.label}
+                {category.name} ({category.count})
               </span>
             </div>
             <div className="space-y-0">
@@ -102,7 +150,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
                     {item.name}
                   </span>
                   <span className="text-[10px] text-gray-400 mt-1">
-                    {item.coordinates}
+                    {item.latitude}, {item.longitude}
                   </span>
                 </div>
               ))}
@@ -113,7 +161,12 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
 
       <CreatePOIModal
         open={isCreateModalOpen}
-        onOpenChange={setIsCreateModalOpen}
+        onOpenChange={(open) => {
+          setIsCreateModalOpen(open);
+          if (!open) {
+            fetchPOIData(); // Refresh data when modal closes
+          }
+        }}
         isDarkMode={isDarkMode}
       />
     </div>
