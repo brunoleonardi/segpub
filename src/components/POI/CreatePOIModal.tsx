@@ -6,6 +6,12 @@ import { HexColorPicker } from 'react-colorful';
 import { PlusIcon } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
+interface POIType {
+  id: string;
+  name: string;
+  color: string;
+}
+
 interface CreatePOIModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -21,6 +27,27 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
+
+  const fetchPOITypes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('poi_types')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      setPoiTypes(data || []);
+    } catch (error) {
+      console.error('Error fetching POI types:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      fetchPOITypes();
+    }
+  }, [open]);
 
   const handleCreateType = async () => {
     try {
@@ -38,9 +65,18 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
         throw insertError;
       }
 
+      // Refresh POI types list
+      await fetchPOITypes();
+
+      // Reset form and close type creation
       setShowTypeForm(false);
       setNewTypeName('');
       setSelectedColor('#000000');
+
+      // Select the newly created type
+      if (data && data[0]) {
+        setSelectedType(data[0].id);
+      }
     } catch (error) {
       console.error('Error creating POI type:', error);
     }
@@ -153,7 +189,21 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                     <SelectValue placeholder="Selecione um tipo" />
                   </SelectTrigger>
                   <SelectContent className={isDarkMode ? 'bg-zinc-700 border-zinc-600' : ''}>
-                    {/* Add SelectItems dynamically from your Supabase data */}
+                    {poiTypes.map((type) => (
+                      <SelectItem 
+                        key={type.id} 
+                        value={type.id}
+                        className={isDarkMode ? 'text-gray-200 focus:bg-zinc-600' : ''}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: type.color }}
+                          />
+                          {type.name}
+                        </div>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <button
