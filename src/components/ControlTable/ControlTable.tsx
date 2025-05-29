@@ -88,7 +88,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
             </div>
           </div>
 
-          <div className="flex justify-center gap-4 mb-6">
+          <div className="flex justify-center gap-3 mb-3">
             <button
               className={`h-9 px-4 py-2 text-sm rounded-lg transition-colors flex items-center gap-2 ${
                 isDarkMode 
