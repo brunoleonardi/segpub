@@ -9,8 +9,7 @@ import {
   MailIcon,
   FileTextIcon,
   BellIcon,
-  SettingsIcon,
-  MoreHorizontal
+  SettingsIcon
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -71,47 +70,34 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, isDarkMode
       <div className={`h-[1px] ${isDarkMode ? 'bg-gray-700' : 'bg-[#00000029]'}`} />
       <div className="space-y-1 mt-4 relative">
         {data.map((item) => (
-          <div key={item.id} className="relative">
-            <div className={`flex items-center justify-between w-full px-3 py-2 rounded-lg transition-colors ${
-              isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
-            }`}>
-              <div className="flex items-center">
+          <DropdownMenu key={item.id}>
+            <DropdownMenuTrigger asChild>
+              <button className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors ${
+                isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
+              }`}>
                 <div className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   {iconMap[item.icon]}
                 </div>
                 <span className={`text-xs ml-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   {item.label}
                 </span>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={`p-1 rounded-lg transition-colors ${
-                      isDarkMode 
-                        ? 'hover:bg-zinc-700' 
-                        : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    <MoreHorizontal size={14} className={isDarkMode ? 'text-gray-300' : 'text-gray-600'} />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className={`text-xs ${isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white'}`}
-                  align="end"
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className={`text-xs ${isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white'}`}
+              align="end"
+            >
+              {item.options.map((optionId) => (
+                <DropdownMenuItem
+                  key={optionId}
+                  className={`text-xs ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+                  onClick={() => handleOptionClick(item.label, optionId)}
                 >
-                  {item.options.map((optionId) => (
-                    <DropdownMenuItem
-                      key={optionId}
-                      className={`text-xs ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
-                      onClick={() => handleOptionClick(item.label, optionId)}
-                    >
-                      {controlOptionsLabels[optionId]}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+                  {controlOptionsLabels[optionId]}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         ))}
       </div>
     </div>
