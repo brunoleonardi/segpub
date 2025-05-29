@@ -145,6 +145,30 @@
   background-color: var(--table-row-hover);
 }
 
+/* Mapbox Popup Styles */
+.mapboxgl-popup {
+  z-index: 1;
+}
+
+.mapboxgl-popup-content {
+  padding: 0 !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mapboxgl-popup-close-button {
+  padding: 4px 8px !important;
+  color: #666666;
+}
+
+.dark .mapboxgl-popup-content {
+  background: #27272a !important;
+}
+
+.dark .mapboxgl-popup-close-button {
+  color: #a1a1aa;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

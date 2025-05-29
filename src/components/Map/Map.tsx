@@ -185,8 +185,8 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
             offset={[0, -15]}
             onClose={() => setPopupInfo(null)}
             closeOnClick={false}
-            className={isDarkMode ? 'dark' : ''}
-            style={{ zIndex: 1 }}
+            className={`mapboxgl-popup ${isDarkMode ? 'dark' : ''}`}
+            maxWidth="300px"
           >
             <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
               <h3 className="font-semibold mb-2">{popupInfo.name}</h3>
