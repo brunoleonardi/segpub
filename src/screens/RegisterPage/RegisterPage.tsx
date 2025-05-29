@@ -2,17 +2,27 @@ import React from 'react';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../../components/ui/form';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { z, ZodTypeAny } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, PencilIcon, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const formSchema = z.object({
-  projeto: z.string().min(1, 'Projeto é obrigatório'),
-  email: z.string().email('Email inválido'),
-  nome: z.string().min(1, 'Nome é obrigatório'),
-  ativo: z.boolean().default(true),
+const fieldConfigs = [
+  { name: 'projeto', label: 'Projeto', placeholder: 'Insira o Projeto', type: 'text', colSpan: 1, validation: z.string().min(1, 'Projeto é obrigatório'), defaultValue: '' },
+  { name: 'email', label: 'e-Mail', placeholder: 'Insira o e-Mail', type: 'text', colSpan: 1, validation: z.string().email('Email inválido'), defaultValue: '' },
+  { name: 'nome', label: 'Nome Completo', placeholder: 'Insira o Nome Completo', type: 'text', colSpan: 1, validation: z.string().min(1, 'Nome é obrigatório'), defaultValue: '' },
+  { name: 'ativo', label: 'Ativo', type: 'checkbox', colSpan: 1, validation: z.boolean().default(true), defaultValue: true },
+] as const;
+
+const schemaShape: Record<string, ZodTypeAny> = {};
+const defaultValues: Record<string, unknown> = {};
+
+fieldConfigs.forEach((field) => {
+  schemaShape[field.name] = field.validation;
+  defaultValues[field.name] = field.defaultValue;
 });
+
+const formSchema = z.object(schemaShape);
 
 interface RegisterPageProps {
   open: boolean;
@@ -22,16 +32,11 @@ interface RegisterPageProps {
 }
 
 export const RegisterPage: React.FC<RegisterPageProps> = ({ open, onOpenChange, isDarkMode, section }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      projeto: '',
-      email: '',
-      nome: '',
-      ativo: true,
-    },
+    defaultValues,
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -63,74 +68,41 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ open, onOpenChange, 
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                       <div className="grid grid-cols-4 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="projeto"
-                          render={({ field }) => (
-                            <FormItem className="col-span-1">
-                              <FormLabel className="text-xs text-[#656565]">Projeto</FormLabel>
-                              <FormControl>
-                                <input
-                                  {...field}
-                                  placeholder="Insira o Projeto"
-                                  className="w-full text-sm px-3 py-1 rounded-full border border-gray-300 bg-white"
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem className="col-span-1">
-                              <FormLabel className="text-xs text-[#656565]">e-Mail</FormLabel>
-                              <FormControl>
-                                <input
-                                  {...field}
-                                  placeholder="Insira o e-Mail"
-                                  className="w-full text-sm px-3 py-1 rounded-full border border-gray-300 bg-white"
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="nome"
-                          render={({ field }) => (
-                            <FormItem className="col-span-1">
-                              <FormLabel className="text-xs text-[#656565]">Nome Completo</FormLabel>
-                              <FormControl>
-                                <input
-                                  {...field}
-                                  placeholder="Insira o Nome Completo"
-                                  className="w-full text-sm px-3 py-1 rounded-full border border-gray-300 bg-white"
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="ativo"
-                          render={({ field }) => (
-                            <FormItem className="col-span-1 flex items-end pb-1">
-                              <div className="flex flex-col items-center h-full">
-                                <FormLabel className="ml-2 font-bold text-xs mt-1 text-[#656565]">Ativo</FormLabel>
-                                <input
-                                  type="checkbox"
-                                  checked={field.value}
-                                  onChange={field.onChange}
-                                  className="h-4 w-4 mt-4 text-blue-600 rounded border border-gray-300"
-                                />
-                              </div>
-                            </FormItem>
-                          )}
-                        />
+                        {fieldConfigs.map((fieldConfig) => (
+                          <FormField
+                            key={fieldConfig.name}
+                            control={form.control}
+                            name={fieldConfig.name as keyof z.infer<typeof formSchema>}
+                            render={({ field }) => (
+                              <FormItem className={`col-span-${fieldConfig.colSpan || 1}`}>
+                                {fieldConfig.type === 'checkbox' ? (
+                                  <div className="flex items-end pb-1">
+                                    <div className="flex flex-col items-center h-full">
+                                      <FormLabel className="ml-2 font-bold text-xs mt-1 text-[#656565]">{fieldConfig.label}</FormLabel>
+                                      <input
+                                        type="checkbox"
+                                        checked={field.value}
+                                        onChange={field.onChange}
+                                        className="h-4 w-4 mt-4 text-blue-600 rounded border border-gray-300"
+                                      />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <FormLabel className="text-xs text-[#656565]">{fieldConfig.label}</FormLabel>
+                                    <FormControl>
+                                      <input
+                                        {...field}
+                                        placeholder={fieldConfig.placeholder}
+                                        className="w-full text-sm px-3 py-1 rounded-full border border-gray-300 bg-white"
+                                      />
+                                    </FormControl>
+                                  </>
+                                )}
+                              </FormItem>
+                            )}
+                          />
+                        ))}
                       </div>
                     </form>
                   </Form>
