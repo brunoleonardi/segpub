@@ -6,12 +6,29 @@ import { MapComponent } from "../../components/Map/Map";
 import { MapProvider } from "../../contexts/MapContext";
 
 export const HomePage = (): JSX.Element => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Check if the user's system is in dark mode
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
   const [showVideoHistory, setShowVideoHistory] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsDarkMode(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
     document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
   }, [isDarkMode]);
 
   const handleDarkModeChange = (darkMode: boolean) => {
