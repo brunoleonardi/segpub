@@ -91,7 +91,7 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, isDarkMode
                 {item.options.map((optionId) => (
                   <DropdownMenuItem
                     key={optionId}
-                    className={`text-xs ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+                    className={`text-xs cursor-pointer ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
                     onClick={() => handleOptionClick(item.label, optionId)}
                   >
                     {controlOptionsLabels[optionId]}

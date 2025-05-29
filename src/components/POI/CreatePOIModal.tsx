@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { HexColorPicker } from 'react-colorful';
-import { PlusIcon } from 'lucide-react';
+import { Plus, PlusIcon, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface POIType {
@@ -52,7 +52,7 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
   const handleCreateType = async () => {
     try {
       setError(null);
-      
+
       const { data, error: insertError } = await supabase
         .from('poi_types')
         .insert([
@@ -115,9 +115,11 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : ''}>
+      <DialogContent className={`border-none rounded-2xl backdrop-blur-[2px] px-6 pt-5 shadow-md cursor-default z-50 ${isDarkMode
+        ? 'bg-zinc-900/60'
+        : 'bg-[#EFF4FA]/70'}`}>
         <DialogHeader>
-          <DialogTitle className={isDarkMode ? 'text-gray-200' : ''}>
+          <DialogTitle className={isDarkMode ? 'text-gray-200 py-4' : 'py-4'}>
             {showTypeForm ? 'Criar Novo Tipo' : 'Criar Ponto de Interesse'}
           </DialogTitle>
         </DialogHeader>
@@ -130,55 +132,51 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
 
         {showTypeForm ? (
           <div className="space-y-4">
-            <div>
-              <Label className={isDarkMode ? 'text-gray-300' : ''}>Nome do Tipo</Label>
+            <div className='block mb-5'>
+              <Label className={`${isDarkMode ? 'text-gray-300' : ''}`}>Nome do Tipo</Label>
               <input
                 type="text"
                 value={newTypeName}
                 onChange={(e) => setNewTypeName(e.target.value)}
-                className={`w-full mt-1.5 p-2 rounded-md ${
-                  isDarkMode 
-                    ? 'bg-zinc-700 text-gray-200 border-zinc-600' 
-                    : 'border-gray-300'
-                }`}
+                className={`w-full mt-1.5 p-2 rounded-md ${isDarkMode
+                  ? 'bg-zinc-700 text-gray-200 border-zinc-600'
+                  : 'border-gray-300'
+                  }`}
               />
             </div>
-            <div>
-              <Label className={isDarkMode ? 'text-gray-300' : ''}>Cor</Label>
+            <div className='w-[full] flex flex-col justify-center items-center'>
               <HexColorPicker color={selectedColor} onChange={setSelectedColor} />
             </div>
             <DialogFooter className="flex justify-between mt-4">
               <button
                 onClick={() => setShowTypeForm(false)}
-                className={`px-4 py-2 rounded-md ${
-                  isDarkMode 
-                    ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600' 
-                    : 'bg-gray-200 hover:bg-gray-300'
-                }`}
+                className={`px-3 py-2 text-destructive text-sm flex items-center gap-2 rounded-md ${isDarkMode
+                  ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600'
+                  : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
               >
-                Cancelar
+                <X size={15} /> Cancelar
               </button>
               <button
                 onClick={handleCreateType}
-                className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+                className="px-3 py-2 flex items-center text-sm gap-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
               >
-                Criar Tipo
+                <Plus size={15} /> Criar
               </button>
             </DialogFooter>
           </div>
         ) : (
           <div className="space-y-4">
             <div>
-              <Label className={isDarkMode ? 'text-gray-300' : ''}>Nome do POI</Label>
+              <Label className={isDarkMode ? 'text-gray-300' : ''}>Nome</Label>
               <input
                 type="text"
                 value={poiName}
                 onChange={(e) => setPoiName(e.target.value)}
-                className={`w-full mt-1.5 p-2 rounded-md ${
-                  isDarkMode 
-                    ? 'bg-zinc-700 text-gray-200 border-zinc-600' 
-                    : 'border-gray-300'
-                }`}
+                className={`w-full mt-1.5 p-2 rounded-md ${isDarkMode
+                  ? 'bg-zinc-700 text-gray-200 border-zinc-600'
+                  : 'border-gray-300'
+                  }`}
               />
             </div>
             <div>
@@ -190,14 +188,14 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                   </SelectTrigger>
                   <SelectContent className={isDarkMode ? 'bg-zinc-700 border-zinc-600' : ''}>
                     {poiTypes.map((type) => (
-                      <SelectItem 
-                        key={type.id} 
+                      <SelectItem
+                        key={type.id}
                         value={type.id}
                         className={isDarkMode ? 'text-gray-200 focus:bg-zinc-600' : ''}
                       >
                         <div className="flex items-center gap-2">
-                          <div 
-                            className="w-3 h-3 rounded-full" 
+                          <div
+                            className="w-3 h-3 rounded-full"
                             style={{ backgroundColor: type.color }}
                           />
                           {type.name}
@@ -208,11 +206,10 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                 </Select>
                 <button
                   onClick={() => setShowTypeForm(true)}
-                  className={`p-2 rounded-md ${
-                    isDarkMode 
-                      ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600' 
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
+                  className={`p-2 rounded-md ${isDarkMode
+                    ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600'
+                    : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
                 >
                   <PlusIcon size={20} />
                 </button>
@@ -225,11 +222,10 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                   type="number"
                   value={latitude}
                   onChange={(e) => setLatitude(e.target.value)}
-                  className={`w-full mt-1.5 p-2 rounded-md ${
-                    isDarkMode 
-                      ? 'bg-zinc-700 text-gray-200 border-zinc-600' 
-                      : 'border-gray-300'
-                  }`}
+                  className={`w-full mt-1.5 p-2 rounded-md ${isDarkMode
+                    ? 'bg-zinc-700 text-gray-200 border-zinc-600'
+                    : 'border-gray-300'
+                    }`}
                 />
               </div>
               <div>
@@ -238,20 +234,19 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                   type="number"
                   value={longitude}
                   onChange={(e) => setLongitude(e.target.value)}
-                  className={`w-full mt-1.5 p-2 rounded-md ${
-                    isDarkMode 
-                      ? 'bg-zinc-700 text-gray-200 border-zinc-600' 
-                      : 'border-gray-300'
-                  }`}
+                  className={`w-full mt-1.5 p-2 rounded-md ${isDarkMode
+                    ? 'bg-zinc-700 text-gray-200 border-zinc-600'
+                    : 'border-gray-300'
+                    }`}
                 />
               </div>
             </div>
             <DialogFooter className="flex justify-end mt-4">
               <button
                 onClick={handleCreatePOI}
-                className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+                className="px-4 py-2 flex items-center gap-2 rounded-md bg-blue-500 text-white text-sm hover:bg-blue-600"
               >
-                Criar POI
+                <Plus size={15} /> Criar
               </button>
             </DialogFooter>
           </div>

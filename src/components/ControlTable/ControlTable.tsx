@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon } from 'lucide-react';
+import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon, Plus, SquareCheckBigIcon, SquareIcon } from 'lucide-react';
 
 interface ControlTableProps {
   isDarkMode?: boolean;
@@ -29,17 +29,17 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
 
   const filteredData = React.useMemo(() => {
     if (!searchTerm) return mockData;
-    
+
     const searchLower = searchTerm.toLowerCase();
-    return mockData.filter(item => 
-      Object.values(item).some(value => 
+    return mockData.filter(item =>
+      Object.values(item).some(value =>
         value.toString().toLowerCase().includes(searchLower)
       )
     );
   }, [searchTerm]);
 
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-  
+
   const paginatedData = React.useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -54,15 +54,15 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
   };
 
   const handleSelectItem = (id: string) => {
-    setSelectedItems(prev => 
-      prev.includes(id) 
+    setSelectedItems(prev =>
+      prev.includes(id)
         ? prev.filter(item => item !== id)
         : [...prev, id]
     );
   };
 
   return (
-    <div className={`w-full h-full p-6 ${isDarkMode ? 'bg-zinc-900' : 'bg-[#EFF4FA]'}`}>
+    <div className={`w-full h-full p-6 ${isDarkMode ? 'bg-zinc-900' : 'bg-[#EEF3FA]'}`}>
       <div className="max-w-[90dvw] mx-auto relative">
         <h2 className={`text-lg font-semibold absolute pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           {title}
@@ -76,85 +76,64 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                 placeholder="Busca por Nome, Tipo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-[300px] h-9 pl-4 pr-8 text-sm rounded-lg ${
-                  isDarkMode 
-                    ? 'bg-zinc-800 text-gray-200 placeholder-gray-400' 
-                    : 'bg-white text-gray-900 placeholder-gray-500'
-                }`}
+                className={`w-[300px] h-8 pl-4 pr-8 text-sm rounded-full ${isDarkMode
+                  ? 'bg-zinc-800 text-gray-200 placeholder-gray-400'
+                  : 'bg-white text-gray-900 placeholder-gray-500'
+                  }`}
               />
-              <SearchIcon className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              }`} />
+              <SearchIcon className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                }`} />
             </div>
           </div>
 
           <div className="flex justify-center gap-3 mb-3">
             <button
-              className={`h-9 px-4 py-2 text-sm rounded-lg transition-colors flex items-center gap-2 ${
-                isDarkMode 
-                  ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
-              }`}
+              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
+                ? 'bg-blue-500 text-white hover:bg-blue-600'
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+                }`}
             >
-              <span className="text-sm">+ Item Monitorado</span>
+              <Plus size={14} /> {title}
             </button>
 
             <button
               onClick={handleSelectAll}
-              className={`h-9 px-4 py-2 text-sm rounded-lg transition-colors ${
-                isDarkMode 
-                  ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' 
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
+                ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
             >
-              Marcar Tudo
+              <SquareCheckBigIcon size={14} /> Marcar Tudo
             </button>
 
             <button
               onClick={() => setSelectedItems([])}
-              className={`h-9 px-4 py-2 text-sm rounded-lg transition-colors ${
-                isDarkMode 
-                  ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' 
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
+                ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
             >
-              Desmarcar Tudo
+              <SquareIcon size={14} /> Desmarcar Tudo
             </button>
           </div>
 
           <div className={`rounded-lg overflow-hidden shadow-lg ${isDarkMode ? 'bg-zinc-800' : 'bg-white'}`}>
             <table className="w-full">
               <thead>
-                <tr className={`${isDarkMode ? 'bg-zinc-800' : 'bg-white'} border-b ${
-                  isDarkMode ? 'border-zinc-700' : 'border-gray-200'
-                }`}>
+                <tr className={`${isDarkMode ? 'bg-zinc-800' : 'bg-white'} border-b ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'
+                  }`}>
                   <th className="w-12 px-4 py-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedItems.length === paginatedData.length}
-                      onChange={handleSelectAll}
-                      className={`h-4 w-4 rounded ${
-                        isDarkMode 
-                          ? 'text-blue-500 bg-zinc-700 border-zinc-600' 
-                          : 'text-blue-600 bg-gray-100 border-gray-300'
-                      }`}
-                    />
                   </th>
-                  <th className={`px-4 py-3 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Nome</th>
-                  <th className={`px-4 py-3 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Tipo</th>
-                  <th className={`px-4 py-3 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Logradouro</th>
-                  <th className={`px-4 py-3 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Local de Instalação</th>
-                  <th className={`px-4 py-3 text-center text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Ações</th>
+                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Nome</th>
+                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Tipo</th>
+                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Logradouro</th>
+                  <th className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Local de Instalação</th>
+                  <th className={`px-4 py-3 text-center text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,41 +150,33 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                         type="checkbox"
                         checked={selectedItems.includes(item.id)}
                         onChange={() => handleSelectItem(item.id)}
-                        className={`h-4 w-4 rounded ${
-                          isDarkMode 
-                            ? 'text-blue-500 bg-zinc-700 border-zinc-600' 
-                            : 'text-blue-600 bg-gray-100 border-gray-300'
-                        }`}
+                        className={`h-4 w-4 rounded ${isDarkMode
+                          ? 'text-blue-500 bg-zinc-700 border-zinc-600'
+                          : 'text-blue-600 bg-gray-100 border-gray-300'
+                          }`}
                       />
                     </td>
-                    <td className={`px-4 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.id}</td>
-                    <td className={`px-4 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.tipo}</td>
-                    <td className={`px-4 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.logradouro}</td>
-                    <td className={`px-4 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.local}</td>
+                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.id}</td>
+                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.tipo}</td>
+                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.logradouro}</td>
+                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.local}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">
-                        <button className={`p-1.5 rounded-lg transition-colors ${
-                          isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-                        }`}>
+                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
+                          }`}>
                           <EyeIcon className="w-4 h-4" />
                         </button>
-                        <button className={`p-1.5 rounded-lg transition-colors ${
-                          isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-                        }`}>
+                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
+                          }`}>
                           <PencilIcon className="w-4 h-4" />
                         </button>
-                        <button className={`p-1.5 rounded-lg transition-colors ${
-                          isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-                        }`}>
-                          <Trash2Icon className="w-4 h-4" />
+                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
+                          }`}>
+                          <Trash2Icon className="w-4 h-4 text-destructive" />
                         </button>
                       </div>
                     </td>
@@ -216,18 +187,17 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
           </div>
 
           <div className="flex justify-center mt-4">
-            <div className={`flex gap-1 rounded-lg p-1 ${isDarkMode ? 'bg-zinc-800' : 'bg-white'}`}>
+            <div className={`flex gap-1 rounded-lg shadow-md p-0.5 ${isDarkMode ? 'bg-zinc-800' : 'bg-white'}`}>
               {Array.from({ length: totalPages }, (_, i) => (
                 <button
                   key={i + 1}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === i + 1
-                      ? 'bg-blue-500 text-white'
-                      : isDarkMode 
-                        ? 'text-gray-300 hover:bg-zinc-700' 
-                        : 'text-gray-600 hover:bg-gray-100'
-                  }`}
+                  className={`px-3 py-1 rounded-md ${currentPage === i + 1
+                    ? 'bg-blue-500 text-white'
+                    : isDarkMode
+                      ? 'text-gray-300 hover:bg-zinc-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                    }`}
                 >
                   {i + 1}
                 </button>

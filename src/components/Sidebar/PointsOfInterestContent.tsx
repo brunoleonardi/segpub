@@ -106,18 +106,18 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
               align="end"
             >
               <DropdownMenuItem
-                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
+                className={`cursor-pointer ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
                 onClick={() => setIsCreateModalOpen(true)}
               >
                 Criar
               </DropdownMenuItem>
               <DropdownMenuItem
-                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
+                className={`cursor-pointer ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
               >
                 Editar
               </DropdownMenuItem>
               <DropdownMenuItem
-                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
+                className={`cursor-pointer ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
               >
                 Excluir
               </DropdownMenuItem>

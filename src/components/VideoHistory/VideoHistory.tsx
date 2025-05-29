@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { SearchIcon, SquareCheckIcon, SquareIcon, DownloadIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { SearchIcon, SquareIcon, DownloadIcon, SquareCheckBigIcon } from 'lucide-react';
 
 interface VideoHistoryProps {
   isDarkMode?: boolean;
@@ -190,7 +190,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
             ? 'bg-zinc-900/60' 
             : 'bg-[#EFF4FA] bg-opacity-60'
         } backdrop-blur-[2px] px-6 pt-5 shadow-md flex flex-col relative cursor-default z-50`}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e : any) => e.stopPropagation()}
       >
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -205,7 +205,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
             Histórico de Vídeos
           </h2>
           
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md"> 
             <div className="relative">
               <input
                 name="search"
@@ -236,7 +236,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
                   : 'bg-white text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <SquareCheckIcon size={14} />
+              <SquareCheckBigIcon size={14} />
               Marcar Tudo
             </motion.button>
             <motion.button
