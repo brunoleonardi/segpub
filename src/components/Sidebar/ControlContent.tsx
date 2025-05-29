@@ -70,34 +70,36 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, isDarkMode
       <div className={`h-[1px] ${isDarkMode ? 'bg-gray-700' : 'bg-[#00000029]'}`} />
       <div className="space-y-1 mt-4 relative">
         {data.map((item) => (
-          <DropdownMenu key={item.id}>
-            <DropdownMenuTrigger asChild>
-              <button className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors ${
-                isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
-              }`}>
-                <div className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {iconMap[item.icon]}
-                </div>
-                <span className={`text-xs ml-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {item.label}
-                </span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className={`text-xs ${isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white'}`}
-              align="end"
-            >
-              {item.options.map((optionId) => (
-                <DropdownMenuItem
-                  key={optionId}
-                  className={`text-xs ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
-                  onClick={() => handleOptionClick(item.label, optionId)}
-                >
-                  {controlOptionsLabels[optionId]}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div key={item.id} className="relative">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors ${
+                  isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
+                }`}>
+                  <div className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {iconMap[item.icon]}
+                  </div>
+                  <span className={`text-xs ml-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {item.label}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className={`w-[var(--radix-dropdown-menu-trigger-width)] text-xs ${isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white'}`}
+                align="start"
+              >
+                {item.options.map((optionId) => (
+                  <DropdownMenuItem
+                    key={optionId}
+                    className={`text-xs ${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+                    onClick={() => handleOptionClick(item.label, optionId)}
+                  >
+                    {controlOptionsLabels[optionId]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         ))}
       </div>
     </div>
