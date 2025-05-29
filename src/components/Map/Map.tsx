@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import DeckGL from '@deck.gl/react';
 import { IconLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
+import { Popup } from 'react-map-gl';
 import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
 
@@ -35,6 +36,12 @@ interface POIData {
   type_color: string;
 }
 
+interface PopupInfo {
+  poi: POIData;
+  x: number;
+  y: number;
+}
+
 const isValidCoordinate = (poi: any): poi is POIData => {
   return (
     typeof poi.latitude === 'number' &&
@@ -51,6 +58,7 @@ const isValidCoordinate = (poi: any): poi is POIData => {
 export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [pois, setPois] = useState<POIData[]>([]);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const { setZoomToLocation } = useMapContext();
 
   const fetchPOIs = async () => {
@@ -155,9 +163,13 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
         const b = parseInt(color.slice(5, 7), 16);
         return [r, g, b, 255];
       },
-      onHover: ({ object }) => {
-        if (object) {
-          console.log(`Hovering over ${object.name} (${object.type_name})`);
+      onClick: (info) => {
+        if (info.object) {
+          setPopupInfo({
+            poi: info.object as POIData,
+            x: info.x,
+            y: info.y
+          });
         }
       }
     })
@@ -178,6 +190,25 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
           reuseMaps
           attributionControl={false}
         />
+        {popupInfo && (
+          <Popup
+            longitude={popupInfo.poi.longitude}
+            latitude={popupInfo.poi.latitude}
+            offset={20}
+            closeButton={true}
+            closeOnClick={false}
+            onClose={() => setPopupInfo(null)}
+            className={isDarkMode ? 'dark' : ''}
+          >
+            <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
+              <h3 className="font-semibold mb-1">{popupInfo.poi.name}</h3>
+              <p className="text-sm mb-1">Tipo: {popupInfo.poi.type_name}</p>
+              <p className="text-sm">
+                Coordenadas: {popupInfo.poi.latitude.toFixed(6)}, {popupInfo.poi.longitude.toFixed(6)}
+              </p>
+            </div>
+          </Popup>
+        )}
       </DeckGL>
       <div className={`absolute bottom-0 right-0 p-2 z-10 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
         © <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer">Mapbox</a> |
