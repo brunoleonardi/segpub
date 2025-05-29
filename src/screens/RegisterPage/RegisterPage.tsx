@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../../components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, PencilIcon, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useTheme } from '../../App';
 
 const fieldConfigs = [
   { name: 'projeto', label: 'Projeto', placeholder: 'Insira o Projeto', type: 'text', colSpan: 1, validation: z.string().min(1, 'Projeto é obrigatório'), defaultValue: '' },
@@ -25,16 +26,10 @@ fieldConfigs.forEach((field) => {
 
 const formSchema = z.object(schemaShape);
 
-interface RegisterPageProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  isDarkMode?: boolean;
-  section: string;
-}
-
-export const RegisterPage: React.FC<RegisterPageProps> = ({ open, onOpenChange, isDarkMode, section }) => {
+export const RegisterPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isDarkMode } = useTheme();
   const editMode = location.state?.editMode;
   const reportData = location.state?.reportData;
 
