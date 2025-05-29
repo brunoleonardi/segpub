@@ -3,28 +3,11 @@ import { HomePage } from './screens/HomePage';
 import { ControlTablePage } from './screens/ControlTablePage';
 import { RegisterPage } from './screens/RegisterPage';
 import { MapProvider } from './contexts/MapContext';
-import { createContext, useContext, useState, useEffect } from 'react';
-
-interface ThemeContextType {
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
-}
-
-export const ThemeContext = createContext<ThemeContextType>({
-  isDarkMode: false,
-  toggleDarkMode: () => {},
-});
-
-export const useTheme = () => useContext(ThemeContext);
+import { ThemeProvider } from './contexts/ThemeContext';
 
 export default function App() {
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev);
-  };
-
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+    <ThemeProvider>
       <MapProvider>
         <BrowserRouter>
           <Routes>
@@ -34,6 +17,6 @@ export default function App() {
           </Routes>
         </BrowserRouter>
       </MapProvider>
-    </ThemeContext.Provider>
+    </ThemeProvider>
   );
 }
