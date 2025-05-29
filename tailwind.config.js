@@ -88,5 +88,5 @@ module.exports = {
   plugins: [
     require('tailwind-scrollbar')({ nocompatible: true }),
   ],
-    darkMode: ['class', '[data-theme="dark"]'], // support class and data attribute
+  darkMode: ['class', '[data-theme="dark"]'], // support class and data attribute
 };

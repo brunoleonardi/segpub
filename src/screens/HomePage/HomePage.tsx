@@ -17,31 +17,31 @@ export const HomePage = (): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-  const updateTheme = (isDark: boolean) => {
-    setIsDarkMode(isDark);
-    document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  };
+    const updateTheme = (isDark: boolean) => {
+      setIsDarkMode(isDark);
+      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    };
 
-  // Initial check
-  updateTheme(mediaQuery.matches);
+    // Initial check
+    updateTheme(mediaQuery.matches);
 
-  // Listen for changes
-  const handleChange = (e: MediaQueryListEvent) => {
-    updateTheme(e.matches);
-  };
+    // Listen for changes
+    const handleChange = (e: MediaQueryListEvent) => {
+      updateTheme(e.matches);
+    };
 
-  mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener('change', handleChange);
 
-  return () => {
-    mediaQuery.removeEventListener('change', handleChange);
-  };
-}, []);
-
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
 
   const handleDarkModeChange = (darkMode: boolean) => {
     setIsDarkMode(darkMode);
+    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   };
 
   const handleHistoryClick = () => {
