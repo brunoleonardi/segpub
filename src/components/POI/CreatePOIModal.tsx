@@ -115,7 +115,7 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`border-none rounded-2xl backdrop-blur-[2px] px-6 pt-5 shadow-md cursor-default z-50 ${isDarkMode
+      <DialogContent className={`border-none rounded-2xl w-[20dvw] backdrop-blur-[2px] px-6 pt-5 shadow-md cursor-default z-50 ${isDarkMode
         ? 'bg-zinc-900/60'
         : 'bg-[#EFF4FA]/70'}`}>
         <DialogHeader>
@@ -166,14 +166,14 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
             </DialogFooter>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div>
               <Label className={isDarkMode ? 'text-gray-300' : ''}>Nome</Label>
               <input
                 type="text"
                 value={poiName}
                 onChange={(e) => setPoiName(e.target.value)}
-                className={`w-full mt-1.5 p-2 rounded-md ${isDarkMode
+                className={`w-full mt-1.5 p-1 rounded-md ${isDarkMode
                   ? 'bg-zinc-700 text-gray-200 border-zinc-600'
                   : 'border-gray-300'
                   }`}
@@ -222,7 +222,7 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                   type="number"
                   value={latitude}
                   onChange={(e) => setLatitude(e.target.value)}
-                  className={`w-full mt-1.5 p-2 rounded-md ${isDarkMode
+                  className={`w-full mt-1.5 p-1 rounded-md ${isDarkMode
                     ? 'bg-zinc-700 text-gray-200 border-zinc-600'
                     : 'border-gray-300'
                     }`}
@@ -234,17 +234,17 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                   type="number"
                   value={longitude}
                   onChange={(e) => setLongitude(e.target.value)}
-                  className={`w-full mt-1.5 p-2 rounded-md ${isDarkMode
+                  className={`w-full mt-1.5 p-1 rounded-md ${isDarkMode
                     ? 'bg-zinc-700 text-gray-200 border-zinc-600'
                     : 'border-gray-300'
                     }`}
                 />
               </div>
             </div>
-            <DialogFooter className="flex justify-end mt-4">
+            <DialogFooter className="flex justify-end">
               <button
                 onClick={handleCreatePOI}
-                className="px-4 py-2 flex items-center gap-2 rounded-md bg-blue-500 text-white text-sm hover:bg-blue-600"
+                className="mt-3 px-4 py-2 flex items-center gap-2 rounded-md bg-blue-500 text-white text-sm hover:bg-blue-600"
               >
                 <Plus size={15} /> Criar
               </button>
