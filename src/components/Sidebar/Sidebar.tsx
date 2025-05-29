@@ -303,7 +303,7 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
                         <span className="text-[10px] text-white font-semibold">{type.count}</span>
                       </Badge>
                     </div>
-                    {stage !== 'closed' && <span className="theme-aware-text text-sm">{type.name}</span>}
+                    {stage !== 'closed' && <span className="theme-aware-text text-sm pl-4">{type.name}</span>}
                   </div>
                 ))}
               </div>
