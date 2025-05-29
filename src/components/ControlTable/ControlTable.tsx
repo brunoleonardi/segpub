@@ -264,7 +264,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <td colSpan={6} className={`text-center py-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       Nenhum dado encontrado na tabela.
                     </td>
                   </tr>
