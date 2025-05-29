@@ -138,7 +138,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
       <div className="space-y-1 mt-4">
         {poiData.map((category) => (
           <div key={category.id} className="mb-0 last:mb-0">
-            <div className={`flex items-center gap-2 mb-3 sticky top-[-8px] rounded-lg p-1 z-10 ${isDarkMode ? 'bg-[#303031]' : 'bg-[#E9F0FA]'}`}>
+            <div className={`flex items-center gap-2 mb-3 sticky top-[-8px] rounded-lg p-1 z-10 ${isDarkMode ? 'bg-[#383838]' : 'bg-[#E9F0FA]'}`}>
               <MapPinIcon size={16} strokeWidth={1.5} style={{ fill: category.color, color: category.color }} />
               <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                 {category.name} ({category.count})
