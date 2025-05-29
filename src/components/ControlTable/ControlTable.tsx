@@ -63,7 +63,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
 
   return (
     <div className={`w-full h-full p-6 ${isDarkMode ? 'bg-zinc-900' : 'bg-[#EFF4FA]'}`}>
-      <div className="max-w-md mx-auto relative">
+      <div className="max-w-[1200px]  mx-auto relative">
         <h2 className={`text-lg font-semibold absolute pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           {title}
         </h2>
