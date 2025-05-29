@@ -6,42 +6,16 @@ import { MapComponent } from "../../components/Map/Map";
 import { MapProvider } from "../../contexts/MapContext";
 
 export const HomePage = (): JSX.Element => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check if the user's system is in dark mode
-    if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [showVideoHistory, setShowVideoHistory] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const updateTheme = (isDark: boolean) => {
-      setIsDarkMode(isDark);
-      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    };
-
-    // Initial check
-    updateTheme(mediaQuery.matches);
-
-    // Listen for changes
-    const handleChange = (e: MediaQueryListEvent) => {
-      updateTheme(e.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, []);
+    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   const handleDarkModeChange = (darkMode: boolean) => {
     setIsDarkMode(darkMode);
-    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   };
 
   const handleHistoryClick = () => {
