@@ -4,7 +4,7 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { HexColorPicker } from 'react-colorful';
 import { PlusIcon } from 'lucide-react';
-import { supabase, isAuthenticated } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 interface CreatePOIModalProps {
   open: boolean;
@@ -26,13 +26,6 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
     try {
       setError(null);
       
-      // Check if user is authenticated
-      const authenticated = await isAuthenticated();
-      if (!authenticated) {
-        setError('You must be logged in to create POI types');
-        return;
-      }
-
       const { data, error: insertError } = await supabase
         .from('poi_types')
         .insert([
@@ -56,13 +49,6 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
   const handleCreatePOI = async () => {
     try {
       setError(null);
-
-      // Check if user is authenticated
-      const authenticated = await isAuthenticated();
-      if (!authenticated) {
-        setError('You must be logged in to create POIs');
-        return;
-      }
 
       const { data, error: insertError } = await supabase
         .from('pois')
