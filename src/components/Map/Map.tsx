@@ -189,26 +189,27 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
           mapStyle={isDarkMode ? MAPBOX_STYLE_DARK : MAPBOX_STYLE_LIGHT}
           reuseMaps
           attributionControl={false}
-        />
-        {popupInfo && (
-          <Popup
-            longitude={popupInfo.poi.longitude}
-            latitude={popupInfo.poi.latitude}
-            offset={20}
-            closeButton={true}
-            closeOnClick={false}
-            onClose={() => setPopupInfo(null)}
-            className={isDarkMode ? 'dark' : ''}
-          >
-            <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
-              <h3 className="font-semibold mb-1">{popupInfo.poi.name}</h3>
-              <p className="text-sm mb-1">Tipo: {popupInfo.poi.type_name}</p>
-              <p className="text-sm">
-                Coordenadas: {popupInfo.poi.latitude.toFixed(6)}, {popupInfo.poi.longitude.toFixed(6)}
-              </p>
-            </div>
-          </Popup>
-        )}
+        >
+          {popupInfo && (
+            <Popup
+              longitude={popupInfo.poi.longitude}
+              latitude={popupInfo.poi.latitude}
+              offset={20}
+              closeButton={true}
+              closeOnClick={false}
+              onClose={() => setPopupInfo(null)}
+              className={isDarkMode ? 'dark' : ''}
+            >
+              <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
+                <h3 className="font-semibold mb-1">{popupInfo.poi.name}</h3>
+                <p className="text-sm mb-1">Tipo: {popupInfo.poi.type_name}</p>
+                <p className="text-sm">
+                  Coordenadas: {popupInfo.poi.latitude.toFixed(6)}, {popupInfo.poi.longitude.toFixed(6)}
+                </p>
+              </div>
+            </Popup>
+          )}
+        </Map>
       </DeckGL>
       <div className={`absolute bottom-0 right-0 p-2 z-10 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
         © <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer">Mapbox</a> |
