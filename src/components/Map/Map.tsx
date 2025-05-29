@@ -18,7 +18,7 @@ const INITIAL_VIEW_STATE = {
 };
 
 const ICON_MAPPING = {
-  marker: {x: 0, y: -0, width: 30, height: 30, mask: true}
+  marker: {x: 0, y: -0, width: 30, height: 28, mask: true}
 };
 
 interface MapComponentProps {
