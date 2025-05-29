@@ -16,6 +16,7 @@ export const HomePage = (): JSX.Element => {
     
     // Set initial state
     setIsDarkMode(mediaQuery.matches);
+    document.body.setAttribute('data-theme', mediaQuery.matches ? 'dark' : 'light');
 
     // Listen for system theme changes
     const handleChange = (e: MediaQueryListEvent) => {
@@ -23,13 +24,8 @@ export const HomePage = (): JSX.Element => {
       document.body.setAttribute('data-theme', e.matches ? 'dark' : 'light');
     };
 
-    // Add listener for theme changes
     mediaQuery.addEventListener('change', handleChange);
-    
-    // Set initial theme
-    document.body.setAttribute('data-theme', mediaQuery.matches ? 'dark' : 'light');
 
-    // Cleanup listener
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
     };
