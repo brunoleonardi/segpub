@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface MapContextType {
   zoomToLocation: (latitude: number, longitude: number) => void;

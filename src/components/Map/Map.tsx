@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
@@ -85,6 +85,31 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
     }
   };
 
+  const updateMapLocation = useCallback((latitude: number, longitude: number) => {
+    if (
+      typeof latitude === 'number' &&
+      typeof longitude === 'number' &&
+      !isNaN(latitude) &&
+      !isNaN(longitude) &&
+      latitude >= -90 &&
+      latitude <= 90 &&
+      longitude >= -180 &&
+      longitude <= 180
+    ) {
+      setViewState(prevState => ({
+        ...prevState,
+        latitude,
+        longitude,
+        zoom: 16,
+        transitionDuration: 1000,
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    setZoomToLocation(() => updateMapLocation);
+  }, [setZoomToLocation, updateMapLocation]);
+
   useEffect(() => {
     fetchPOIs();
 
@@ -107,29 +132,6 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
       supabase.removeChannel(channel);
     };
   }, []);
-
-  useEffect(() => {
-    setZoomToLocation((latitude: number, longitude: number) => {
-      if (
-        typeof latitude === 'number' &&
-        typeof longitude === 'number' &&
-        !isNaN(latitude) &&
-        !isNaN(longitude) &&
-        latitude >= -90 &&
-        latitude <= 90 &&
-        longitude >= -180 &&
-        longitude <= 180
-      ) {
-        setViewState({
-          ...viewState,
-          latitude,
-          longitude,
-          zoom: 16,
-          transitionDuration: 1000,
-        });
-      }
-    });
-  }, [setZoomToLocation, viewState]);
 
   const layers = [
     new ScatterplotLayer({
