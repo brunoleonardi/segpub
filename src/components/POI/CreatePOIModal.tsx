@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { HexColorPicker } from 'react-colorful';
 import { PlusIcon } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { supabase, isAuthenticated } from '../../lib/supabase';
 
 interface CreatePOIModalProps {
   open: boolean;
@@ -20,17 +20,30 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
   const [poiName, setPoiName] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleCreateType = async () => {
     try {
-      const { data, error } = await supabase
+      setError(null);
+      
+      // Check if user is authenticated
+      const authenticated = await isAuthenticated();
+      if (!authenticated) {
+        setError('You must be logged in to create POI types');
+        return;
+      }
+
+      const { data, error: insertError } = await supabase
         .from('poi_types')
         .insert([
           { name: newTypeName, color: selectedColor }
         ])
         .select();
 
-      if (error) throw error;
+      if (insertError) {
+        setError(insertError.message);
+        throw insertError;
+      }
 
       setShowTypeForm(false);
       setNewTypeName('');
@@ -42,7 +55,16 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
 
   const handleCreatePOI = async () => {
     try {
-      const { data, error } = await supabase
+      setError(null);
+
+      // Check if user is authenticated
+      const authenticated = await isAuthenticated();
+      if (!authenticated) {
+        setError('You must be logged in to create POIs');
+        return;
+      }
+
+      const { data, error: insertError } = await supabase
         .from('pois')
         .insert([
           {
@@ -54,7 +76,10 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
         ])
         .select();
 
-      if (error) throw error;
+      if (insertError) {
+        setError(insertError.message);
+        throw insertError;
+      }
 
       onOpenChange(false);
       setPoiName('');
@@ -74,6 +99,12 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
             {showTypeForm ? 'Criar Novo Tipo' : 'Criar Ponto de Interesse'}
           </DialogTitle>
         </DialogHeader>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
 
         {showTypeForm ? (
           <div className="space-y-4">
