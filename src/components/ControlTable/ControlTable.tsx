@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon, Plus, SquareCheckBigIcon, SquareIcon } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 interface ControlTableProps {
   isDarkMode?: boolean;
@@ -20,6 +21,7 @@ interface EmailReport {
 const ITEMS_PER_PAGE = 10;
 
 export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title }) => {
+  const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,8 +44,48 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
   useEffect(() => {
     if (title === 'e-Mails Relatório') {
       fetchEmailReports();
+
+      // Subscribe to realtime changes
+      const channel = supabase
+        .channel('email_reports_changes')
+        .on('postgres_changes', 
+          { event: '*', schema: 'public', table: 'email_reports' }, 
+          () => {
+            fetchEmailReports();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [title]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('email_reports')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Remove from selected items if it was selected
+      setSelectedItems(prev => prev.filter(item => item !== id));
+    } catch (error) {
+      console.error('Error deleting email report:', error);
+    }
+  };
+
+  const handleEdit = (report: EmailReport) => {
+    navigate(`/register/e-Mails Relatório`, { 
+      state: { 
+        editMode: true,
+        reportData: report
+      }
+    });
+  };
 
   const filteredData = React.useMemo(() => {
     if (!searchTerm) return data;
@@ -106,6 +148,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
 
           <div className="flex justify-center gap-3 mb-3">
             <button
+              onClick={() => navigate(`/register/${title}`)}
               className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
                 ? 'bg-blue-500 text-white hover:bg-blue-600'
                 : 'bg-blue-500 text-white hover:bg-blue-600'
@@ -184,16 +227,16 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                       }`}>{item.active ? 'Ativo' : 'Inativo'}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-2">
-                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-                          }`}>
-                          <EyeIcon className="w-4 h-4" />
-                        </button>
-                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-                          }`}>
+                        <button 
+                          className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+                          onClick={() => handleEdit(item)}
+                        >
                           <PencilIcon className="w-4 h-4" />
                         </button>
-                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'
-                          }`}>
+                        <button 
+                          className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+                          onClick={() => handleDelete(item.id)}
+                        >
                           <Trash2Icon className="w-4 h-4 text-destructive" />
                         </button>
                       </div>

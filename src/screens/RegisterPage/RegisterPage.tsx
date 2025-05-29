@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../../components/ui/form';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, PencilIcon, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
 const fieldConfigs = [
@@ -34,24 +34,46 @@ interface RegisterPageProps {
 
 export const RegisterPage: React.FC<RegisterPageProps> = ({ open, onOpenChange, isDarkMode, section }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const editMode = location.state?.editMode;
+  const reportData = location.state?.reportData;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues,
+    defaultValues: editMode ? {
+      projeto: reportData.project,
+      email: reportData.email,
+      nome: reportData.name,
+      ativo: reportData.active,
+    } : defaultValues,
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const { error } = await supabase
-        .from('email_reports')
-        .insert([{
-          project: values.projeto,
-          email: values.email,
-          name: values.nome,
-          active: values.ativo,
-        }]);
+      if (editMode) {
+        const { error } = await supabase
+          .from('email_reports')
+          .update({
+            project: values.projeto,
+            email: values.email,
+            name: values.nome,
+            active: values.ativo,
+          })
+          .eq('id', reportData.id);
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('email_reports')
+          .insert([{
+            project: values.projeto,
+            email: values.email,
+            name: values.nome,
+            active: values.ativo,
+          }]);
+
+        if (error) throw error;
+      }
 
       navigate('/control/e-Mails Relatório');
     } catch (error) {
@@ -136,7 +158,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ open, onOpenChange, 
                     className="px-3 py-1.5 text-sm rounded-full bg-[#4D94FF] text-white hover:bg-[#3B82F6]"
                   >
                     <Check size={14} className="inline-block mr-1" />
-                    Concluir
+                    {editMode ? 'Salvar' : 'Concluir'}
                   </button>
                 </div>
               </div>
