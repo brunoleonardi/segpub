@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MapIcon, MapPinIcon, MoreHorizontal } from 'lucide-react';
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import {
@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { CreatePOIModal } from '../POI/CreatePOIModal';
 
 interface LocationItem {
   id: string;
@@ -28,6 +29,8 @@ interface PointsOfInterestContentProps {
 }
 
 export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ data, isDarkMode }) => {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   return (
     <div className="p-2 mt-1 h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500">
       <div className="gap-3 mb-2">
@@ -56,6 +59,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
             >
               <DropdownMenuItem
                 className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
+                onClick={() => setIsCreateModalOpen(true)}
               >
                 Criar
               </DropdownMenuItem>
@@ -106,6 +110,12 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
           </div>
         ))}
       </div>
+
+      <CreatePOIModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 };
