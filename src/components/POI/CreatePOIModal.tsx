@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { HexColorPicker } from 'react-colorful';
 import { Plus, PlusIcon, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface POIType {
   id: string;
@@ -18,7 +19,8 @@ interface CreatePOIModalProps {
   isDarkMode?: boolean;
 }
 
-export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChange, isDarkMode }) => {
+export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChange }) => {
+  const { isDarkMode } = useTheme()
   const [showTypeForm, setShowTypeForm] = useState(false);
   const [newTypeName, setNewTypeName] = useState('');
   const [selectedColor, setSelectedColor] = useState('#000000');

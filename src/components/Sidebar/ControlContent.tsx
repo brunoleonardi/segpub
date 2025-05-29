@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  UserIcon, 
-  UsersIcon, 
-  SearchIcon, 
-  SmartphoneIcon, 
+import {
+  UserIcon,
+  UsersIcon,
+  SearchIcon,
+  SmartphoneIcon,
   MonitorIcon,
   BuildingIcon,
   MailIcon,
@@ -45,8 +45,11 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 import { controlOptionsLabels } from './data';
+import { useTheme } from '../../contexts/ThemeContext';
 
-export const ControlContent: React.FC<ControlContentProps> = ({ data, isDarkMode, onConsultarClick }) => {
+export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsultarClick }) => {
+  const { isDarkMode } = useTheme()
+
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -77,9 +80,8 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, isDarkMode
           <div key={item.id} className="relative">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors ${
-                  isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
-                }`}>
+                <button className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
+                  }`}>
                   <div className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     {iconMap[item.icon]}
                   </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDownIcon, ChevronRightIcon, MonitorIcon, WifiIcon, WifiOffIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface Item {
   id: string;
@@ -43,25 +44,25 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   onToggle,
   level = 0,
   children,
-  isDarkMode,
   parentKey = ''
 }) => {
+  const { isDarkMode } = useTheme()
+
   const getBackgroundColor = () => {
     if (!isExpanded) return '';
-    
+
     if (parentKey.includes('emTransito') || parentKey.includes('naBase')) {
       return isDarkMode ? 'bg-gray-100 bg-opacity-10' : 'bg-blue-600 bg-opacity-10';
     }
-    
+
     return isDarkMode ? 'bg-gray-100 bg-opacity-15' : 'bg-blue-600 bg-opacity-15';
   };
 
   return (
     <div className={`${level > 0 ? "ml-4 border-l-2 border-dashed border-gray-500 pl-4" : ""} mb-1`}>
       <div
-        className={`flex items-center justify-between cursor-pointer h-10 px-3 rounded ${
-          getBackgroundColor()
-        } ${!isExpanded && (isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50')}`}
+        className={`flex items-center justify-between cursor-pointer h-10 px-3 rounded ${getBackgroundColor()
+          } ${!isExpanded && (isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50')}`}
         onClick={onToggle}
       >
         <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{label}</span>
@@ -93,8 +94,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   );
 };
 
-const ItemsList: React.FC<ItemsListProps> = ({ items, level, isDarkMode }) => {
+const ItemsList: React.FC<ItemsListProps> = ({ items, level }) => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const { isDarkMode } = useTheme()
 
   const getItemBackground = (itemId: string) => {
     if (selectedItem === itemId) {
@@ -108,13 +110,11 @@ const ItemsList: React.FC<ItemsListProps> = ({ items, level, isDarkMode }) => {
       {items.map(item => (
         <button
           key={item.id}
-          className={`flex w-full px-3 py-2 rounded-lg transition-colors ${
-            getItemBackground(item.id)
-          } ${
-            isDarkMode 
-              ? 'hover:bg-zinc-800' 
+          className={`flex w-full px-3 py-2 rounded-lg transition-colors ${getItemBackground(item.id)
+            } ${isDarkMode
+              ? 'hover:bg-zinc-800'
               : 'hover:bg-gray-50'
-          }`}
+            }`}
           onClick={() => setSelectedItem(item.id)}
         >
           <div className="flex items-center justify-between w-full">
@@ -147,19 +147,20 @@ export const MonitoringContent: React.FC<MonitoringContentProps> = ({
   data,
   expandedItems,
   onToggleItem,
-  isDarkMode
 }) => {
+  const { isDarkMode } = useTheme()
+
   const renderAccordionContent = (content: any, parentKey: string = '', level: number = 0) => {
     if (Array.isArray(content)) {
-      return <ItemsList items={content} level={level} isDarkMode={isDarkMode} />;
+      return <ItemsList items={content} level={level} />;
     }
 
     if (typeof content === 'object') {
       return Object.entries(content).map(([key, value]: [string, any]) => {
         if (key === 'label') return null;
-        
+
         const currentKey = parentKey ? `${parentKey}_${key}` : key;
-        
+
         if (key === 'items') {
           return renderAccordionContent(value, parentKey, level + 1);
         }
@@ -171,7 +172,6 @@ export const MonitoringContent: React.FC<MonitoringContentProps> = ({
             isExpanded={!!expandedItems[currentKey]}
             onToggle={() => onToggleItem(currentKey)}
             level={level}
-            isDarkMode={isDarkMode}
             parentKey={currentKey}
           >
             {renderAccordionContent(value.items, currentKey, level + 1)}

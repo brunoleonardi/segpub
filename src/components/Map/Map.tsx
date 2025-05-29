@@ -4,6 +4,7 @@ import { IconLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
 import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const MAPBOX_STYLE_DARK = 'mapbox://styles/geovista-fdte/clu7c9nmj00vs01pad3m97qqa';
 const MAPBOX_STYLE_LIGHT = 'mapbox://styles/geovista-fdte/clon6qm3o008t01peeqk31rg7';
@@ -14,11 +15,11 @@ const INITIAL_VIEW_STATE = {
   latitude: -23.5489,
   zoom: 12,
   pitch: 0,
-  bearing: 0 
+  bearing: 0
 };
 
 const ICON_MAPPING = {
-  marker: {x: 0, y: -0, width: 26, height: 26, mask: true}
+  marker: { x: 0, y: -0, width: 26, height: 26, mask: true }
 };
 
 interface MapComponentProps {
@@ -48,7 +49,8 @@ const isValidCoordinate = (poi: any): poi is POIData => {
   );
 };
 
-export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
+export const MapComponent: React.FC<MapComponentProps> = () => {
+  const { isDarkMode } = useTheme()
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [pois, setPois] = useState<POIData[]>([]);
   const { setZoomToLocation, hiddenPOITypes } = useMapContext();
@@ -105,7 +107,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
         latitude,
         longitude,
         zoom: 16,
-        transitionDuration: 2000,
+        transitionDuration: 1500,
       }));
     }
   }, []);

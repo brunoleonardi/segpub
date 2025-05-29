@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon, Plus, SquareCheckBigIcon, SquareIcon } from 'lucide-react';
+import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon, Plus, SquareCheckBigIcon, SquareIcon, CircleChevronLeft, ArrowLeft } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface ControlTableProps {
   isDarkMode?: boolean;
@@ -30,8 +31,9 @@ interface EmailReport {
 
 const ITEMS_PER_PAGE = 10;
 
-export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title }) => {
+export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme()
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,8 +61,8 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
 
       const channel = supabase
         .channel('email_reports_changes')
-        .on('postgres_changes', 
-          { event: '*', schema: 'public', table: 'email_reports' }, 
+        .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'email_reports' },
           () => {
             fetchEmailReports();
           }
@@ -97,8 +99,8 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
   };
 
   const handleEdit = (report: EmailReport) => {
-    navigate(`/register/e-Mails Relatório`, { 
-      state: { 
+    navigate(`/register/e-Mails Relatório`, {
+      state: {
         editMode: true,
         reportData: report
       }
@@ -142,8 +144,8 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
   return (
     <div className={`w-full h-full p-6 ${isDarkMode ? 'bg-zinc-900' : 'bg-[#EEF3FA]'}`}>
       <div className="max-w-[90dvw] mx-auto relative">
-        <h2 className={`text-lg font-semibold absolute pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          {title}
+        <h2 onClick={() => navigate('/')} className={`cursor-pointer text-lg font-semibold absolute flex gap-2 items-center pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <ArrowLeft size={23} className='pt-0.5' /> {title}
         </h2>
 
         <div className="flex flex-col">
@@ -154,7 +156,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                 placeholder="Busca por Nome, Tipo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-[300px] h-8 pl-4 pr-8 text-sm rounded-full ${isDarkMode
+                className={`w-[300px] h-8 pl-4 pr-8 text-xs rounded-full ${isDarkMode
                   ? 'bg-zinc-800 text-gray-200 placeholder-gray-400'
                   : 'bg-white text-gray-900 placeholder-gray-500'
                   }`}
@@ -246,13 +248,13 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                         }`}>{item.active ? 'Ativo' : 'Inativo'}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-2">
-                          <button 
-                            className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+                          <button
+                            className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
                             onClick={() => handleEdit(item)}
                           >
                             <PencilIcon className="w-4 h-4" />
                           </button>
-                          <button 
+                          <button
                             className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
                             onClick={() => handleDeleteClick(item.id)}
                           >
@@ -307,7 +309,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel 
+            <AlertDialogCancel
               className={isDarkMode ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600' : ''}
               onClick={() => {
                 setDeleteDialogOpen(false);

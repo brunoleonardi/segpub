@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { VideoHistory } from '../../components/VideoHistory/VideoHistory';
 import { ArrowLeft } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const VideoHistoryPage = () => {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const {isDarkMode} = useTheme()
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-zinc-900' : 'bg-[#EFF4FA]'}`}>
@@ -22,7 +23,7 @@ export const VideoHistoryPage = () => {
           <span>Voltar</span>
         </button>
       </div>
-      <VideoHistory isDarkMode={isDarkMode} onClose={() => navigate('/')} />
+      <VideoHistory onClose={() => navigate('/')} />
     </div>
   );
 };

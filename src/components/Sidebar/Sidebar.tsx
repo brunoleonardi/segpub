@@ -13,6 +13,7 @@ import {
   LogOutIcon,
   ChevronLeftIcon,
   SunIcon,
+  Locate,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -27,6 +28,7 @@ import { cn } from "../../lib/utils";
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { supabase } from "../../lib/supabase";
 import { useMapContext } from "../../contexts/MapContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface POIType {
   id: string;
@@ -36,18 +38,17 @@ interface POIType {
 }
 
 interface SidebarProps {
-  onDarkModeChange?: (darkMode: boolean) => void;
   onHistoryClick?: () => void;
   onControlConsultarClick?: (itemLabel: string) => void;
 }
 
-export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarClick }: SidebarProps): JSX.Element => {
+export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProps): JSX.Element => {
   const [stage, setStage] = useState<'closed' | 'half' | 'full'>('closed');
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
   const { hiddenPOITypes, togglePOIType } = useMapContext();
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   const fetchPOITypes = async () => {
     try {
@@ -117,9 +118,7 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
 
   const handleSectionClick = (section: string) => {
     if (section === 'darkMode') {
-      const newDarkMode = !isDarkMode;
-      setIsDarkMode(newDarkMode);
-      onDarkModeChange?.(newDarkMode);
+      toggleDarkMode();
       return;
     }
 
@@ -143,19 +142,16 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
         data={monitoringData}
         expandedItems={expandedItems}
         onToggleItem={toggleExpand}
-        isDarkMode={isDarkMode}
       />
     ),
     controle: (
       <ControlContent
         data={controlData}
-        isDarkMode={isDarkMode}
         onConsultarClick={onControlConsultarClick}
       />
     ),
     pontosInteresse: (
       <PointsOfInterestContent
-        isDarkMode={isDarkMode}
         onPOITypeCreated={fetchPOITypes}
       />
     )
@@ -166,17 +162,17 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
   };
 
   const menuIcons: Record<string, JSX.Element> = {
-    monitoramento: <MonitorIcon size={20} strokeWidth={1.5}/>,
-    controle: <SettingsIcon size={20} strokeWidth={1.5}/>,
-    historico: <VideoIcon size={20} strokeWidth={1.5}/>,
-    estatisticas: <PieChartIcon size={20} strokeWidth={1.5}/>
+    monitoramento: <MonitorIcon size={20} strokeWidth={1.5} />,
+    controle: <SettingsIcon size={20} strokeWidth={1.5} />,
+    historico: <VideoIcon size={20} strokeWidth={1.5} />,
+    estatisticas: <PieChartIcon size={20} strokeWidth={1.5} />
   };
 
   const getIconForMenuItem = (id: string) => menuIcons[id] || null;
 
   const navIcons: Record<string, JSX.Element> = {
     notifications: <BellIcon size={16} strokeWidth={1.5} />,
-    location: <LocationIcon size={16} strokeWidth={1.5} />,
+    location: <Locate size={16} strokeWidth={1.5} />,
     darkMode: isDarkMode ? <SunIcon size={16} /> : <MoonIcon size={16} strokeWidth={1.5} />,
     logout: <LogOutIcon size={16} strokeWidth={1.5} />
   };

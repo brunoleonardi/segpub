@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { SearchIcon, SquareIcon, DownloadIcon, SquareCheckBigIcon } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface VideoHistoryProps {
   isDarkMode?: boolean;
@@ -31,8 +32,9 @@ const mockData = [
 ];
 
 const ITEMS_PER_PAGE = 10;
- 
-export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose }) => {
+
+export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
+  const { isDarkMode } = useTheme()
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isClosing, setIsClosing] = useState(false);
@@ -40,17 +42,17 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
 
   const filteredData = useMemo(() => {
     if (!searchTerm) return mockData;
-    
+
     const searchLower = searchTerm.toLowerCase();
-    return mockData.filter(item => 
-      Object.values(item).some(value => 
+    return mockData.filter(item =>
+      Object.values(item).some(value =>
         value.toString().toLowerCase().includes(searchLower)
       )
     );
   }, [searchTerm]);
 
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-  
+
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -65,8 +67,8 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
   };
 
   const handleSelectItem = (id: number) => {
-    setSelectedItems(prev => 
-      prev.includes(id) 
+    setSelectedItems(prev =>
+      prev.includes(id)
         ? prev.filter(item => item !== id)
         : [...prev, id]
     );
@@ -107,13 +109,12 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
         <button
           key={i}
           onClick={() => handlePageChange(i)}
-          className={`px-3 py-1 rounded-md ${
-            currentPage === i
-              ? 'bg-blue-400 text-white'
-              : isDarkMode 
-                ? 'text-gray-300 hover:bg-zinc-700' 
-                : 'text-gray-600 hover:bg-gray-100'
-          }`}
+          className={`px-3 py-1 rounded-md ${currentPage === i
+            ? 'bg-blue-400 text-white'
+            : isDarkMode
+              ? 'text-gray-300 hover:bg-zinc-700'
+              : 'text-gray-600 hover:bg-gray-100'
+            }`}
         >
           {i}
         </button>
@@ -122,19 +123,17 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
 
     if (startPage > 1) {
       buttons.unshift(
-        <span key="start-ellipsis" className={`px-3 py-1 ${
-          isDarkMode ? 'text-gray-300' : 'text-gray-600'
-        }`}>...</span>
+        <span key="start-ellipsis" className={`px-3 py-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>...</span>
       );
       buttons.unshift(
         <button
           key={1}
           onClick={() => handlePageChange(1)}
-          className={`px-3 py-1 rounded-md ${
-            isDarkMode 
-              ? 'text-gray-300 hover:bg-zinc-700' 
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
+          className={`px-3 py-1 rounded-md ${isDarkMode
+            ? 'text-gray-300 hover:bg-zinc-700'
+            : 'text-gray-600 hover:bg-gray-100'
+            }`}
         >
           1
         </button>
@@ -143,19 +142,17 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
 
     if (endPage < totalPages) {
       buttons.push(
-        <span key="end-ellipsis\" className={`px-3 py-1 ${
-          isDarkMode ? 'text-gray-300' : 'text-gray-600'
-        }`}>...</span>
+        <span key="end-ellipsis\" className={`px-3 py-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>...</span>
       );
       buttons.push(
         <button
           key={totalPages}
           onClick={() => handlePageChange(totalPages)}
-          className={`px-3 py-1 rounded-md ${
-            isDarkMode 
-              ? 'text-gray-300 hover:bg-zinc-700' 
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
+          className={`px-3 py-1 rounded-md ${isDarkMode
+            ? 'text-gray-300 hover:bg-zinc-700'
+            : 'text-gray-600 hover:bg-gray-100'
+            }`}
         >
           {totalPages}
         </button>
@@ -167,7 +164,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <motion.div 
+      <motion.div
         className="fixed inset-0 bg-black/50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -175,22 +172,21 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
         transition={{ duration: 0.3 }}
         onClick={handleClose}
       />
-      
+
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ 
+        transition={{
           type: "spring",
           duration: 0.3,
           bounce: 0.2
         }}
-        className={`w-[90%] max-w-6xl max-h-[90dvh] rounded-2xl ${
-          isDarkMode 
-            ? 'bg-zinc-900/60' 
-            : 'bg-[#EFF4FA] bg-opacity-60'
-        } backdrop-blur-[2px] px-6 pt-5 shadow-md flex flex-col relative cursor-default z-50`}
-        onClick={(e : any) => e.stopPropagation()}
+        className={`w-[90%] max-w-6xl max-h-[90dvh] rounded-2xl ${isDarkMode
+          ? 'bg-zinc-900/60'
+          : 'bg-[#EFF4FA] bg-opacity-60'
+          } backdrop-blur-[2px] px-6 pt-5 shadow-md flex flex-col relative cursor-default z-50`}
+        onClick={(e: any) => e.stopPropagation()}
       >
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -199,13 +195,12 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
           transition={{ delay: 0.1 }}
           className="flex flex-col items-center mb-3"
         >
-          <h2 className={`text-lg font-semibold absolute self-start mt-4 ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          }`}>
+          <h2 className={`text-lg font-semibold absolute self-start mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
             Histórico de Vídeos
           </h2>
-          
-          <div className="w-full max-w-md"> 
+
+          <div className="w-full max-w-md">
             <div className="relative">
               <input
                 name="search"
@@ -213,15 +208,13 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
                 placeholder="Busca por ID, status, data..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full h-8 pl-4 pr-8 text-sm rounded-full ${
-                  isDarkMode 
-                    ? 'bg-zinc-800 text-gray-200 placeholder-gray-400' 
-                    : 'bg-white text-gray-900 placeholder-gray-500'
-                }`}
+                className={`w-full h-8 pl-4 pr-8 text-xs rounded-full ${isDarkMode
+                  ? 'bg-zinc-800 text-gray-200 placeholder-gray-400'
+                  : 'bg-white text-gray-900 placeholder-gray-500'
+                  }`}
               />
-              <SearchIcon className={`absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 ${
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              }`} />
+              <SearchIcon className={`absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                }`} />
             </div>
           </div>
 
@@ -230,11 +223,10 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSelectAll}
-              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${
-                isDarkMode 
-                  ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' 
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
+                ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
             >
               <SquareCheckBigIcon size={14} />
               Marcar Tudo
@@ -243,11 +235,10 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSelectedItems([])}
-              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${
-                isDarkMode 
-                  ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' 
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
+                ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+                }`}
             >
               <SquareIcon size={14} />
               Desmarcar Tudo
@@ -265,30 +256,23 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
           <div className="overflow-auto flex-1 shadow-md">
             <table className={`w-full ${isDarkMode ? 'bg-zinc-800' : 'bg-white'} rounded-lg`}>
               <thead className="sticky top-0">
-                <tr className={`${
-                  isDarkMode 
-                    ? 'bg-zinc-800 border-zinc-700' 
-                    : 'bg-white border-gray-200'
-                } border-b`}>
+                <tr className={`${isDarkMode
+                  ? 'bg-zinc-800 border-zinc-700'
+                  : 'bg-white border-gray-200'
+                  } border-b`}>
                   <th className="px-3 py-2 text-left w-8"></th>
-                  <th className={`px-3 py-2 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>ID</th>
-                  <th className={`px-3 py-2 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Status</th>
-                  <th className={`px-3 py-2 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Veículo</th>
-                  <th className={`px-3 py-2 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Início</th>
-                  <th className={`px-3 py-2 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Fim</th>
-                  <th className={`px-3 py-2 text-left text-sm font-medium ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                  }`}>Ações</th>
+                  <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>ID</th>
+                  <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Status</th>
+                  <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Veículo</th>
+                  <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Início</th>
+                  <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Fim</th>
+                  <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -298,69 +282,59 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    transition={{ 
+                    transition={{
                       delay: index * 0.03,
                       duration: 0.2
                     }}
-                    className={`border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'} ${
-                      selectedItems.includes(item.id)
-                        ? isDarkMode
-                          ? 'bg-[#333333]'
-                          : 'bg-[#f9f9f9]'
-                        : isDarkMode 
-                          ? ''
-                          : ''
-                    }`}
+                    className={`border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'} ${selectedItems.includes(item.id)
+                      ? isDarkMode
+                        ? 'bg-[#333333]'
+                        : 'bg-[#f9f9f9]'
+                      : isDarkMode
+                        ? ''
+                        : ''
+                      }`}
                   >
                     <td className="px-3 py-3">
                       <input
                         type="checkbox"
                         checked={selectedItems.includes(item.id)}
                         onChange={() => handleSelectItem(item.id)}
-                        className={`h-3 w-3 rounded ${
-                          isDarkMode 
-                            ? 'text-blue-500 bg-zinc-700 border-zinc-600' 
-                            : 'text-blue-600 bg-white border-gray-300'
-                        }`}
+                        className={`h-3 w-3 rounded ${isDarkMode
+                          ? 'text-blue-500 bg-zinc-700 border-zinc-600'
+                          : 'text-blue-600 bg-white border-gray-300'
+                          }`}
                       />
                     </td>
-                    <td className={`px-3 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.id}</td>
-                    <td className={`px-3 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.status}</td>
-                    <td className={`px-3 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.veiculo}</td>
-                    <td className={`px-3 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.inicio}</td>
-                    <td className={`px-3 py-3 text-sm ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-900'
-                    }`}>{item.fim}</td>
+                    <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.id}</td>
+                    <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.status}</td>
+                    <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.veiculo}</td>
+                    <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.inicio}</td>
+                    <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                      }`}>{item.fim}</td>
                     <td className="px-3 py-3">
-                      <motion.button 
+                      <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`p-1.5 rounded-lg transition-colors ${
-                          isDarkMode 
-                            ? 'hover:bg-zinc-600' 
-                            : 'hover:bg-gray-100'
-                        }`}
+                        className={`p-1.5 rounded-lg transition-colors ${isDarkMode
+                          ? 'hover:bg-zinc-600'
+                          : 'hover:bg-gray-100'
+                          }`}
                       >
-                        <DownloadIcon className={`w-4 h-4 ${
-                          isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                        }`} />
+                        <DownloadIcon className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                          }`} />
                       </motion.button>
                     </td>
                   </motion.tr>
                 ))}
                 {paginatedData.length === 0 && (
                   <tr>
-                    <td colSpan={7} className={`text-center py-4 ${
-                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
+                    <td colSpan={7} className={`text-center py-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                      }`}>
                       Nenhum resultado encontrado
                     </td>
                   </tr>
@@ -370,9 +344,8 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ isDarkMode, onClose 
           </div>
 
           <div className="p-4 flex items-center justify-center">
-            <div className={`flex gap-1 rounded-lg p-0.5 shadow-md ${
-              isDarkMode ? 'bg-zinc-800' : 'bg-white'
-            }`}>
+            <div className={`flex gap-1 rounded-lg p-0.5 shadow-md ${isDarkMode ? 'bg-zinc-800' : 'bg-white'
+              }`}>
               {renderPaginationButtons()}
             </div>
           </div>

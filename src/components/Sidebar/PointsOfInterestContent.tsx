@@ -10,6 +10,7 @@ import {
 import { CreatePOIModal } from '../POI/CreatePOIModal';
 import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface LocationItem {
   id: string;
@@ -31,7 +32,8 @@ interface PointsOfInterestContentProps {
   onPOITypeCreated?: () => void;
 }
 
-export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ isDarkMode, onPOITypeCreated }) => {
+export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ onPOITypeCreated }) => {
+  const { isDarkMode } = useTheme()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [poiData, setPoiData] = useState<POIType[]>([]);
   const { zoomToLocation } = useMapContext();
@@ -98,11 +100,10 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className={`p-1.5 rounded-lg transition-colors ${
-                  isDarkMode 
-                    ? 'hover:bg-zinc-700' 
+                className={`p-1.5 rounded-lg transition-colors ${isDarkMode
+                    ? 'hover:bg-zinc-700'
                     : 'hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 <MoreHorizontal size={16} className={isDarkMode ? 'text-gray-300' : 'text-gray-600'} />
               </button>
@@ -148,9 +149,8 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
               {category.items.map((item) => (
                 <div
                   key={item.id}
-                  className={`flex flex-col px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
-                  }`}
+                  className={`flex flex-col px-3 py-2 rounded-lg transition-colors cursor-pointer ${isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
+                    }`}
                   onClick={() => handlePOIClick(item.latitude, item.longitude)}
                 >
                   <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -175,7 +175,6 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
             onPOITypeCreated?.();
           }
         }}
-        isDarkMode={isDarkMode}
       />
     </div>
   );

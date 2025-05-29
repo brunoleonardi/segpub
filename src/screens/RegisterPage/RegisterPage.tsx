@@ -153,14 +153,14 @@ export const RegisterPage = () => {
                         : 'bg-[#F3F4F6] text-[#656565] hover:bg-[#E5E7EB]'
                     }`}
                   >
-                    <X size={14} className="inline-block mr-1" />
+                    <X size={14} className="inline-block mr-1 pb-0.5" />
                     Cancelar
                   </button>
                   <button
                     onClick={form.handleSubmit(onSubmit)}
                     className="px-3 py-1.5 text-sm rounded-full bg-[#4D94FF] text-white hover:bg-[#3B82F6]"
                   >
-                    <Check size={14} className="inline-block mr-1" />
+                    <Check size={14} className="inline-block mr-1 pb-0.5" />
                     {editMode ? 'Salvar' : 'Concluir'}
                   </button>
                 </div>
