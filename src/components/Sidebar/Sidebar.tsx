@@ -22,7 +22,7 @@ import { Card, CardContent } from "../ui/card";
 import { MonitoringContent } from "./MonitoringContent";
 import { ControlContent } from "./ControlContent";
 import { PointsOfInterestContent } from "./PointsOfInterestContent";
-import { controlData, menuItems, bottomNavItems } from "./data";
+import { controlData, menuItems, bottomNavItems, monitoringData } from "./data";
 import { cn } from "../../lib/utils";
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { supabase } from "../../lib/supabase";
