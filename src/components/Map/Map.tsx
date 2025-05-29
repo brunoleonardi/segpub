@@ -101,7 +101,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
         latitude,
         longitude,
         zoom: 16,
-        transitionDuration: 3000,
+        transitionDuration: 2000,
       }));
     }
   }, []);
