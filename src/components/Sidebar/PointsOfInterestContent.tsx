@@ -55,7 +55,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
               align="end"
             >
               <DropdownMenuItem
-                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100 text-xs'}`}
               >
                 Criar
               </DropdownMenuItem>
