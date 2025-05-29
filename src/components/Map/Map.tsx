@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import DeckGL from '@deck.gl/react';
 import { IconLayer } from '@deck.gl/layers';
-import { Map } from 'react-map-gl';
-import { Popup } from 'react-map-gl';
+import { Map, Popup } from 'react-map-gl';
 import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
 
@@ -36,12 +35,6 @@ interface POIData {
   type_color: string;
 }
 
-interface PopupInfo {
-  poi: POIData;
-  x: number;
-  y: number;
-}
-
 const isValidCoordinate = (poi: any): poi is POIData => {
   return (
     typeof poi.latitude === 'number' &&
@@ -58,7 +51,7 @@ const isValidCoordinate = (poi: any): poi is POIData => {
 export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [pois, setPois] = useState<POIData[]>([]);
-  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [popupInfo, setPopupInfo] = useState<POIData | null>(null);
   const { setZoomToLocation } = useMapContext();
 
   const fetchPOIs = async () => {
@@ -165,63 +158,57 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
       },
       onClick: (info) => {
         if (info.object) {
-          setPopupInfo({
-            poi: info.object as POIData,
-            x: info.x,
-            y: info.y
-          });
+          setPopupInfo(info.object as POIData);
         }
       }
     })
   ];
 
   return (
-    <div className="relative w-full h-full">
-      <DeckGL
-        viewState={viewState}
-        onViewStateChange={({ viewState }) => setViewState(viewState)}
-        controller={true}
-        layers={layers}
+    <DeckGL
+      viewState={viewState}
+      onViewStateChange={({ viewState }) => setViewState(viewState)}
+      controller={true}
+      layers={layers}
+    >
+      <Map
+        mapboxAccessToken={MAPBOX_TOKEN}
+        mapStyle={isDarkMode ? MAPBOX_STYLE_DARK : MAPBOX_STYLE_LIGHT}
+        reuseMaps
+        attributionControl={false}
       >
-        <Map
-          mapboxAccessToken={MAPBOX_TOKEN}
-          mapStyle={isDarkMode ? MAPBOX_STYLE_DARK : MAPBOX_STYLE_LIGHT}
-          reuseMaps
-          attributionControl={false}
-        >
-          {popupInfo && (
-            <Popup
-              longitude={popupInfo.poi.longitude}
-              latitude={popupInfo.poi.latitude}
-              offset={[0, -20]}
-              closeButton={true}
-              closeOnClick={false}
-              onClose={() => setPopupInfo(null)}
-              className={`z-[999] ${isDarkMode ? 'dark' : ''}`}
-              anchor="bottom"
-            >
-              <div className={`p-3 rounded-lg shadow-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
-                <h3 className="font-semibold mb-2">{popupInfo.poi.name}</h3>
-                <div className="flex items-center gap-2 mb-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: popupInfo.poi.type_color }}
-                  />
-                  <p className="text-sm">{popupInfo.poi.type_name}</p>
-                </div>
-                <p className="text-sm opacity-70">
-                  {popupInfo.poi.latitude.toFixed(6)}, {popupInfo.poi.longitude.toFixed(6)}
-                </p>
+        {popupInfo && (
+          <Popup
+            longitude={popupInfo.longitude}
+            latitude={popupInfo.latitude}
+            anchor="bottom"
+            offset={[0, -15]}
+            onClose={() => setPopupInfo(null)}
+            closeOnClick={false}
+            className={isDarkMode ? 'dark' : ''}
+            style={{ zIndex: 1 }}
+          >
+            <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-900'}`}>
+              <h3 className="font-semibold mb-2">{popupInfo.name}</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: popupInfo.type_color }}
+                />
+                <p className="text-sm">{popupInfo.type_name}</p>
               </div>
-            </Popup>
-          )}
-        </Map>
-      </DeckGL>
+              <p className="text-sm opacity-70">
+                {popupInfo.latitude.toFixed(6)}, {popupInfo.longitude.toFixed(6)}
+              </p>
+            </div>
+          </Popup>
+        )}
+      </Map>
       <div className={`absolute bottom-0 right-0 p-2 z-10 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
         © <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer">Mapbox</a> |
         © <a href="https://www.openstreetmap.org/about/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> |
         <a href="https://www.mapbox.com/map-feedback/" target="_blank" rel="noopener noreferrer">Improve this map</a>
       </div>
-    </div>
+    </DeckGL>
   );
 };
