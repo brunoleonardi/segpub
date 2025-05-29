@@ -2,16 +2,18 @@ import React, { createContext, useContext, useState } from 'react';
 
 interface MapContextType {
   zoomToLocation: (latitude: number, longitude: number) => void;
-  setZoomToLocation: (callback: (latitude: number, longitude: number) => void) => void;
+  setZoomToLocation: React.Dispatch<React.SetStateAction<(latitude: number, longitude: number) => void>>;
 }
 
+const defaultZoomFunction = (latitude: number, longitude: number) => {};
+
 const MapContext = createContext<MapContextType>({
-  zoomToLocation: () => {},
-  setZoomToLocation: () => {},
+  zoomToLocation: defaultZoomFunction,
+  setZoomToLocation: () => defaultZoomFunction,
 });
 
 export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [zoomToLocation, setZoomToLocation] = useState<(latitude: number, longitude: number) => void>(() => () => {});
+  const [zoomToLocation, setZoomToLocation] = useState<(latitude: number, longitude: number) => void>(() => defaultZoomFunction);
 
   return (
     <MapContext.Provider value={{ zoomToLocation, setZoomToLocation }}>
