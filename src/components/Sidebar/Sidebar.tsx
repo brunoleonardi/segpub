@@ -26,6 +26,7 @@ import { controlData, menuItems, bottomNavItems, monitoringData } from "./data";
 import { cn } from "../../lib/utils";
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import { supabase } from "../../lib/supabase";
+import { useMapContext } from "../../contexts/MapContext";
 
 interface POIType {
   id: string;
@@ -46,10 +47,10 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
+  const { hiddenPOITypes, togglePOIType } = useMapContext();
 
   const fetchPOITypes = async () => {
     try {
-      // Fetch POI types
       const { data: typesData, error: typesError } = await supabase
         .from('poi_types')
         .select('*')
@@ -57,14 +58,12 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
 
       if (typesError) throw typesError;
 
-      // Fetch POIs
       const { data: poisData, error: poisError } = await supabase
         .from('pois')
         .select('*');
 
       if (poisError) throw poisError;
 
-      // Count POIs for each type
       const typesWithCount = typesData.map(type => ({
         ...type,
         count: poisData.filter(poi => poi.type_id === type.id).length
@@ -292,7 +291,12 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
             <div className="theme-aware-card mx-2 my-2 rounded-xl">
               <div className="p-4">
                 {poiTypes.map((type) => (
-                  <div key={type.id} className={`flex items-center ${stage === 'closed' ? 'justify-center' : ''} gap-3 mb-5 last:mb-0`}>
+                  <div
+                    key={type.id}
+                    className={`flex items-center ${stage === 'closed' ? 'justify-center' : ''} gap-3 mb-5 last:mb-0 cursor-pointer`}
+                    onClick={() => togglePOIType(type.id)}
+                    style={{ opacity: hiddenPOITypes.has(type.id) ? 0.5 : 1 }}
+                  >
                     <div className="relative">
                       <MapPinIcon size={20} style={{ fill: type.color, color: type.color }} />
                       <Badge className="absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full border border-white flex items-center justify-center" style={{ backgroundColor: type.color }}>

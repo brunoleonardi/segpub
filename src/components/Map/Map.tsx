@@ -51,7 +51,7 @@ const isValidCoordinate = (poi: any): poi is POIData => {
 export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [pois, setPois] = useState<POIData[]>([]);
-  const { setZoomToLocation } = useMapContext();
+  const { setZoomToLocation, hiddenPOITypes } = useMapContext();
 
   const fetchPOIs = async () => {
     try {
@@ -140,7 +140,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   const layers = [
     new IconLayer({
       id: 'poi-layer',
-      data: pois,
+      data: pois.filter(poi => !hiddenPOITypes.has(poi.type_id)),
       pickable: true,
       iconAtlas: '/map-pin.svg',
       iconMapping: ICON_MAPPING,
