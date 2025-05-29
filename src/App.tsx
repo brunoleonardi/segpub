@@ -18,10 +18,7 @@ export const ThemeContext = createContext<ThemeContextType>({
 export const useTheme = () => useContext(ThemeContext);
 
 export default function App() {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark';
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
     setIsDarkMode(prev => !prev);
