@@ -26,11 +26,11 @@ export const HomePage = (): JSX.Element => {
   };
 
   return (
-    <div className="theme-aware-bg flex flex-row justify-center w-full h-screen">
-      <div className="w-full h-full">
-        <div className={`h-full relative ${isDarkMode ? 'bg-zinc-900' : ''}`}>
+    <div className="theme-aware-bg flex flex-row justify-center w-full h-screen overflow-hidden">
+      <div className="w-full h-full relative">
+        <div className={`h-full ${isDarkMode ? 'bg-zinc-900' : ''}`}>
           <MapComponent isDarkMode={isDarkMode} />
-          <div className="absolute top-[50%] left-[17px] -translate-y-1/2">
+          <div className="absolute top-[50%] left-[17px] -translate-y-1/2 z-10">
             <Sidebar 
               onDarkModeChange={handleDarkModeChange} 
               onHistoryClick={handleHistoryClick}

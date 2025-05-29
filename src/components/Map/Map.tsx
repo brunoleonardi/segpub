@@ -124,17 +124,25 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   ];
 
   return (
-    <DeckGL
-      initialViewState={viewState}
-      controller={true}
-      layers={layers}
-      style={{ width: '100%', height: '100%' }}
-    >
-      <Map
-        mapboxAccessToken={MAPBOX_TOKEN}
-        mapStyle={isDarkMode ? MAPBOX_STYLE_DARK : MAPBOX_STYLE_LIGHT}
-        reuseMaps
-      />
-    </DeckGL>
+    <div className="relative w-full h-full">
+      <DeckGL
+        initialViewState={viewState}
+        controller={true}
+        layers={layers}
+        style={{ position: 'absolute', width: '100%', height: '100%' }}
+      >
+        <Map
+          mapboxAccessToken={MAPBOX_TOKEN}
+          mapStyle={isDarkMode ? MAPBOX_STYLE_DARK : MAPBOX_STYLE_LIGHT}
+          reuseMaps
+          attributionControl={false}
+        />
+      </DeckGL>
+      <div className={`absolute bottom-0 right-0 p-2 z-10 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+        © <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer">Mapbox</a> |
+        © <a href="https://www.openstreetmap.org/about/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> |
+        <a href="https://www.mapbox.com/map-feedback/" target="_blank" rel="noopener noreferrer">Improve this map</a>
+      </div>
+    </div>
   );
 };
