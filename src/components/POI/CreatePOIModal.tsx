@@ -138,7 +138,7 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`border-none rounded-2xl w-[600px] backdrop-blur-[2px] px-6 pt-5 shadow-md cursor-default z-50 ${isDarkMode ? 'bg-zinc-900/60' : 'bg-[#EFF4FA]/70'}`}>
+      <DialogContent className={`border-none rounded-2xl w-[450px] backdrop-blur-[2px] px-6 pt-5 shadow-md cursor-default z-50 ${isDarkMode ? 'bg-zinc-900/60' : 'bg-[#EFF4FA]/70'}`}>
         <DialogHeader>
           <DialogTitle className={`py-4 text-center ${isDarkMode ? 'text-gray-200' : ''}`}>
             {showTypeForm ? 'Criar Novo Tipo' : 'Criar Ponto de Interesse'}
