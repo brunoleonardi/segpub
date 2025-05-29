@@ -51,21 +51,21 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className={isDarkMode ? 'bg-zinc-800 border-zinc-700 text-xs' : 'bg-white text-xs'}
+              className={isDarkMode ? 'bg-zinc-800 border-zinc-700 text-xs' : 'bg-white'}
               align="end"
             >
               <DropdownMenuItem
-                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100 text-xs'}`}
+                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
               >
                 Criar
               </DropdownMenuItem>
               <DropdownMenuItem
-                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
               >
                 Editar
               </DropdownMenuItem>
               <DropdownMenuItem
-                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'}`}
+                className={`${isDarkMode ? 'text-gray-300 focus:bg-zinc-700' : 'text-gray-600 focus:bg-gray-100'} text-xs`}
               >
                 Excluir
               </DropdownMenuItem>
