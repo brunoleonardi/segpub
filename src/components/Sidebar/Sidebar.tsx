@@ -157,6 +157,7 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
     pontosInteresse: (
       <PointsOfInterestContent
         isDarkMode={isDarkMode}
+        onPOITypeCreated={fetchPOITypes}
       />
     )
   };
@@ -272,8 +273,7 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
                 <div
                   className={cn(
                     "flex items-center h-10 px-4 cursor-pointer rounded-lg mx-2",
-                    stage === 'closed' ? 'justify-center' :
-                    '',
+                    stage === 'closed' ? 'justify-center' : '',
                     activeSection === "pontosInteresse" ? 'theme-aware-active' : 'theme-aware-hover'
                   )}
                   onClick={() => handleSectionClick("pontosInteresse")}

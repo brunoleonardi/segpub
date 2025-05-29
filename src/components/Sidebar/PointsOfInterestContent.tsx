@@ -26,11 +26,11 @@ interface POIType {
 }
 
 interface PointsOfInterestContentProps {
-  data?: POIType[];
   isDarkMode?: boolean;
+  onPOITypeCreated?: () => void;
 }
 
-export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ isDarkMode }) => {
+export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ isDarkMode, onPOITypeCreated }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [poiData, setPoiData] = useState<POIType[]>([]);
 
@@ -164,7 +164,8 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
         onOpenChange={(open) => {
           setIsCreateModalOpen(open);
           if (!open) {
-            fetchPOIData(); // Refresh data when modal closes
+            fetchPOIData();
+            onPOITypeCreated?.();
           }
         }}
         isDarkMode={isDarkMode}
