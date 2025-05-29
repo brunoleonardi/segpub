@@ -17,19 +17,28 @@ export const HomePage = (): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsDarkMode(e.matches);
-    };
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    mediaQuery.addEventListener('change', handleChange);
-    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  const updateTheme = (isDark: boolean) => {
+    setIsDarkMode(isDark);
+    document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  };
 
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, [isDarkMode]);
+  // Initial check
+  updateTheme(mediaQuery.matches);
+
+  // Listen for changes
+  const handleChange = (e: MediaQueryListEvent) => {
+    updateTheme(e.matches);
+  };
+
+  mediaQuery.addEventListener('change', handleChange);
+
+  return () => {
+    mediaQuery.removeEventListener('change', handleChange);
+  };
+}, []);
+
 
   const handleDarkModeChange = (darkMode: boolean) => {
     setIsDarkMode(darkMode);
