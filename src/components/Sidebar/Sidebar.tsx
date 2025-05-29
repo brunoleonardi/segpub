@@ -196,7 +196,7 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
       >
         <div className={`p-2 flex ${stage === 'closed' ? 'justify-center' : 'justify-between items-center'}`}>
           <div className={`flex items-center ${stage === 'closed' ? '' : 'gap-3'}`}>
-            <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#333]' : 'border-white'}`}>
+            <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#272727]' : 'border-white'}`}>
               <AvatarFallback className="bg-[#95C0FF] text-white text-lg">BL</AvatarFallback>
             </Avatar>
             {stage !== 'closed' && (
