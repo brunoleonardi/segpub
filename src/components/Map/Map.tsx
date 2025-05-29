@@ -145,9 +145,9 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
       iconAtlas: '/map-pin.svg',
       iconMapping: ICON_MAPPING,
       getIcon: d => 'marker',
-      sizeScale: 10,
+      sizeScale: 15,
       getPosition: d => [d.longitude, d.latitude],
-      getSize: d => 5,
+      getSize: d => 2,
       getColor: d => {
         const color = d.type_color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)?.[0] || '#000000';
         const r = parseInt(color.slice(1, 3), 16);
