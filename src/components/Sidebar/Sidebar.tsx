@@ -14,7 +14,7 @@ import {
   ChevronLeftIcon,
   SunIcon,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
@@ -22,9 +22,17 @@ import { Card, CardContent } from "../ui/card";
 import { MonitoringContent } from "./MonitoringContent";
 import { ControlContent } from "./ControlContent";
 import { PointsOfInterestContent } from "./PointsOfInterestContent";
-import { monitoringData, controlData, locationPins, menuItems, bottomNavItems } from "./data";
+import { controlData, menuItems, bottomNavItems } from "./data";
 import { cn } from "../../lib/utils";
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
+import { supabase } from "../../lib/supabase";
+
+interface POIType {
+  id: string;
+  name: string;
+  color: string;
+  count: number;
+}
 
 interface SidebarProps {
   onDarkModeChange?: (darkMode: boolean) => void;
@@ -37,6 +45,40 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
+
+  const fetchPOITypes = async () => {
+    try {
+      // Fetch POI types
+      const { data: typesData, error: typesError } = await supabase
+        .from('poi_types')
+        .select('*')
+        .order('name');
+
+      if (typesError) throw typesError;
+
+      // Fetch POIs
+      const { data: poisData, error: poisError } = await supabase
+        .from('pois')
+        .select('*');
+
+      if (poisError) throw poisError;
+
+      // Count POIs for each type
+      const typesWithCount = typesData.map(type => ({
+        ...type,
+        count: poisData.filter(poi => poi.type_id === type.id).length
+      }));
+
+      setPoiTypes(typesWithCount);
+    } catch (error) {
+      console.error('Error fetching POI data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPOITypes();
+  }, []);
 
   const toggleExpand = (key: string) => {
     const parts = key.split('_');
@@ -114,7 +156,6 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
     ),
     pontosInteresse: (
       <PointsOfInterestContent
-        data={locationPins}
         isDarkMode={isDarkMode}
       />
     )
@@ -220,7 +261,9 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
 
             <div className={`px-4 py-2 ${stage === 'closed' ? 'text-center' : 'flex items-center justify-between'}`}>
               <span className="theme-aware-text-secondary text-xs">
-                {stage === 'closed' ? 'PIs: ' : 'Pontos de Interesse: '}<span className="font-bold">46</span>
+                {stage === 'closed' ? 'PIs: ' : 'Pontos de Interesse: '}<span className="font-bold">
+                  {poiTypes.reduce((acc, type) => acc + type.count, 0)}
+                </span>
               </span>
             </div>
 
@@ -248,15 +291,15 @@ export const Sidebar = ({ onDarkModeChange, onHistoryClick, onControlConsultarCl
 
             <div className="theme-aware-card mx-2 my-2 rounded-xl">
               <div className="p-4">
-                {locationPins.map((pin) => (
-                  <div key={pin.id} className={`flex items-center ${stage === 'closed' ? 'justify-center' : ''} gap-3 mb-5 last:mb-0`}>
+                {poiTypes.map((type) => (
+                  <div key={type.id} className={`flex items-center ${stage === 'closed' ? 'justify-center' : ''} gap-3 mb-5 last:mb-0`}>
                     <div className="relative">
-                      <MapPinIcon size={20} style={{ fill: pin.color, color: pin.color }} />
-                      <Badge className="absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full border border-white flex items-center justify-center" style={{ backgroundColor: pin.color }}>
-                        <span className="text-[10px] text-white font-semibold">{pin.count}</span>
+                      <MapPinIcon size={20} style={{ fill: type.color, color: type.color }} />
+                      <Badge className="absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full border border-white flex items-center justify-center" style={{ backgroundColor: type.color }}>
+                        <span className="text-[10px] text-white font-semibold">{type.count}</span>
                       </Badge>
                     </div>
-                    {stage !== 'closed' && <span className="theme-aware-text text-sm">{pin.label}</span>}
+                    {stage !== 'closed' && <span className="theme-aware-text text-sm">{type.name}</span>}
                   </div>
                 ))}
               </div>

@@ -1,3 +1,5 @@
+import { supabase } from '../../lib/supabase';
+
 // Mock data structure for the monitoring section
 export const monitoringData = {
   fixos: {
@@ -58,27 +60,6 @@ export const controlOptionsLabels: Record<string, string> = {
   'faces': 'Faces',
   'placas': 'Placas'
 };
-
-export const locationPins = [
-  { id: 1, label: "UBS", count: 11, color: "#5db0eb", items: [
-    { id: 'ubs1', name: 'UBS Jardim Esperança', coordinates: '-23.5505, -46.6333' },
-    { id: 'ubs2', name: 'UBS Nova Aliança', coordinates: '-23.5505, -46.6333' },
-    { id: 'ubs3', name: 'UBS Saúde para Todos', coordinates: '-23.5505, -46.6333' },
-    { id: 'ubs4', name: 'UBS Bem Viver', coordinates: '-23.5505, -46.6333' }
-  ]},
-  { id: 2, label: "Hospitais", count: 21, color: "#bf2424", items: [
-    { id: 'hosp1', name: 'Hospital Vida e Saúde', coordinates: '-23.5505, -46.6333' },
-    { id: 'hosp2', name: 'Hospital São Lucas', coordinates: '-23.5505, -46.6333' },
-    { id: 'hosp3', name: 'Hospital Municipal Nossa...', coordinates: '-23.5505, -46.6333' },
-    { id: 'hosp4', name: 'Hospital Esperança de Viver', coordinates: '-23.5505, -46.6333' }
-  ]},
-  { id: 3, label: "Praças e Parques", count: 14, color: "#529319", items: [
-    { id: 'praca1', name: 'Praça das Palmeiras', coordinates: '-23.5505, -46.6333' },
-    { id: 'praca2', name: 'Praça do Sol', coordinates: '-23.5505, -46.6333' },
-    { id: 'praca3', name: 'Praça da Liberdade', coordinates: '-23.5505, -46.6333' },
-    { id: 'praca4', name: 'Praça São Jorge', coordinates: '-23.5505, -46.6333' }
-  ]}
-];
 
 export const menuItems = [
   { id: "monitoramento", label: "Monitoramento", badge: 15 },
