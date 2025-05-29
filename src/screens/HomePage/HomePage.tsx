@@ -1,26 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sidebar } from "../../components/Sidebar";
 import { VideoHistory } from "../../components/VideoHistory/VideoHistory";
 import { MapComponent } from "../../components/Map/Map";
 import { MapProvider } from "../../contexts/MapContext";
+import { useTheme } from "../../App";
 
 export const HomePage = (): JSX.Element => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [showVideoHistory, setShowVideoHistory] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
-
-  const handleDarkModeChange = (darkMode: boolean) => {
-    setIsDarkMode(darkMode);
-  };
-
-  const handleHistoryClick = () => {
-    setShowVideoHistory(true);
-  };
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   const handleControlConsultarClick = (itemLabel: string) => {
     navigate(`/control/${itemLabel}`);
@@ -34,8 +23,8 @@ export const HomePage = (): JSX.Element => {
             <MapComponent isDarkMode={isDarkMode} />
             <div className="absolute top-[50%] left-[17px] -translate-y-1/2 z-10">
               <Sidebar 
-                onDarkModeChange={handleDarkModeChange} 
-                onHistoryClick={handleHistoryClick}
+                onDarkModeChange={toggleDarkMode} 
+                onHistoryClick={() => setShowVideoHistory(true)}
                 onControlConsultarClick={handleControlConsultarClick}
               />
             </div>
