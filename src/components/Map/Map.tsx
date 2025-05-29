@@ -3,6 +3,7 @@ import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
 import { supabase } from '../../lib/supabase';
+import { useMapContext } from '../../contexts/MapContext';
 
 const MAPBOX_STYLE_DARK = 'mapbox://styles/geovista-fdte/clu7c9nmj00vs01pad3m97qqa';
 const MAPBOX_STYLE_LIGHT = 'mapbox://styles/geovista-fdte/clon6qm3o008t01peeqk31rg7';
@@ -33,6 +34,7 @@ interface POIData {
 export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [pois, setPois] = useState<POIData[]>([]);
+  const { setZoomToLocation } = useMapContext();
 
   const fetchPOIs = async () => {
     try {
@@ -92,6 +94,18 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
     };
   }, []);
 
+  useEffect(() => {
+    setZoomToLocation((latitude: number, longitude: number) => {
+      setViewState({
+        ...viewState,
+        latitude,
+        longitude,
+        zoom: 16,
+        transitionDuration: 1000,
+      });
+    });
+  }, [setZoomToLocation, viewState]);
+
   const layers = [
     new ScatterplotLayer({
       id: 'poi-layer',
@@ -126,7 +140,8 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   return (
     <div className="relative w-full h-full">
       <DeckGL
-        initialViewState={viewState}
+        viewState={viewState}
+        onViewStateChange={({ viewState }) => setViewState(viewState)}
         controller={true}
         layers={layers}
         style={{ position: 'absolute', width: '100%', height: '100%' }}

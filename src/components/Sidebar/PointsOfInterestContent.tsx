@@ -9,6 +9,7 @@ import {
 } from "../ui/dropdown-menu";
 import { CreatePOIModal } from '../POI/CreatePOIModal';
 import { supabase } from '../../lib/supabase';
+import { useMapContext } from '../../contexts/MapContext';
 
 interface LocationItem {
   id: string;
@@ -33,6 +34,7 @@ interface PointsOfInterestContentProps {
 export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ isDarkMode, onPOITypeCreated }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [poiData, setPoiData] = useState<POIType[]>([]);
+  const { zoomToLocation } = useMapContext();
 
   const fetchPOIData = async () => {
     try {
@@ -78,6 +80,10 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
   useEffect(() => {
     fetchPOIData();
   }, []);
+
+  const handlePOIClick = (latitude: number, longitude: number) => {
+    zoomToLocation(latitude, longitude);
+  };
 
   return (
     <div className="p-2 mt-1 h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500">
@@ -145,6 +151,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
                   className={`flex flex-col px-3 py-2 rounded-lg transition-colors cursor-pointer ${
                     isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
                   }`}
+                  onClick={() => handlePOIClick(item.latitude, item.longitude)}
                 >
                   <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     {item.name}
