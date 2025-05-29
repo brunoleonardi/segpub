@@ -31,6 +31,19 @@ interface POIData {
   type_color: string;
 }
 
+const isValidCoordinate = (poi: any): poi is POIData => {
+  return (
+    typeof poi.latitude === 'number' &&
+    typeof poi.longitude === 'number' &&
+    !isNaN(poi.latitude) &&
+    !isNaN(poi.longitude) &&
+    poi.latitude >= -90 &&
+    poi.latitude <= 90 &&
+    poi.longitude >= -180 &&
+    poi.longitude <= 180
+  );
+};
+
 export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [pois, setPois] = useState<POIData[]>([]);
@@ -54,15 +67,17 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
 
       if (error) throw error;
 
-      const formattedData = data.map(poi => ({
-        id: poi.id,
-        name: poi.name,
-        latitude: poi.latitude,
-        longitude: poi.longitude,
-        type_id: poi.type_id,
-        type_name: poi.poi_types.name,
-        type_color: poi.poi_types.color
-      }));
+      const formattedData = data
+        .map(poi => ({
+          id: poi.id,
+          name: poi.name,
+          latitude: Number(poi.latitude),
+          longitude: Number(poi.longitude),
+          type_id: poi.type_id,
+          type_name: poi.poi_types.name,
+          type_color: poi.poi_types.color
+        }))
+        .filter(isValidCoordinate);
 
       setPois(formattedData);
     } catch (error) {
@@ -73,7 +88,6 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
   useEffect(() => {
     fetchPOIs();
 
-    // Subscribe to changes
     const channel = supabase
       .channel('poi_changes')
       .on(
@@ -96,13 +110,24 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
 
   useEffect(() => {
     setZoomToLocation((latitude: number, longitude: number) => {
-      setViewState({
-        ...viewState,
-        latitude,
-        longitude,
-        zoom: 16,
-        transitionDuration: 1000,
-      });
+      if (
+        typeof latitude === 'number' &&
+        typeof longitude === 'number' &&
+        !isNaN(latitude) &&
+        !isNaN(longitude) &&
+        latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180
+      ) {
+        setViewState({
+          ...viewState,
+          latitude,
+          longitude,
+          zoom: 16,
+          transitionDuration: 1000,
+        });
+      }
     });
   }, [setZoomToLocation, viewState]);
 
@@ -130,7 +155,6 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
       getRadius: 5,
       onHover: ({ object }) => {
         if (object) {
-          // You can implement tooltip or hover effects here
           console.log(`Hovering over ${object.name} (${object.type_name})`);
         }
       }

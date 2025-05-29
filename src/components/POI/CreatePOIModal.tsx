@@ -79,9 +79,35 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
     }
   };
 
+  const validateCoordinates = () => {
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+
+    if (isNaN(lat) || isNaN(lng)) {
+      setError('Latitude e longitude devem ser números válidos');
+      return false;
+    }
+
+    if (lat < -90 || lat > 90) {
+      setError('Latitude deve estar entre -90 e 90 graus');
+      return false;
+    }
+
+    if (lng < -180 || lng > 180) {
+      setError('Longitude deve estar entre -180 e 180 graus');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreatePOI = async () => {
     try {
       setError(null);
+
+      if (!validateCoordinates()) {
+        return;
+      }
 
       const { data, error: insertError } = await supabase
         .from('pois')
@@ -206,6 +232,9 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                   value={latitude}
                   onChange={(e) => setLatitude(e.target.value)}
                   className={`w-full mt-1.5 p-2 rounded-full text-sm ${isDarkMode ? 'bg-zinc-700 text-gray-200 border-zinc-600' : 'border-gray-300'}`}
+                  step="any"
+                  min="-90"
+                  max="90"
                 />
               </div>
               <div>
@@ -215,6 +244,9 @@ export const CreatePOIModal: React.FC<CreatePOIModalProps> = ({ open, onOpenChan
                   value={longitude}
                   onChange={(e) => setLongitude(e.target.value)}
                   className={`w-full mt-1.5 p-2 rounded-full text-sm ${isDarkMode ? 'bg-zinc-700 text-gray-200 border-zinc-600' : 'border-gray-300'}`}
+                  step="any"
+                  min="-180"
+                  max="180"
                 />
               </div>
             </div>
