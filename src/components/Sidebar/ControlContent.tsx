@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { RegisterForm } from '../RegisterForm';
 
 interface ControlItem {
   id: string;
@@ -47,10 +48,15 @@ import { controlOptionsLabels } from './data';
 
 export const ControlContent: React.FC<ControlContentProps> = ({ data, isDarkMode, onConsultarClick }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState('');
 
   const handleOptionClick = (itemLabel: string, option: string) => {
     if (option === 'consultar' && onConsultarClick) {
       onConsultarClick(itemLabel);
+    } else if (option === 'cadastro') {
+      setSelectedSection(itemLabel);
+      setIsRegisterOpen(true);
     }
   };
 
@@ -102,6 +108,13 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, isDarkMode
           </div>
         ))}
       </div>
+
+      <RegisterForm
+        open={isRegisterOpen}
+        onOpenChange={setIsRegisterOpen}
+        isDarkMode={isDarkMode}
+        section={selectedSection}
+      />
     </div>
   );
 };
