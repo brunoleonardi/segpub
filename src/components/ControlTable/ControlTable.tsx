@@ -3,6 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon, Plus, SquareCheckBigIcon, SquareIcon } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 interface ControlTableProps {
   isDarkMode?: boolean;
@@ -26,6 +36,8 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState<EmailReport[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const fetchEmailReports = async () => {
     try {
@@ -45,7 +57,6 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
     if (title === 'e-Mails Relatório') {
       fetchEmailReports();
 
-      // Subscribe to realtime changes
       const channel = supabase
         .channel('email_reports_changes')
         .on('postgres_changes', 
@@ -71,11 +82,18 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
 
       if (error) throw error;
 
-      // Remove from selected items if it was selected
       setSelectedItems(prev => prev.filter(item => item !== id));
+      setDeleteDialogOpen(false);
+      setItemToDelete(null);
+      await fetchEmailReports();
     } catch (error) {
       console.error('Error deleting email report:', error);
     }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setItemToDelete(id);
+    setDeleteDialogOpen(true);
   };
 
   const handleEdit = (report: EmailReport) => {
@@ -235,7 +253,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
                         </button>
                         <button 
                           className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDeleteClick(item.id)}
                         >
                           <Trash2Icon className="w-4 h-4 text-destructive" />
                         </button>
@@ -267,6 +285,36 @@ export const ControlTable: React.FC<ControlTableProps> = ({ isDarkMode, title })
           </div>
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : ''}>
+          <AlertDialogHeader>
+            <AlertDialogTitle className={isDarkMode ? 'text-gray-200' : ''}>
+              Confirmar exclusão
+            </AlertDialogTitle>
+            <AlertDialogDescription className={isDarkMode ? 'text-gray-400' : ''}>
+              Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              className={isDarkMode ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600' : ''}
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setItemToDelete(null);
+              }}
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 text-white hover:bg-red-700"
+              onClick={() => itemToDelete && handleDelete(itemToDelete)}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
