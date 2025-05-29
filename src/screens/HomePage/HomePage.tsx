@@ -4,7 +4,7 @@ import { Sidebar } from "../../components/Sidebar";
 import { VideoHistory } from "../../components/VideoHistory/VideoHistory";
 import { MapComponent } from "../../components/Map/Map";
 import { MapProvider } from "../../contexts/MapContext";
-import { useTheme } from "../../App";
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const HomePage = (): JSX.Element => {
   const [showVideoHistory, setShowVideoHistory] = useState(false);

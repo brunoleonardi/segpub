@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ControlTable } from '../../components/ControlTable';
-import { useTheme } from '../../App';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const ControlTablePage = () => {
   const { section } = useParams();
