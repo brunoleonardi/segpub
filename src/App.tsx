@@ -23,11 +23,6 @@ export default function App() {
     return savedTheme === 'dark';
   });
 
-  useEffect(() => {
-    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
-
   const toggleDarkMode = () => {
     setIsDarkMode(prev => !prev);
   };
