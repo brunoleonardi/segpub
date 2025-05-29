@@ -14,7 +14,7 @@ const INITIAL_VIEW_STATE = {
   latitude: -23.5489,
   zoom: 12,
   pitch: 0,
-  bearing: 0
+  bearing: 0 
 };
 
 const ICON_MAPPING = {
@@ -147,7 +147,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ isDarkMode }) => {
       getIcon: d => 'marker',
       sizeScale: 15,
       getPosition: d => [d.longitude, d.latitude],
-      getSize: d => 2,
+      getSize: d => 5,
       getColor: d => {
         const color = d.type_color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)?.[0] || '#000000';
         const r = parseInt(color.slice(1, 3), 16);
