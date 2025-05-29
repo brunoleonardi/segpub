@@ -51,7 +51,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white'}
+              className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white text-xs'}
               align="end"
             >
               <DropdownMenuItem
