@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, PencilIcon } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Checkbox } from '../../components/ui/checkbox';
@@ -31,6 +31,22 @@ export const RegisterPage = () => {
   const { isDarkMode } = useTheme();
   const editMode = location.state?.editMode;
   const reportData = location.state?.reportData;
+  const { section } = useParams();
+  const title = removeFinalSFromFirstAndSecondWord(section as string);
+
+  function removeFinalSFromFirstAndSecondWord(str: string): string {
+    const words = str.split(" ");
+
+    if (words[0]?.endsWith("s")) {
+      words[0] = words[0].slice(0, -1);
+    }
+
+    if (words[1]?.endsWith("s")) {
+      words[1] = words[1].slice(0, -1);
+    }
+
+    return words.join(" ");
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,7 +94,10 @@ export const RegisterPage = () => {
   return (
     <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'}`}>
       <div className='flex flex-col justify-between h-full py-7 gap-7'>
-        <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Criar e-Mail</h2>
+        <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>
+          {editMode ? 'Editar ' : 'Cadastrar '}
+          {title}
+        </h2>
         <div className="w-[70dvw] h-full flex rounded-xl shadow-2xl overflow-hidden">
           {/* Sidebar */}
           <div className={`w-[13vw] p-4 ${isDarkMode ? 'bg-[#333333]' : 'bg-[#F8F8F8]'} flex flex-col items-center`}>

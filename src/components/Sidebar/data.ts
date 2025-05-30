@@ -51,7 +51,7 @@ export const controlData = [
   { id: 'clientes', label: 'Clientes', icon: 'building', options: ['cadastro', 'consultar'] },
   { id: 'emails', label: 'e-Mails Relatório', icon: 'mail', options: ['cadastro', 'consultar'] },
   { id: 'relatorios', label: 'Relatórios', icon: 'file-text', options: ['cadastro', 'consultar'] },
-  { id: 'notificacoes', label: 'Tipo Notificações', icon: 'bell', options: ['cadastro', 'consultar'] }
+  { id: 'notificacoes', label: 'Tipo Notificação', icon: 'bell', options: ['cadastro', 'consultar'] }
 ];
 
 export const controlOptionsLabels: Record<string, string> = {
