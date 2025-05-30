@@ -15,6 +15,21 @@ export const DetailsPage = () => {
     const { isDarkMode } = useTheme();
     const reportData = location.state?.reportData || {};
 
+    const handleEdit = () => {
+        navigate(`/register/e-Mails Relatório`, {
+            state: {
+                editMode: true,
+                reportData: {
+                    id: reportData.id,
+                    project: reportData.project,
+                    email: reportData.email,
+                    name: reportData.name,
+                    active: reportData.active
+                }
+            }
+        });
+    };
+
     return (
         <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'}`}>
             <div className='flex flex-col justify-between h-full py-7 gap-7'>
@@ -37,7 +52,11 @@ export const DetailsPage = () => {
                                     className={`rounded-xl relative p-6 ${isDarkMode ? 'bg-zinc-800' : 'bg-white'} ${isDarkMode ? '' : 'shadow-md'}`}
                                     style={isDarkMode ? { boxShadow: '0 2px 4px rgba(255, 255, 255, 0.2)' } : undefined}
                                 >
-                                    <Edit size={20} className='cursor-pointer absolute text-gray-300 right-5 top-5' />
+                                    <Edit 
+                                        size={20} 
+                                        className='cursor-pointer absolute text-gray-300 right-5 top-5 hover:text-gray-100 transition-colors' 
+                                        onClick={handleEdit}
+                                    />
                                     <h2 className={`text-base font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Identificação</h2>
 
                                     <div className="grid grid-cols-4 gap-4">
@@ -59,7 +78,7 @@ export const DetailsPage = () => {
                                 <div className="flex justify-end gap-3">
                                     <button
                                         type="button"
-                                        onClick={() => navigate('/')}
+                                        onClick={() => navigate('/control/e-Mails Relatório')}
                                         className={`px-3 py-1.5 text-sm rounded-full ${isDarkMode
                                             ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600'
                                             : 'bg-[#F3F4F6] text-[#656565] hover:bg-[#E5E7EB]'

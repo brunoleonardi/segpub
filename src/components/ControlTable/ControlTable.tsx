@@ -99,10 +99,24 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
   };
 
   const handleEdit = (report: EmailReport) => {
-    navigate(`/register/e-Mails Relatório`, {
+    navigate(`/register/${title}`, {
       state: {
         editMode: true,
         reportData: report
+      }
+    });
+  };
+
+  const handleViewDetails = (report: EmailReport) => {
+    navigate(`/details/${title}/${report.id}`, {
+      state: {
+        reportData: {
+          id: report.id,
+          project: report.project,
+          email: report.email,
+          name: report.name,
+          active: report.active
+        }
       }
     });
   };
@@ -250,7 +264,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
                         <div className="flex items-center justify-center gap-2">
                           <button
                             className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
-                            onClick={() => handleEdit(item)}
+                            onClick={() => handleViewDetails(item)}
                           >
                             <Eye className="w-4 h-4" />
                           </button>
