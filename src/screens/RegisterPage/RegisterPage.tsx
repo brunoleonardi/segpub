@@ -111,7 +111,7 @@ export const RegisterPage = () => {
           <div className={`flex-1 p-8 flex justify-center ${isDarkMode ? 'bg-zinc-800' : 'bg-[#fff]'}`}>
             <div className="w-full max-w-[900px]">
               <h1 className={`text-xl font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h1>
-              <div className='justify-between flex flex-col h-full pb-10'>
+              <div className='flex flex-col h-full gap-8'>
                 <div
                   className={`rounded-xl p-6 ${isDarkMode ? 'bg-zinc-800' : 'bg-white'} ${isDarkMode ? '' : 'shadow-md'}`}
                   style={isDarkMode ? { boxShadow: '0 2px 4px rgba(255, 255, 255, 0.2)' } : undefined}
@@ -180,7 +180,7 @@ export const RegisterPage = () => {
                     className="px-3 py-1.5 text-sm rounded-full bg-[#4D94FF] text-white hover:bg-[#3B82F6]"
                   >
                     <Check size={14} className="inline-block mr-1 pb-0.5" />
-                    {editMode ? 'Salvar' : 'Concluir'}
+                    {editMode ? 'Salvar' : 'Cadastrar'}
                   </button>
                 </div>
               </div>

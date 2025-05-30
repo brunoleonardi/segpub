@@ -206,7 +206,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
               <input
                 name="search"
                 type="text"
-                placeholder="Busca por ID, status, data..."
+                placeholder="Busque por Palavras-chave"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full h-8 pl-4 pr-8 text-xs rounded-full ${isDarkMode
