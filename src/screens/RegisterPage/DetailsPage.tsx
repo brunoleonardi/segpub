@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { cn } from '../../lib/utils';
 import { TooltipContent, TooltipProvider, TooltipRoot, TooltipTrigger } from '../../components/ui/tooltip';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../components/ui/alert-dialog';
+import { useState } from 'react';
+import { supabase } from '../../lib/supabase';
 
 const fieldConfigs = [
   { name: 'project', label: 'Projeto', colSpan: 1 },
@@ -16,6 +19,7 @@ export const DetailsPage = () => {
   const location = useLocation();
   const { isDarkMode } = useTheme();
   const reportData = location.state?.reportData || {};
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleEdit = () => {
     navigate(`/register/e-Mails Relatório`, {
@@ -32,18 +36,46 @@ export const DetailsPage = () => {
     });
   };
 
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('email_reports')
+        .delete()
+        .eq('id', reportData.id);
+
+      if (error) throw error;
+
+      navigate('/control/e-Mails Relatório');
+    } catch (error) {
+      console.error('Error deleting email report:', error);
+    }
+  };
+
+  const handleAddNew = () => {
+    navigate('/register/e-Mails Relatório');
+  };
+
   return (
     <TooltipProvider>
       <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'}`}>
         <div className='flex flex-col justify-between h-full py-7 gap-7'>
           <div className="flex justify-center gap-3">
-            <button className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}>
+            <button 
+              onClick={handleEdit}
+              className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            >
               <Pencil size={14} /> Editar
             </button>
-            <button className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 text-destructive ${isDarkMode ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-white hover:bg-gray-50'}`}>
+            <button 
+              onClick={() => setDeleteDialogOpen(true)}
+              className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 text-destructive ${isDarkMode ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-white hover:bg-gray-50'}`}
+            >
               <Trash2 size={14} /> Excluir
             </button>
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 text-xs rounded-full flex items-center gap-2">
+            <button 
+              onClick={handleAddNew}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 text-xs rounded-full flex items-center gap-2"
+            >
               <Plus size={14} /> e-Mail
             </button>
           </div>
@@ -103,25 +135,37 @@ export const DetailsPage = () => {
                       ))}
                     </div>
                   </div>
-
-                  {/* <div className='flex justify-end gap-3'>
-                    <button
-                      type='button'
-                      onClick={() => navigate('/control/e-Mails Relatório')}
-                      className={`px-3 py-1.5 text-sm rounded-full ${isDarkMode
-                        ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600'
-                        : 'bg-[#F3F4F6] text-[#656565] hover:bg-[#E5E7EB]'}`}
-                    >
-                      <ChevronLeft size={14} className='inline-block mr-1 pb-0.5' />
-                      Voltar
-                    </button>
-                  </div> */}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : ''}>
+          <AlertDialogHeader>
+            <AlertDialogTitle className={isDarkMode ? 'text-gray-200' : ''}>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription className={isDarkMode ? 'text-gray-400' : ''}>
+              Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className={isDarkMode ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600' : ''}
+              onClick={() => setDeleteDialogOpen(false)}
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 text-white hover:bg-red-700"
+              onClick={handleDelete}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </TooltipProvider>
   );
 };
