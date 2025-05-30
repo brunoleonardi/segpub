@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { SearchIcon, PencilIcon, Trash2Icon, Plus, SquareCheckBigIcon, SquareIcon, ChevronLeft } from 'lucide-react';
+import { SearchIcon, PencilIcon, Trash2Icon, Plus, SquareCheckBigIcon, SquareIcon, ChevronLeft, Eye } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -248,6 +248,12 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
                         }`}>{item.active ? 'Ativo' : 'Inativo'}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-2">
+                          <button
+                            className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+                            onClick={() => handleEdit(item)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
                           <button
                             className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
                             onClick={() => handleEdit(item)}
