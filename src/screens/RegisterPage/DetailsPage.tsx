@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const fieldConfigs = [
-    { name: 'projeto', label: 'Projeto', colSpan: 1 },
+    { name: 'project', label: 'Projeto', colSpan: 1 },
     { name: 'email', label: 'e-Mail', colSpan: 1 },
-    { name: 'nome', label: 'Nome Completo', colSpan: 1 },
-    { name: 'ativo', label: 'Ativo', colSpan: 1 },
+    { name: 'name', label: 'Nome Completo', colSpan: 1 },
+    { name: 'active', label: 'Ativo', colSpan: 1 },
 ] as const;
 
 export const DetailsPage = () => {
@@ -66,7 +66,7 @@ export const DetailsPage = () => {
                                                     {field.label}
                                                 </label>
                                                 <div className={`w-full text-sm py-2 ${isDarkMode ? 'text-gray-100' : 'text-[#656565]'} border border-transparent`}>
-                                                    {field.name === 'ativo'
+                                                    {field.name === 'active'
                                                         ? reportData[field.name] ? 'Sim' : 'Não'
                                                         : reportData[field.name] || '-'}
                                                 </div>
