@@ -77,13 +77,13 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-zinc-900' : 'bg-[#F3F7FE]'}`}>
+    <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'}`}>
       <div className='flex flex-col justify-between h-full py-7 gap-7'>
         <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Criar e-Mail</h2>
-        <div className="w-[70dvw] h-full flex rounded-xl shadow-md overflow-hidden">
+        <div className="w-[70dvw] h-full flex rounded-xl shadow-2xl overflow-hidden">
           {/* Sidebar */}
-          <div className={`w-[13vw] p-4 border-r ${isDarkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-[#F8F8F8] border-[#fff]'} flex flex-col items-center`}>
-            <div className={`flex items-center justify-center gap-4 p-3 rounded-xl ${isDarkMode ? 'bg-zinc-700' : 'bg-[#D5E6FF]'} w-full`}>
+          <div className={`w-[13vw] p-4 ${isDarkMode ? 'bg-[#333333]' : 'bg-[#F8F8F8]'} flex flex-col items-center`}>
+            <div className={`flex items-center justify-center gap-4 p-3 rounded-xl ${isDarkMode ? 'bg-zinc-600' : 'bg-[#D5E6FF]'} w-full`}>
               <PencilIcon className={isDarkMode ? 'text-gray-200' : 'text-[#656565]'} size={16} />
               <h2 className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h2>
             </div>
@@ -94,7 +94,10 @@ export const RegisterPage = () => {
             <div className="w-full max-w-[900px]">
               <h1 className={`text-xl font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h1>
               <div className='justify-between flex flex-col h-full pb-10'>
-                <div className={`rounded-xl p-6 shadow-md ${isDarkMode ? 'bg-zinc-700' : 'bg-white'}`}>
+                <div
+                  className={`rounded-xl p-6 ${isDarkMode ? 'bg-zinc-800' : 'bg-white'} ${isDarkMode ? '' : 'shadow-md'}`}
+                  style={isDarkMode ? { boxShadow: '0 2px 4px rgba(255, 255, 255, 0.2)' } : undefined}
+                >
                   <h2 className={`text-base font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Identificação</h2>
 
                   <Form {...form}>
@@ -115,7 +118,7 @@ export const RegisterPage = () => {
                                         type="checkbox"
                                         checked={field.value}
                                         onChange={field.onChange}
-                                        className={`h-4 w-4 mt-4 rounded border ${isDarkMode ? 'bg-zinc-600 border-zinc-500' : 'border-gray-300'}`}
+                                        className={`h-4 w-4 mt-4 cursor-pointer rounded border ${isDarkMode ? 'bg-zinc-600 border-zinc-500' : 'border-gray-300'}`}
                                       />
                                     </div>
                                   </div>
@@ -126,11 +129,10 @@ export const RegisterPage = () => {
                                       <input
                                         {...field}
                                         placeholder={fieldConfig.placeholder}
-                                        className={`w-full text-sm px-3 py-1 rounded-full border ${
-                                          isDarkMode 
-                                            ? 'bg-zinc-800 border-zinc-600 text-gray-200 placeholder-gray-400' 
-                                            : 'border-gray-300 bg-white'
-                                        }`}
+                                        className={`w-full text-sm px-3 py-1 rounded-full border ${isDarkMode
+                                          ? 'bg-zinc-800 border-zinc-600 text-gray-200 placeholder-gray-400'
+                                          : 'border-gray-300 bg-white'
+                                          }`}
                                       />
                                     </FormControl>
                                   </>
@@ -147,11 +149,10 @@ export const RegisterPage = () => {
                   <button
                     type="button"
                     onClick={() => navigate('/')}
-                    className={`px-3 py-1.5 text-sm rounded-full ${
-                      isDarkMode 
-                        ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600' 
-                        : 'bg-[#F3F4F6] text-[#656565] hover:bg-[#E5E7EB]'
-                    }`}
+                    className={`px-3 py-1.5 text-sm rounded-full ${isDarkMode
+                      ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600'
+                      : 'bg-[#F3F4F6] text-[#656565] hover:bg-[#E5E7EB]'
+                      }`}
                   >
                     <X size={14} className="inline-block mr-1 pb-0.5" />
                     Cancelar
@@ -169,6 +170,6 @@ export const RegisterPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
