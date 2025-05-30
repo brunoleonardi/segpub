@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import { ControlTable } from '../../components/ControlTable';
 import { useTheme } from '../../contexts/ThemeContext';

@@ -1,5 +1,3 @@
-import React from 'react';
-import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../../components/ui/form';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

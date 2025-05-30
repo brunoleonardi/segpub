@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { SearchIcon, EyeIcon, PencilIcon, Trash2Icon, ChevronDownIcon, ChevronRightIcon, Plus, SquareCheckBigIcon, SquareIcon, CircleChevronLeft, ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { SearchIcon, PencilIcon, Trash2Icon, Plus, SquareCheckBigIcon, SquareIcon, ChevronLeft } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -145,7 +145,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
     <div className={`w-full h-full p-6 ${isDarkMode ? 'bg-[#353535]' : 'bg-[#EEF3FA]'}`}>
       <div className="max-w-[90dvw] mx-auto relative">
         <h2 onClick={() => navigate('/')} className={`cursor-pointer text-lg font-semibold absolute flex gap-2 items-center pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          <ArrowLeft size={23} className='pt-0.5' /> {title}
+          <ChevronLeft size={23} className='pt-0.5' /> {title}
         </h2>
 
         <div className="flex flex-col">
