@@ -2,10 +2,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '../../compone
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, PencilIcon, X } from 'lucide-react';
+import { Check, PencilIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../contexts/ThemeContext';
+import { Checkbox } from '../../components/ui/checkbox';
 
 const fieldConfigs = [
   { name: 'projeto', label: 'Projeto', placeholder: 'Insira o Projeto', type: 'text', colSpan: 1, validation: z.string().min(1, 'Projeto é obrigatório'), defaultValue: '' },
@@ -112,11 +113,11 @@ export const RegisterPage = () => {
                                   <div className="flex items-end pb-1">
                                     <div className="flex flex-col items-center h-full">
                                       <FormLabel className={`ml-2 font-bold text-xs mt-1 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>{fieldConfig.label}</FormLabel>
-                                      <input
-                                        type="checkbox"
+                                      <Checkbox
+                                        className='mt-4'
                                         checked={field.value}
-                                        onChange={field.onChange}
-                                        className={`h-4 w-4 mt-4 cursor-pointer rounded border ${isDarkMode ? 'bg-zinc-600 border-zinc-500' : 'border-gray-300'}`}
+                                        onCheckedChange={field.onChange}
+                                        isDarkMode={isDarkMode}
                                       />
                                     </div>
                                   </div>
@@ -144,7 +145,7 @@ export const RegisterPage = () => {
                   </Form>
                 </div>
                 <div className="flex justify-end gap-3">
-                  <button
+                  {/* <button
                     type="button"
                     onClick={() => navigate('/')}
                     className={`px-3 py-1.5 text-sm rounded-full ${isDarkMode
@@ -154,7 +155,7 @@ export const RegisterPage = () => {
                   >
                     <X size={14} className="inline-block mr-1 pb-0.5" />
                     Cancelar
-                  </button>
+                  </button> */}
                   <button
                     onClick={form.handleSubmit(onSubmit)}
                     className="px-3 py-1.5 text-sm rounded-full bg-[#4D94FF] text-white hover:bg-[#3B82F6]"

@@ -17,7 +17,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    console.log('isDarkMode', isDarkMode)
     document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { SearchIcon, SquareIcon, DownloadIcon, SquareCheckBigIcon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { Checkbox } from '../ui/checkbox';
 
 interface VideoHistoryProps {
   isDarkMode?: boolean;
@@ -296,14 +297,11 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
                       }`}
                   >
                     <td className="px-3 py-3">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={selectedItems.includes(item.id)}
-                        onChange={() => handleSelectItem(item.id)}
-                        className={`h-3 w-3 rounded ${isDarkMode
-                          ? 'text-blue-500 bg-zinc-700 border-zinc-600'
-                          : 'text-blue-600 bg-white border-gray-300'
-                          }`}
+                        onCheckedChange={() => handleSelectItem(item.id)}
+                        isDarkMode={isDarkMode}
+                        size="sm"
                       />
                     </td>
                     <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
