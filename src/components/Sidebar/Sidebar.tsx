@@ -124,6 +124,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
 
     if (section === 'historico') {
       onHistoryClick?.();
+      setStage('half');
       return;
     }
 
