@@ -70,6 +70,7 @@ export const menuItems = [
 
 export const bottomNavItems = [
   { id: "notifications", label: "Notificações" },
+  { id: "home", label: "Página Inicial" },
   { id: "location", label: "Localização" },
   { id: "darkMode", label: "Modo Escuro" },
   { id: "logout", label: "Sair" },

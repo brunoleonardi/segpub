@@ -30,6 +30,7 @@ interface ControlContentProps {
   data: ControlItem[];
   isDarkMode?: boolean;
   onConsultarClick?: (itemLabel: string) => void;
+  handleClose?: (itemLabel: string) => void;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -47,7 +48,7 @@ const iconMap: Record<string, React.ReactNode> = {
 import { controlOptionsLabels } from './data';
 import { useTheme } from '../../contexts/ThemeContext';
 
-export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsultarClick }) => {
+export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsultarClick, handleClose }) => {
   const { isDarkMode } = useTheme()
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,6 +60,7 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsulta
     } else if (option === 'cadastro') {
       navigate(`/register/${itemLabel}`);
     }
+    handleClose('closed')
   };
 
   return (

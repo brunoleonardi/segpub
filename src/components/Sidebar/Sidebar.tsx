@@ -14,6 +14,7 @@ import {
   ChevronLeftIcon,
   SunIcon,
   Locate,
+  Home,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -29,6 +30,7 @@ import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "..
 import { supabase } from "../../lib/supabase";
 import { useMapContext } from "../../contexts/MapContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface POIType {
   id: string;
@@ -49,6 +51,9 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
   const { hiddenPOITypes, togglePOIType } = useMapContext();
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   const fetchPOITypes = async () => {
     try {
@@ -122,6 +127,11 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
       return;
     }
 
+    if (section === 'home') {
+      navigate('/');
+      return;
+    }
+
     if (section === 'historico') {
       onHistoryClick?.();
       setStage('half');
@@ -149,6 +159,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
       <ControlContent
         data={controlData}
         onConsultarClick={onControlConsultarClick}
+        handleClose={setStage}
       />
     ),
     pontosInteresse: (
@@ -174,11 +185,12 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const navIcons: Record<string, JSX.Element> = {
     notifications: <BellIcon size={16} strokeWidth={1.5} />,
     location: <Locate size={16} strokeWidth={1.5} />,
+    home: <Home size={16} strokeWidth={1.5} />,
     darkMode: isDarkMode ? <SunIcon size={16} /> : <MoonIcon size={16} strokeWidth={1.5} />,
     logout: <LogOutIcon size={16} strokeWidth={1.5} />
   };
 
-  const getIconForNavItem = (id: string) => navIcons[id] || null;
+  const getIconForNavItem = (id: string) => { return navIcons[id] || null };
 
   return (
     <TooltipProvider>
@@ -193,7 +205,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
         <div className={`p-2 flex ${stage === 'closed' ? 'justify-center' : 'justify-between items-center'}`}>
           <div className={`flex items-center ${stage === 'closed' ? '' : 'gap-3'}`}>
             <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#272727]' : 'border-white'}`}>
-              <AvatarFallback className="bg-[#95C0FF] text-white text-lg">BL</AvatarFallback>
+              <AvatarFallback className="bg-[#95C0FF] text-white text-lg font-semibold">BL</AvatarFallback>
             </Avatar>
             {stage !== 'closed' && (
               <div className="flex flex-col">
@@ -313,24 +325,28 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
                 </div>
                 <div className="mx-2 mb-4">
                   <div className="theme-aware-card flex items-center justify-between px-3 py-1.5 rounded-lg">
-                    {bottomNavItems.map((item) => (
-                      <TooltipRoot key={item.id}>
-                        <TooltipTrigger asChild>
-                          <div
-                            className={cn(
-                              "p-1.5 rounded-lg cursor-pointer transition-colors",
-                              activeSection === item.id ? 'theme-aware-active' : 'theme-aware-hover theme-aware-text'
-                            )}
-                            onClick={() => handleSectionClick(item.id)}
-                          >
-                            {getIconForNavItem(item.id)}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="theme-aware-tooltip">
-                          {item.label}
-                        </TooltipContent>
-                      </TooltipRoot>
-                    ))}
+                    {bottomNavItems.map((item) => {
+                      if (item.id === 'home' && isHome) return null;
+
+                      return (
+                        <TooltipRoot key={item.id}>
+                          <TooltipTrigger asChild>
+                            <div
+                              className={cn(
+                                "p-1.5 rounded-lg cursor-pointer transition-colors",
+                                activeSection === item.id ? 'theme-aware-active' : 'theme-aware-hover theme-aware-text'
+                              )}
+                              onClick={() => handleSectionClick(item.id)}
+                            >
+                              {getIconForNavItem(item.id)}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="theme-aware-tooltip">
+                            {item.label}
+                          </TooltipContent>
+                        </TooltipRoot>
+                      );
+                    })}
                   </div>
                 </div>
               </>

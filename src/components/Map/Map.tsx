@@ -22,9 +22,7 @@ const ICON_MAPPING = {
   marker: { x: 0, y: -0, width: 26, height: 26, mask: true }
 };
 
-interface MapComponentProps {
-  isDarkMode: boolean;
-}
+interface MapComponentProps {}
 
 interface POIData {
   id: string;

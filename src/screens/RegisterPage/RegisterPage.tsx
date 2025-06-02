@@ -101,7 +101,7 @@ export const RegisterPage = () => {
         <div className="w-[70dvw] h-full flex rounded-xl shadow-2xl overflow-hidden">
           {/* Sidebar */}
           <div className={`w-[13vw] p-4 ${isDarkMode ? 'bg-[#333333]' : 'bg-[#F8F8F8]'} flex flex-col items-center`}>
-            <div className={`flex items-center justify-center gap-4 p-3 rounded-xl ${isDarkMode ? 'bg-zinc-600' : 'bg-[#D5E6FF]'} w-full`}>
+            <div className={`flex items-center cursor-pointer justify-center gap-4 p-3 rounded-xl ${isDarkMode ? 'bg-zinc-600' : 'bg-[#D5E6FF]'} w-full`}>
               <PencilIcon className={isDarkMode ? 'text-gray-200' : 'text-[#656565]'} size={16} />
               <h2 className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h2>
             </div>

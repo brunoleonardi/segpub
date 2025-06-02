@@ -132,7 +132,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
 
   return (
     <div className={`w-full h-full p-6 ${isDarkMode ? 'bg-[#353535]' : 'bg-[#EEF3FA]'}`}>
-      <div className="max-w-[90dvw] mx-auto relative">
+      <div className="max-w-[80dvw] mx-auto relative">
         <h2 onClick={() => navigate('/')} className={`cursor-pointer text-lg font-semibold absolute flex gap-2 items-center pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           <ChevronLeft size={23} className='pt-0.5' /> {title}
         </h2>
