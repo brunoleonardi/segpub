@@ -10,7 +10,8 @@ import {
   MailIcon,
   FileTextIcon,
   BellIcon,
-  SettingsIcon
+  SettingsIcon,
+  ChevronLeft
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -29,6 +30,8 @@ interface ControlItem {
 interface ControlContentProps {
   data: ControlItem[];
   isDarkMode?: boolean;
+  setContentMode?: (condition: boolean) => void;
+  setIsOpen?: (condition: boolean) => void;
   onConsultarClick?: (itemLabel: string) => void;
   handleClose?: (itemLabel: string) => void;
 }
@@ -47,9 +50,11 @@ const iconMap: Record<string, React.ReactNode> = {
 
 import { controlOptionsLabels } from './data';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
-export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsultarClick, handleClose }) => {
+export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsultarClick, handleClose, setContentMode, setIsOpen }) => {
   const { isDarkMode } = useTheme()
+  const isMobile = useIsMobile();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -60,7 +65,9 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsulta
     } else if (option === 'cadastro') {
       navigate(`/register/${itemLabel}`);
     }
-    handleClose('closed')
+    handleClose?.('closed')
+    setContentMode?.(false)
+    setIsOpen?.(false)
   };
 
   return (
@@ -68,11 +75,15 @@ export const ControlContent: React.FC<ControlContentProps> = ({ data, onConsulta
       <div className="gap-3 mb-2">
         <div className="flex items-center mb-2">
           <div className="rounded-lg mr-2">
-            <SettingsIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+            {isMobile ? (
+              <ChevronLeft onClick={() => setContentMode?.(false)} size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+            ) : (
+              <SettingsIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+            )}
           </div>
-          <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Controle</p>
+          <p onClick={() => setContentMode?.(false)} className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Controle</p>
         </div>
-        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1 ${isMobile ? 'py-2' : ''}`}>
           Escolha uma das opções abaixo para realizar o cadastro ou consultar os dados que precisa.
         </p>
       </div>

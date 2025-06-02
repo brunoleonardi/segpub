@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ChevronDownIcon, ChevronRightIcon, MonitorIcon, WifiIcon, WifiOffIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronLeft, ChevronRightIcon, MonitorIcon, WifiIcon, WifiOffIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface Item {
   id: string;
@@ -36,6 +37,7 @@ interface MonitoringContentProps {
   expandedItems: Record<string, boolean>;
   onToggleItem: (key: string) => void;
   isDarkMode?: boolean;
+  setContentMode?: (condition: boolean) => void;
 }
 
 const AccordionItem: React.FC<AccordionItemProps> = ({
@@ -147,8 +149,10 @@ export const MonitoringContent: React.FC<MonitoringContentProps> = ({
   data,
   expandedItems,
   onToggleItem,
+  setContentMode
 }) => {
   const { isDarkMode } = useTheme()
+  const isMobile = useIsMobile();
 
   const renderAccordionContent = (content: any, parentKey: string = '', level: number = 0) => {
     if (Array.isArray(content)) {
@@ -188,11 +192,15 @@ export const MonitoringContent: React.FC<MonitoringContentProps> = ({
       <div className="gap-3 mb-2">
         <div className="flex items-center mb-2">
           <div className="rounded-lg mr-2">
-            <MonitorIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+            {isMobile ? (
+              <ChevronLeft onClick={() => setContentMode?.(false)} size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+            ) : (
+              <MonitorIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+            )}
           </div>
-          <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Monitoramento</p>
+          <p onClick={() => setContentMode?.(false)} className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Monitoramento</p>
         </div>
-        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1 ${isMobile ? 'py-2' : ''}`}>
           Acesse a câmera desejada através das abas abaixo:
         </p>
       </div>

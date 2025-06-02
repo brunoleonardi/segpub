@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapIcon, MapPinIcon, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft, MapIcon, MapPinIcon, MoreHorizontal } from 'lucide-react';
 import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import { CreatePOIModal } from '../POI/CreatePOIModal';
 import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface LocationItem {
   id: string;
@@ -30,13 +31,15 @@ interface POIType {
 interface PointsOfInterestContentProps {
   isDarkMode?: boolean;
   onPOITypeCreated?: () => void;
+  setContentMode?: (condition: boolean) => void;
 }
 
-export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ onPOITypeCreated }) => {
+export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ onPOITypeCreated, setContentMode }) => {
   const { isDarkMode } = useTheme()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [poiData, setPoiData] = useState<POIType[]>([]);
   const { zoomToLocation } = useMapContext();
+  const isMobile = useIsMobile();
 
   const fetchPOIData = async () => {
     try {
@@ -93,16 +96,20 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
             <div className="rounded-lg mr-2">
-              <MapIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+              {isMobile ? (
+                <ChevronLeft onClick={() => setContentMode?.(false)} size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+              ) : (
+                <MapIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+              )}
             </div>
-            <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Pontos de Interesse</p>
+            <p onClick={() => setContentMode?.(false)} className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>Pontos de Interesse</p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 className={`p-1.5 rounded-lg transition-colors ${isDarkMode
-                    ? 'hover:bg-zinc-700'
-                    : 'hover:bg-gray-100'
+                  ? 'hover:bg-zinc-700'
+                  : 'hover:bg-gray-100'
                   }`}
               >
                 <MoreHorizontal size={16} className={isDarkMode ? 'text-gray-300' : 'text-gray-600'} />
@@ -131,7 +138,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1 ${isMobile ? 'py-2' : ''}`}>
           Confira abaixo os pontos de interesse que foram cadastrados para acompanhamento e monitoramento.
         </p>
       </div>
