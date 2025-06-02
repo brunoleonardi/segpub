@@ -6,13 +6,16 @@ import { MapProvider } from './contexts/MapContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { DetailsPage } from './screens/RegisterPage/DetailsPage';
 import { Sidebar } from './components/Sidebar';
+import { MobileSidebar } from './components/Sidebar/MobileSidebar';
 import { VideoHistory } from './components/VideoHistory/VideoHistory';
 import { useState } from 'react';
 import { Router } from './Routes';
+import { useIsMobile } from './hooks/useIsMobile';
 
 export default function App() {
   const [showVideoHistory, setShowVideoHistory] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleControlConsultarClick = (itemLabel: string) => {
     navigate(`/control/${itemLabel}`);
@@ -23,12 +26,19 @@ export default function App() {
       <MapProvider>
         <Router />
 
-        <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
-          <Sidebar
+        {isMobile ? (
+          <MobileSidebar
             onHistoryClick={() => setShowVideoHistory(true)}
             onControlConsultarClick={handleControlConsultarClick}
           />
-        </div>
+        ) : (
+          <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
+            <Sidebar
+              onHistoryClick={() => setShowVideoHistory(true)}
+              onControlConsultarClick={handleControlConsultarClick}
+            />
+          </div>
+        )}
 
         {showVideoHistory && (
           <VideoHistory onClose={() => setShowVideoHistory(false)} />
