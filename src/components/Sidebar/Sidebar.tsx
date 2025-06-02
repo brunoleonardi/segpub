@@ -15,6 +15,7 @@ import {
   SunIcon,
   Locate,
   Home,
+  Menu,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -203,28 +204,35 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
         transition={{ duration: 0.3 }}
       >
         <div className={`p-2 flex ${stage === 'closed' ? 'justify-center' : 'justify-between items-center'}`}>
-          <div className={`flex items-center ${stage === 'closed' ? '' : 'gap-3'}`}>
-            <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#272727]' : 'border-white'}`}>
-              <AvatarFallback className="bg-[#95C0FF] text-white text-lg font-semibold">BL</AvatarFallback>
-            </Avatar>
-            {stage !== 'closed' && (
-              <div className="flex flex-col">
-                <span className="theme-aware-text-secondary text-xs">Bem-vindo</span>
-                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Bruno Leonardi</span>
+          {stage === 'closed' ? (
+            <button
+              onClick={() => setStage('half')}
+              className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`}
+            >
+              <Menu size={24} className={isDarkMode ? 'text-gray-200' : 'text-gray-700'} />
+            </button>
+          ) : (
+            <>
+              <div className="flex items-center gap-3">
+                <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#272727]' : 'border-white'}`}>
+                  <AvatarFallback className="bg-[#95C0FF] text-white text-lg font-semibold">BL</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="theme-aware-text-secondary text-xs">Bem-vindo</span>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Bruno Leonardi</span>
+                </div>
               </div>
-            )}
-          </div>
-          {stage !== 'closed' && (
-            <TooltipRoot>
-              <TooltipTrigger asChild>
-                <button onClick={handleCloseSidebar} className="theme-aware-hover p-1 rounded-full transition-colors">
-                  <ChevronLeftIcon size={20} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="theme-aware-tooltip">
-                Fechar Menu
-              </TooltipContent>
-            </TooltipRoot>
+              <TooltipRoot>
+                <TooltipTrigger asChild>
+                  <button onClick={handleCloseSidebar} className="theme-aware-hover p-1 rounded-full transition-colors">
+                    <ChevronLeftIcon size={20} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="theme-aware-tooltip">
+                  Fechar Menu
+                </TooltipContent>
+              </TooltipRoot>
+            </>
           )}
         </div>
 
@@ -355,19 +363,28 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
                 <div className="px-4 py-2 text-center">
                   <span className="theme-aware-text-secondary text-xs">Mais</span>
                 </div>
-                <TooltipRoot>
-                  <TooltipTrigger asChild>
-                    <div
-                      className="theme-aware-hover flex justify-center p-2 mb-2 cursor-pointer rounded-lg mx-2"
-                      onClick={() => setStage('half')}
-                    >
-                      <MoreHorizontalIcon size={20} className="theme-aware-text" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="theme-aware-tooltip">
-                    Expandir Menu
-                  </TooltipContent>
-                </TooltipRoot>
+                {bottomNavItems.map((item) => {
+                  if (item.id === 'home' && isHome) return null;
+
+                  return (
+                    <TooltipRoot key={item.id}>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={cn(
+                            "theme-aware-hover flex justify-center p-2 mb-2 cursor-pointer rounded-lg mx-2",
+                            activeSection === item.id ? 'theme-aware-active' : ''
+                          )}
+                          onClick={() => handleSectionClick(item.id)}
+                        >
+                          {getIconForNavItem(item.id)}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="theme-aware-tooltip">
+                        {item.label}
+                      </TooltipContent>
+                    </TooltipRoot>
+                  );
+                })}
               </>
             )}
           </div>
