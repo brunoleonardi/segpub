@@ -23,7 +23,7 @@ export default function App() {
       <MapProvider>
         <Router />
 
-        <div className="absolute top-[50%] left-[17px] -translate-y-1/2 z-10">
+        <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
           <Sidebar
             onHistoryClick={() => setShowVideoHistory(true)}
             onControlConsultarClick={handleControlConsultarClick}
