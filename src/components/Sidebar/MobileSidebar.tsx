@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, MapPinIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
 import { menuItems, bottomNavItems } from './data';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Badge } from "../ui/badge";
 
 interface MobileSidebarProps {
   onHistoryClick?: () => void;
@@ -57,59 +59,91 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 20 }}
               className={`fixed top-0 left-0 h-full w-[80%] max-w-[300px] z-50 ${
-                isDarkMode ? 'bg-zinc-900' : 'bg-white'
-              } p-4`}
+                isDarkMode ? 'bg-[#353535]' : 'bg-[#EFF4FA]'
+              } rounded-r-[20px] overflow-hidden`}
             >
-              <button
-                onClick={() => setIsOpen(false)}
-                className={`absolute top-4 right-4 p-2 rounded-lg ${
-                  isDarkMode ? 'text-gray-300 hover:bg-zinc-800' : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                <X size={24} />
-              </button>
+              <div className="p-4 flex items-center gap-3">
+                <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#272727]' : 'border-white'}`}>
+                  <AvatarFallback className="bg-[#95C0FF] text-white text-lg font-semibold">BL</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Bem-vindo</span>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Bruno Leonardi</span>
+                </div>
+              </div>
 
-              <div className="mt-16 space-y-4">
+              <div className={`px-4 py-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                <span className="text-xs">Menu</span>
+              </div>
+
+              <div className="px-2 space-y-1">
                 {menuItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => handleMenuItemClick(item.id)}
-                    className={`w-full text-left px-4 py-3 rounded-lg ${
+                    className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
                       isDarkMode
                         ? 'text-gray-300 hover:bg-zinc-800'
                         : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                    } flex items-center justify-between`}
                   >
                     {item.label}
                     {item.badge && (
-                      <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
-                        isDarkMode ? 'bg-zinc-700 text-white' : 'bg-gray-200 text-gray-700'
-                      }`}>
+                      <Badge className={`${isDarkMode ? 'bg-zinc-700 text-white' : 'bg-white text-gray-700'} text-xs`}>
                         {item.badge}
-                      </span>
+                      </Badge>
                     )}
                   </button>
                 ))}
               </div>
 
-              <div className={`mt-8 pt-8 border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
-                {bottomNavItems.map((item) => {
-                  if (item.id === 'home' && isHome) return null;
-                  
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleMenuItemClick(item.id)}
-                      className={`w-full text-left px-4 py-3 rounded-lg ${
-                        isDarkMode
-                          ? 'text-gray-300 hover:bg-zinc-800'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      {item.label}
-                    </button>
-                  );
-                })}
+              <div className={`mt-4 px-4 py-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                <span className="text-xs">Pontos de Interesse: <span className="font-bold">48</span></span>
+              </div>
+
+              <div className="px-2 space-y-1">
+                <button className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
+                  isDarkMode ? 'text-gray-300 hover:bg-zinc-800' : 'text-gray-700 hover:bg-gray-100'
+                }`}>
+                  Pontos de Interesse
+                </button>
+                <button className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
+                  isDarkMode ? 'text-gray-300 hover:bg-zinc-800' : 'text-gray-700 hover:bg-gray-100'
+                }`}>
+                  UBS
+                </button>
+                <button className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
+                  isDarkMode ? 'text-gray-300 hover:bg-zinc-800' : 'text-gray-700 hover:bg-gray-100'
+                }`}>
+                  Hospitais
+                </button>
+                <button className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
+                  isDarkMode ? 'text-gray-300 hover:bg-zinc-800' : 'text-gray-700 hover:bg-gray-100'
+                }`}>
+                  Praças e Parques
+                </button>
+              </div>
+
+              <div className={`absolute bottom-0 left-0 right-0 border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
+                <div className="grid grid-cols-5 divide-x divide-gray-200">
+                  {bottomNavItems.map((item) => {
+                    if (item.id === 'home' && isHome) return null;
+                    
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleMenuItemClick(item.id)}
+                        className={`py-4 text-center ${
+                          isDarkMode
+                            ? 'text-gray-300 hover:bg-zinc-800'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <span className="text-xs">{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </motion.div>
           </>
