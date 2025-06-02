@@ -219,7 +219,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                     <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Bruno Leonardi</span>
                   </div>
                 </div>
-                <button onClick={handleCloseSidebar} className="theme-aware-hover p-1 rounded-full transition-colors">
+                <button onClick={handleCloseSidebar} className="theme-aware-hover theme-aware-text p-1 rounded-full transition-colors">
                   <ChevronLeftIcon size={20} />
                 </button>
               </div>

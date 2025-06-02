@@ -205,7 +205,7 @@ export const MonitoringContent: React.FC<MonitoringContentProps> = ({
         </p>
       </div>
       <div className={`h-[1px] ${isDarkMode ? 'bg-gray-700' : 'bg-[#00000029]'}`} />
-      <div className="space-y-1 mt-4">
+      <div className="space-y-1 mt-4 theme-aware-text">
         {renderAccordionContent(data)}
       </div>
     </div>
