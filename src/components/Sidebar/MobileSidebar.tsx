@@ -205,7 +205,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
 
         {/* Barra de ações */}
         <div className="absolute left-0 top-14 z-30 w-full overflow-x-auto no-scrollbar">
-          <div className="flex gap-2 w-max px-5">
+          <div className="flex gap-2 w-max px-[20px]">
             <ActionButton
               icon={<Locate size={16} />}
               label="Centralizar itens"
