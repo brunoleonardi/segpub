@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, X, MapPinIcon, BellIcon, Locate, Home, SunIcon, MoonIcon, LogOutIcon, MonitorIcon, SettingsIcon, VideoIcon, PieChartIcon, MapIcon, ChevronLeftIcon } from 'lucide-react';
+import { Menu, X, MapPinIcon, BellIcon, Locate, Home, SunIcon, MoonIcon, LogOutIcon, MonitorIcon, SettingsIcon, VideoIcon, PieChartIcon, MapIcon, ChevronLeftIcon, Moon, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
 import { menuItems, bottomNavItems, monitoringData, controlData } from './data';
@@ -182,13 +182,50 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className={`fixed top-4 left-4 z-50 p-2 rounded-lg ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-gray-700'
-          }`}
-      >
-        <Menu size={24} />
-      </button>
+      <div className="flex z-30 justify-center w-full fixed top-4">
+        {/* Campo de busca */}
+        <div
+          className={`flex gap-2 px-4 py-3 w-[90dvw] rounded-full shadow-md backdrop-blur-md ${isDarkMode ? 'bg-zinc-700/40' : 'bg-[#D5E6FF]/40'
+            }`}
+        >
+          <Menu
+            onClick={() => setIsOpen(true)}
+            size={20}
+            className={`${isDarkMode ? 'text-gray-200' : 'text-gray-600'} mr-2`}
+          />
+          <input
+            type="text"
+            placeholder="Buscar Endereço"
+            className={`bg-transparent outline-none text-sm w-full ${isDarkMode
+              ? 'text-gray-100 placeholder-gray-400'
+              : 'text-gray-700 placeholder-gray-500'
+              }`}
+          />
+        </div>
+
+        {/* Barra de ações */}
+        <div className="absolute left-0 top-14 z-30 w-full overflow-x-auto no-scrollbar">
+          <div className="flex gap-2 w-max px-5">
+            <ActionButton
+              icon={<Locate size={16} />}
+              label="Centralizar itens"
+              isDarkMode={isDarkMode}
+            />
+            <ActionButton
+              icon={<Moon size={16} />}
+              handleClick={toggleDarkMode}
+              label={isDarkMode ? 'Modo Claro' : 'Modo Noturno'}
+              isDarkMode={isDarkMode}
+            />
+            <ActionButton
+              icon={<Bell size={16} />}
+              label="Notificações"
+              isDarkMode={isDarkMode}
+            />
+          </div>
+        </div>
+      </div>
+
 
       <AnimatePresence>
         {isOpen && (
@@ -327,3 +364,30 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
     </>
   );
 };
+
+const ActionButton = ({
+  icon,
+  label,
+  isDarkMode,
+  handleClick
+}: {
+  icon: React.ReactNode;
+  label: string;
+  isDarkMode: boolean;
+  handleClick?: () => void;
+}) => {
+  return (
+    <button
+      onClick={() => handleClick?.()}
+      className={`flex items-center border flex-nowrap gap-2 px-3 py-1.5 rounded-full text-sm transition-colors shadow-sm whitespace-nowrap
+        ${isDarkMode
+          ? 'bg-zinc-800 border-zinc-700 text-gray-100'
+          : 'bg-white border-gray-200 text-gray-700'}
+      `}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+};
+
