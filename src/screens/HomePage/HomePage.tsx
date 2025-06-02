@@ -7,13 +7,8 @@ import { MapProvider } from "../../contexts/MapContext";
 import { useTheme } from '../../contexts/ThemeContext';
 
 export const HomePage = (): JSX.Element => {
-  const [showVideoHistory, setShowVideoHistory] = useState(false);
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
-
-  const handleControlConsultarClick = (itemLabel: string) => {
-    navigate(`/control/${itemLabel}`);
-  };
 
   return (
     <MapProvider>
@@ -21,17 +16,7 @@ export const HomePage = (): JSX.Element => {
         <div className="w-full h-full relative">
           <div className={`h-full ${isDarkMode ? 'bg-zinc-900' : ''}`}>
             <MapComponent />
-            <div className="absolute top-[50%] left-[17px] -translate-y-1/2 z-10">
-              <Sidebar 
-                onHistoryClick={() => setShowVideoHistory(true)}
-                onControlConsultarClick={handleControlConsultarClick}
-              />
-            </div>
-            {showVideoHistory && (
-              <VideoHistory 
-                onClose={() => setShowVideoHistory(false)} 
-              />
-            )}
+            
           </div>
         </div>
       </div>
