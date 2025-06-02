@@ -193,7 +193,7 @@ export const MonitoringContent: React.FC<MonitoringContentProps> = ({
         <div className="flex items-center mb-2">
           <div className="rounded-lg mr-2">
             {isMobile ? (
-              <ChevronLeft onClick={() => setContentMode?.(false)} size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
+              <ChevronLeft onClick={() => setContentMode?.(false)} size={22} strokeWidth={2} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
             ) : (
               <MonitorIcon size={18} strokeWidth={1.5} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
             )}
