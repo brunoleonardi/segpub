@@ -91,7 +91,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
   };
 
   return (
-    <div className="p-2 mt-1 h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500">
+    <div className={`p-2 mt-1 ${isMobile ? 'h-full' : 'h-[500px]'} overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500`}>
       <div className="gap-3 mb-2">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
