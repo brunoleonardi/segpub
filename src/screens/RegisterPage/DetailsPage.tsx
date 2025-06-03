@@ -114,7 +114,7 @@ export const DetailsPage = () => {
                     <div className={`grid ${isMobile ? '' : 'grid-cols-4'} gap-4`}>
                       {fieldConfigs.map((field) => (
                         <div key={field.name} className={`col-span-${field.colSpan || 1}`}>
-                          <label className={`text-xs block mb-1 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>
+                          <label className={`text-xs block ${isMobile ? '' : ''}  ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>
                             {field.label}
                           </label>
                           <TooltipRoot delayDuration={300}>
