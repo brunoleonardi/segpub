@@ -254,9 +254,11 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
               isDarkMode={isDarkMode}
             />
           </div>
-          <div className="my-2 px-3 w-full">
-            <div className="theme-aware-divider h-[1px] w-full" />
-          </div>
+          {!isHome && (
+            <div className="my-2 px-3 w-full">
+              <div className="theme-aware-divider h-[1px] w-full" />
+            </div>
+          )}
         </div>
       </div>
 
