@@ -185,10 +185,10 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
           duration: 0.3,
           bounce: 0.2
         }}
-        className={`w-[90%] max-w-6xl max-h-[90dvh] rounded-2xl ${isDarkMode
-          ? 'bg-zinc-900/60'
+        className={`w-[90%] max-w-6xl ${isMobile ? 'max-h-[80dvh] px-3 pt-2' : 'max-h-[90dvh] px-6 pt-5'} rounded-2xl ${isDarkMode
+          ? 'bg-zinc-700/60'
           : 'bg-[#EFF4FA] bg-opacity-60'
-          } backdrop-blur-[2px] px-6 pt-5 shadow-md flex flex-col relative cursor-default z-50`}
+          } backdrop-blur-[2px] shadow-md flex flex-col relative cursor-default z-50`}
         onClick={(e: any) => e.stopPropagation()}
       >
         <motion.div
@@ -198,12 +198,11 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
           transition={{ delay: 0.1 }}
           className="flex flex-col items-center mb-3"
         >
-          <h2 className={`text-lg font-semibold absolute self-start mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>
+          <h2 className={`text-lg font-semibold absolute self-start mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} ${isMobile ? 'text-center w-[100%] justify-center items-center relative' : ''}`}>
             Histórico de Vídeos
           </h2>
 
-          <div className={`w-full max-w-md ${isMobile ? 'mt-14' : ''}`}>
+          <div className={`w-full max-w-md ${isMobile ? 'mt-6' : ''}`}>
             <div className="relative">
               <input
                 name="search"
