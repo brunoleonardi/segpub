@@ -196,23 +196,25 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
 
   return (
     <>
-      <div className="flex z-30 justify-center w-full fixed top-4">
+      <div className={`flex z-30  ${isHome ? 'justify-center' : 'pl-[20px]'} w-full fixed top-4`}>
         <div
-          className={`flex gap-2 px-4 py-3 w-[90dvw] rounded-full shadow-md backdrop-blur-md ${isDarkMode ? 'bg-zinc-700/40' : 'bg-[#D5E6FF]/40'}`}
+          className={`flex gap-2 px-4 py-3 ${isHome ? 'w-[90dvw]' : ''} rounded-full shadow-md backdrop-blur-md ${isDarkMode ? 'bg-zinc-700/40' : 'bg-[#D5E6FF]/40'}`}
         >
           <Menu
             onClick={() => setIsOpen(true)}
             size={20}
-            className={`${isDarkMode ? 'text-gray-200' : 'text-gray-600'} mr-2`}
+            className={`${isDarkMode ? 'text-gray-200' : 'text-gray-600'} ${isHome ? 'mr-2' : ''}`}
           />
-          <input
-            type="text"
-            placeholder="Buscar Endereço"
-            className={`bg-transparent outline-none text-sm w-full ${isDarkMode
-              ? 'text-gray-100 placeholder-gray-400'
-              : 'text-gray-700 placeholder-gray-500'
-              }`}
-          />
+          {isHome && (
+            <input
+              type="text"
+              placeholder="Buscar Endereço"
+              className={`bg-transparent outline-none text-sm w-full ${isDarkMode
+                ? 'text-gray-100 placeholder-gray-400'
+                : 'text-gray-700 placeholder-gray-500'
+                }`}
+            />
+          )}
         </div>
 
         {/* Barra de ações */}
@@ -251,6 +253,9 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
               label="Histórico de Vídeos"
               isDarkMode={isDarkMode}
             />
+          </div>
+          <div className="my-2 px-3 w-full">
+            <div className="theme-aware-divider h-[1px] w-full" />
           </div>
         </div>
       </div>
