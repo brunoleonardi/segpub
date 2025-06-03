@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, X, MapPinIcon, BellIcon, Locate, Home, SunIcon, MoonIcon, LogOutIcon, MonitorIcon, SettingsIcon, VideoIcon, PieChartIcon, MapIcon, ChevronLeftIcon, Moon, Bell } from 'lucide-react';
+import { Menu, MapPinIcon, BellIcon, Locate, Home, SunIcon, MoonIcon, LogOutIcon, MonitorIcon, SettingsIcon, VideoIcon, PieChartIcon, MapIcon, ChevronLeftIcon, Moon, Bell, Video } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
 import { menuItems, bottomNavItems, monitoringData, controlData } from './data';
@@ -36,7 +36,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
   const location = useLocation();
   const isHome = location.pathname === '/';
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
-  const { hiddenPOITypes, togglePOIType, fitToAllLayers, deckRef } = useMapContext();
+  const { hiddenPOITypes, togglePOIType } = useMapContext();
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [contentMode, setContentMode] = useState<boolean>(false);
@@ -182,6 +182,10 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
     )
   };
 
+  const goToHomepage = () => {
+    navigate('/');
+  }
+
   const renderContent = () => {
     return sectionComponents[activeSection || ''] || null;
   };
@@ -214,12 +218,22 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
         {/* Barra de ações */}
         <div className="absolute left-0 top-14 z-30 w-full overflow-x-auto no-scrollbar">
           <div className="flex gap-2 w-max px-[20px]">
-            <ActionButton
-              icon={<Locate size={16} />}
-              handleClick={handleCentralizeAll}
-              label="Centralizar itens"
-              isDarkMode={isDarkMode}
-            />
+            {isHome && (
+              <ActionButton
+                icon={<Locate size={16} />}
+                handleClick={handleCentralizeAll}
+                label="Centralizar itens"
+                isDarkMode={isDarkMode}
+              />
+            )}
+            {!isHome && (
+              <ActionButton
+                icon={<Home size={16} />}
+                handleClick={goToHomepage}
+                label="Página Inicial"
+                isDarkMode={isDarkMode}
+              />
+            )}
             <ActionButton
               icon={<Moon size={16} />}
               handleClick={toggleDarkMode}
@@ -231,10 +245,15 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
               label="Notificações"
               isDarkMode={isDarkMode}
             />
+            <ActionButton
+              icon={<Video size={16} />}
+              handleClick={onHistoryClick}
+              label="Histórico de Vídeos"
+              isDarkMode={isDarkMode}
+            />
           </div>
         </div>
       </div>
-
 
       <AnimatePresence>
         {isOpen && (
@@ -346,6 +365,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                     <div className="theme-aware-card flex items-center justify-between px-3 py-1.5 rounded-lg">
                       {bottomNavItems.map((item) => {
                         if (item.id === 'home' && isHome) return null;
+                        if (item.id === 'location' && !isHome) return null;
 
                         return (
                           <div
