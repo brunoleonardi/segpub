@@ -256,7 +256,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
           transition={{ delay: 0.2 }}
           className="rounded-lg flex-1 overflow-hidden flex flex-col"
         >
-          <div className="overflow-auto flex-1 shadow-md">
+          <div className={`overflow-auto flex-1 shadow-md ${isMobile ? 'no-scrollbar' : ''}`}>
             <table className={`w-full ${isDarkMode ? 'bg-zinc-800' : 'bg-white'} rounded-lg`}>
               <thead className="sticky top-0">
                 <tr className={`${isDarkMode
