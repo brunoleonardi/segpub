@@ -390,7 +390,7 @@ const ActionButton = ({
       onClick={() => handleClick?.()}
       className={`flex items-center border flex-nowrap gap-2 px-3 py-1.5 rounded-full text-sm transition-colors shadow-sm whitespace-nowrap
         ${isDarkMode
-          ? 'bg-zinc-800 border-zinc-700 text-gray-100'
+          ? 'bg-zinc-800 border-zinc-700 text-gray-300'
           : 'bg-white border-gray-200 text-gray-700'}
       `}
     >
