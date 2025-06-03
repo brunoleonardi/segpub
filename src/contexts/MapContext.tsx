@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-import deckRef from './DeckRef';
-import bbox from '@turf/bbox';
-import { FeatureCollection, Point } from 'geojson';
-import { fitBounds } from '@deck.gl/core'; // opcional, para calcular zoom
+import deckRef from './DeckRef'; // opcional, para calcular zoom
+import { point, featureCollection, bbox, center as turfCenter } from '@turf/turf';
 
 interface MapContextType {
   zoomToLocation: (latitude: number, longitude: number) => void;
@@ -44,11 +42,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const fitToAllLayers = useCallback(() => {
     const layers = deckRef.current?.deck?.layerManager?.layers || [];
-
-    const allFeatures: FeatureCollection<Point> = {
-      type: 'FeatureCollection',
-      features: []
-    };
+    const points = [];
 
     layers.forEach(layer => {
       const data = layer?.props?.data;
@@ -57,51 +51,45 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (Array.isArray(data) && typeof getPosition === 'function') {
         data.forEach((item: any) => {
           const pos = getPosition(item);
-          if (
-            Array.isArray(pos) &&
-            typeof pos[0] === 'number' &&
-            typeof pos[1] === 'number'
-          ) {
-            allFeatures.features.push({
-              type: 'Feature',
-              geometry: {
-                type: 'Point',
-                coordinates: pos
-              },
-              properties: {}
-            });
+          if (Array.isArray(pos) && pos.length === 2) {
+            points.push(point(pos));
           }
         });
       }
     });
 
-    if (allFeatures.features.length === 0) {
-      console.warn("⚠️ Nenhum dado para centralizar.");
+    if (points.length === 0) {
+      console.warn('⚠️ Nenhum ponto para centralizar.');
       return;
     }
 
-    const [minLng, minLat, maxLng, maxLat] = bbox(allFeatures);
+    const features = featureCollection(points);
+    const [minLng, minLat, maxLng, maxLat] = bbox(features);
+    const [centerLng, centerLat] = turfCenter(features).geometry.coordinates;
 
-    const centerLng = (minLng + maxLng) / 2;
-    const centerLat = (minLat + maxLat) / 2;
+    const WORLD_DIM = { height: window.innerHeight, width: window.innerWidth };
+    const ZOOM_MAX = 22;
 
-    const deltaLng = maxLng - minLng;
-    const deltaLat = maxLat - minLat;
-    const maxDelta = Math.max(deltaLng, deltaLat);
+    const latRad = (lat: number) => {
+      const sin = Math.sin((lat * Math.PI) / 180);
+      return Math.log((1 + sin) / (1 - sin)) / 2;
+    };
 
-    const screenWidth = window.innerWidth;
-    let baseZoom = 14;
-    if (screenWidth < 480) baseZoom = 12;
-    else if (screenWidth < 768) baseZoom = 13;
+    const latFraction = (latRad(maxLat) - latRad(minLat)) / Math.PI;
+    const lngDiff = maxLng - minLng;
+    const lngFraction = (lngDiff < 0 ? lngDiff + 360 : lngDiff) / 360;
 
-    const zoomOffset = Math.log2(maxDelta / 0.01);
-    const calculatedZoom = Math.max(10, Math.min(16, baseZoom - zoomOffset));
+    const latZoom = Math.log2(WORLD_DIM.height / 256 / latFraction);
+    const lngZoom = Math.log2(WORLD_DIM.width / 256 / lngFraction);
+    const zoom = Math.min(ZOOM_MAX, Math.floor(Math.min(latZoom, lngZoom)));
+
+    console.log("✅ Centralizando para:", { centerLat, centerLng, zoom });
 
     setViewState(prev => ({
       ...prev,
       latitude: centerLat,
       longitude: centerLng,
-      zoom: calculatedZoom,
+      zoom,
       transitionDuration: 1000
     }));
   }, [deckRef, setViewState]);
