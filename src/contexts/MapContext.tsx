@@ -81,7 +81,13 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const latZoom = Math.log2(WORLD_DIM.height / 256 / latFraction);
     const lngZoom = Math.log2(WORLD_DIM.width / 256 / lngFraction);
-    const zoom = Math.min(ZOOM_MAX, Math.floor(Math.min(latZoom, lngZoom)));
+    let zoom = Math.min(ZOOM_MAX, Math.floor(Math.min(latZoom, lngZoom)));
+
+    // 📱 Afasta um pouco mais em telas pequenas
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      zoom = Math.max(zoom - 1, 3); // afasta um nível, mas garante mínimo
+    }
 
     console.log("✅ Centralizando para:", { centerLat, centerLng, zoom });
 
