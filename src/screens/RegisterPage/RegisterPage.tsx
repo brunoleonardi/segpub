@@ -7,6 +7,8 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Checkbox } from '../../components/ui/checkbox';
+import { useIsMobile } from '../../hooks/useIsMobile';
+import { removeFinalSFromFirstAndSecondWord } from '../../lib/utils';
 
 const fieldConfigs = [
   { name: 'projeto', label: 'Projeto', placeholder: 'Insira o Projeto', type: 'text', colSpan: 1, validation: z.string().min(1, 'Projeto é obrigatório'), defaultValue: '' },
@@ -32,21 +34,8 @@ export const RegisterPage = () => {
   const editMode = location.state?.editMode;
   const reportData = location.state?.reportData;
   const { section } = useParams();
+  const isMobile = useIsMobile()
   const title = removeFinalSFromFirstAndSecondWord(section as string);
-
-  function removeFinalSFromFirstAndSecondWord(str: string): string {
-    const words = str.split(" ");
-
-    if (words[0]?.endsWith("s")) {
-      words[0] = words[0].slice(0, -1);
-    }
-
-    if (words[1]?.endsWith("s")) {
-      words[1] = words[1].slice(0, -1);
-    }
-
-    return words.join(" ");
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -92,23 +81,25 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'}`}>
+    <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'} ${isMobile ? 'pt-[100px]' : ''}`}>
       <div className='flex flex-col justify-between h-full py-7 gap-7'>
         <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>
           {editMode ? 'Editar ' : 'Cadastrar '}
           {title}
         </h2>
-        <div className="w-[70dvw] h-full flex rounded-xl shadow-2xl overflow-hidden">
+        <div className={`${isMobile ? 'w-[90dvw]' : 'w-[70dvw]'} h-full flex rounded-xl shadow-2xl ${isMobile ? 'flex-col' : ''} overflow-hidden`}>
           {/* Sidebar */}
-          <div className={`w-[13vw] p-4 ${isDarkMode ? 'bg-[#333333]' : 'bg-[#F8F8F8]'} flex flex-col items-center`}>
-            <div className={`flex items-center cursor-pointer justify-center gap-4 p-3 rounded-xl ${isDarkMode ? 'bg-zinc-600' : 'bg-[#D5E6FF]'} w-full`}>
-              <PencilIcon className={isDarkMode ? 'text-gray-200' : 'text-[#656565]'} size={16} />
-              <h2 className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h2>
+          {!isMobile && (
+            <div className={`${isMobile ? 'w-[50vw]' : 'w-[13vw]'} p-4 flex flex-col items-center`}>
+              <div className={`flex items-center cursor-pointer justify-center gap-4 p-3 rounded-xl ${isDarkMode ? 'bg-zinc-600' : 'bg-[#D5E6FF]'} w-full`}>
+                <PencilIcon className={isDarkMode ? 'text-gray-200' : 'text-[#656565]'} size={16} />
+                <h2 className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h2>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Main Content */}
-          <div className={`flex-1 p-8 flex justify-center ${isDarkMode ? 'bg-zinc-800' : 'bg-[#fff]'}`}>
+          <div className={`flex-1 ${isMobile ? 'p-5' : 'p-8'} flex justify-center ${isDarkMode ? 'bg-zinc-800' : 'bg-[#fff]'}`}>
             <div className="w-full max-w-[900px]">
               <h1 className={`text-xl font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h1>
               <div className='flex flex-col h-full gap-8'>
@@ -120,7 +111,7 @@ export const RegisterPage = () => {
 
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <div className="grid grid-cols-4 gap-4">
+                      <div className={`grid ${isMobile ? '' : 'grid-cols-4'} gap-4`}>
                         {fieldConfigs.map((fieldConfig) => (
                           <FormField
                             key={fieldConfig.name}

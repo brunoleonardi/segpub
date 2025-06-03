@@ -1,11 +1,12 @@
 import { ChevronLeft, Edit, Pencil, PencilIcon, Plus, Trash2, X } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
-import { cn } from '../../lib/utils';
+import { cn, removeFinalSFromFirstAndSecondWord } from '../../lib/utils';
 import { TooltipContent, TooltipProvider, TooltipRoot, TooltipTrigger } from '../../components/ui/tooltip';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../components/ui/alert-dialog';
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 const fieldConfigs = [
   { name: 'project', label: 'Projeto', colSpan: 1 },
@@ -20,6 +21,9 @@ export const DetailsPage = () => {
   const { isDarkMode } = useTheme();
   const reportData = location.state?.reportData || {};
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const { section } = useParams();
+  const title = removeFinalSFromFirstAndSecondWord(section as string);
 
   const handleEdit = () => {
     navigate(`/register/e-Mails Relatório`, {
@@ -57,40 +61,42 @@ export const DetailsPage = () => {
 
   return (
     <TooltipProvider>
-      <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'}`}>
-        <div className='flex flex-col justify-between h-full py-7 gap-7'>
+      <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'} ${isMobile ? 'pt-[100px]' : ''}`}>
+        <div className={`flex flex-col justify-between h-full py-7 ${isMobile ? 'gap-3' : 'gap-7'} `}>
+          <h2 className={`text-xl absolute font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'} ${isMobile ? 'text-center w-[100%] justify-center items-center relative mb-3' : ''}`}>Detalhes do {title}</h2>
           <div className="flex justify-center gap-3">
-            <button 
+            <button
               onClick={handleEdit}
               className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
             >
               <Pencil size={14} /> Editar
             </button>
-            <button 
+            <button
               onClick={() => setDeleteDialogOpen(true)}
               className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 text-destructive ${isDarkMode ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-white hover:bg-gray-50'}`}
             >
               <Trash2 size={14} /> Excluir
             </button>
-            <button 
+            <button
               onClick={handleAddNew}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 text-xs rounded-full flex items-center gap-2"
             >
-              <Plus size={14} /> e-Mail
+              <Plus size={14} /> {title}
             </button>
           </div>
-          <h2 className={`text-xl absolute font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Detalhes do e-Mail</h2>
-          <div className='w-[70dvw] h-full flex rounded-xl shadow-2xl overflow-hidden'>
+          <div className={`${isMobile ? 'w-[90dvw]' : 'w-[70dvw]'} h-full flex rounded-xl shadow-2xl ${isMobile ? 'flex-col' : ''} overflow-hidden`}>
             {/* Sidebar */}
-            <div className={`w-[13vw] p-4 ${isDarkMode ? 'bg-[#333333]' : 'bg-[#F8F8F8]'} flex flex-col items-center`}>
-              <div className={`flex items-center justify-center gap-4 cursor-pointer p-3 rounded-xl ${isDarkMode ? 'bg-zinc-600' : 'bg-[#D5E6FF]'} w-full`}>
-                <PencilIcon className={isDarkMode ? 'text-gray-200' : 'text-[#656565]'} size={16} />
-                <h2 className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h2>
+            {!isMobile && (
+              <div className={`${isMobile ? 'w-[50vw]' : 'w-[13vw]'} p-4 flex flex-col items-center`}>
+                <div className={`flex items-center cursor-pointer justify-center gap-4 p-3 rounded-xl ${isDarkMode ? 'bg-zinc-600' : 'bg-[#D5E6FF]'} w-full`}>
+                  <PencilIcon className={isDarkMode ? 'text-gray-200' : 'text-[#656565]'} size={16} />
+                  <h2 className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h2>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Main Content */}
-            <div className={`flex-1 p-8 flex justify-center ${isDarkMode ? 'bg-zinc-800' : 'bg-[#fff]'}`}>
+            <div className={`flex-1 ${isMobile ? 'p-5' : 'p-8'} flex justify-center ${isDarkMode ? 'bg-zinc-800' : 'bg-[#fff]'}`}>
               <div className='w-full max-w-[900px]'>
                 <h1 className={`text-xl font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h1>
                 <div className='justify-between flex flex-col h-full pb-10'>
@@ -105,7 +111,7 @@ export const DetailsPage = () => {
                     />
                     <h2 className={`text-base font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Identificação</h2>
 
-                    <div className='grid grid-cols-4 gap-4'>
+                    <div className={`grid ${isMobile ? '' : 'grid-cols-4'} gap-4`}>
                       {fieldConfigs.map((field) => (
                         <div key={field.name} className={`col-span-${field.colSpan || 1}`}>
                           <label className={`text-xs block mb-1 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>
