@@ -145,7 +145,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
                 placeholder="Busque por Palavras-chave"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-[300px] h-8 pl-4 pr-8 text-xs rounded-full ${isDarkMode ? 'bg-zinc-800 text-gray-200 placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'}`}
+                className={`w-[300px] h-10 pl-4 pr-8 text-xs rounded-full ${isDarkMode ? 'bg-zinc-800 text-gray-200 placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'}`}
               />
               <SearchIcon className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
             </div>

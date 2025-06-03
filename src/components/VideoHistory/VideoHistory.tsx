@@ -210,7 +210,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
                 placeholder="Busque por Palavras-chave"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full h-8 pl-4 pr-8 text-xs rounded-full ${isDarkMode
+                className={`w-full h-10 pl-4 pr-8 text-xs rounded-full ${isDarkMode
                   ? 'bg-zinc-800 text-gray-200 placeholder-gray-400'
                   : 'bg-white text-gray-900 placeholder-gray-500'
                   }`}
@@ -220,32 +220,34 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 mt-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSelectAll}
-              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
-                ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-            >
-              <SquareCheckBigIcon size={14} />
-              Marcar Tudo
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setSelectedItems([])}
-              className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
-                ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-            >
-              <SquareIcon size={14} />
-              Desmarcar Tudo
-            </motion.button>
-          </div>
+          {!isMobile && (
+            <div className="flex items-center gap-3 mt-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleSelectAll}
+                className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
+                  ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+              >
+                <SquareCheckBigIcon size={14} />
+                Marcar Tudo
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedItems([])}
+                className={`px-4 py-1.5 text-xs rounded-full transition-colors flex items-center gap-2 ${isDarkMode
+                  ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+              >
+                <SquareIcon size={14} />
+                Desmarcar Tudo
+              </motion.button>
+            </div>
+          )}
         </motion.div>
 
         <motion.div
@@ -298,12 +300,14 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
                       }`}
                   >
                     <td className="px-3 py-3">
-                      <Checkbox
-                        checked={selectedItems.includes(item.id)}
-                        onCheckedChange={() => handleSelectItem(item.id)}
-                        isDarkMode={isDarkMode}
-                        size="sm"
-                      />
+                      {!isMobile && (
+                        <Checkbox
+                          checked={selectedItems.includes(item.id)}
+                          onCheckedChange={() => handleSelectItem(item.id)}
+                          isDarkMode={isDarkMode}
+                          size="sm"
+                        />
+                      )}
                     </td>
                     <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
                       }`}>{item.id}</td>
