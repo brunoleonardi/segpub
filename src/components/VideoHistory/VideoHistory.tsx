@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { SearchIcon, SquareIcon, DownloadIcon, SquareCheckBigIcon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Checkbox } from '../ui/checkbox';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface VideoHistoryProps {
   isDarkMode?: boolean;
@@ -40,6 +41,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isClosing, setIsClosing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const isMobile = useIsMobile();
 
   const filteredData = useMemo(() => {
     if (!searchTerm) return mockData;
@@ -201,7 +203,7 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
             Histórico de Vídeos
           </h2>
 
-          <div className="w-full max-w-md">
+          <div className={`w-full max-w-md ${isMobile ? 'mt-14' : ''}`}>
             <div className="relative">
               <input
                 name="search"
