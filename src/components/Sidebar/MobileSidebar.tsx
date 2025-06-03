@@ -12,6 +12,7 @@ import { supabase } from '../../lib/supabase';
 import { MonitoringContent } from './MonitoringContent';
 import { ControlContent } from './ControlContent';
 import { PointsOfInterestContent } from './PointsOfInterestContent';
+import { forceToCenter } from '../Map/Map';
 
 interface MobileSidebarProps {
   onHistoryClick?: () => void;
@@ -35,7 +36,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
   const location = useLocation();
   const isHome = location.pathname === '/';
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
-  const { hiddenPOITypes, togglePOIType } = useMapContext();
+  const { hiddenPOITypes, togglePOIType, fitToAllLayers, deckRef } = useMapContext();
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [contentMode, setContentMode] = useState<boolean>(false);
@@ -142,6 +143,11 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
       return;
     }
 
+    if (section === 'location') {
+      forceToCenter();
+      return;
+    }
+
     if (fullOpenSections.includes(section)) {
       setActiveSection(section);
       setContentMode(true)
@@ -180,13 +186,15 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
     return sectionComponents[activeSection || ''] || null;
   };
 
+  const handleCentralizeAll = () => {
+    forceToCenter()
+  };
+
   return (
     <>
       <div className="flex z-30 justify-center w-full fixed top-4">
-        {/* Campo de busca */}
         <div
-          className={`flex gap-2 px-4 py-3 w-[90dvw] rounded-full shadow-md backdrop-blur-md ${isDarkMode ? 'bg-zinc-700/40' : 'bg-[#D5E6FF]/40'
-            }`}
+          className={`flex gap-2 px-4 py-3 w-[90dvw] rounded-full shadow-md backdrop-blur-md ${isDarkMode ? 'bg-zinc-700/40' : 'bg-[#D5E6FF]/40'}`}
         >
           <Menu
             onClick={() => setIsOpen(true)}
@@ -208,13 +216,14 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
           <div className="flex gap-2 w-max px-[20px]">
             <ActionButton
               icon={<Locate size={16} />}
+              handleClick={handleCentralizeAll}
               label="Centralizar itens"
               isDarkMode={isDarkMode}
             />
             <ActionButton
               icon={<Moon size={16} />}
               handleClick={toggleDarkMode}
-              label={isDarkMode ? 'Modo Claro' : 'Modo Noturno'}
+              label={isDarkMode ? 'Modo Claro' : 'Modo Escuro'}
               isDarkMode={isDarkMode}
             />
             <ActionButton

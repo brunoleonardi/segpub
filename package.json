@@ -9,7 +9,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@deck.gl/core": "^8.9.34",
+    "@deck.gl/core": "^8.9.36",
     "@deck.gl/layers": "^8.9.34",
     "@deck.gl/react": "^8.9.34",
     "@hookform/resolvers": "^3.3.4",
@@ -24,6 +24,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@supabase/supabase-js": "^2.39.7",
     "@tanstack/react-table": "^8.13.2",
+    "@turf/turf": "^7.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "2.1.1",
     "deck.gl": "^8.9.34",

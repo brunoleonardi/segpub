@@ -31,6 +31,7 @@ import { supabase } from "../../lib/supabase";
 import { useMapContext } from "../../contexts/MapContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { forceToCenter } from "../Map/Map";
 
 interface POIType {
   id: string;
@@ -49,7 +50,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
-  const { hiddenPOITypes, togglePOIType } = useMapContext();
+  const { hiddenPOITypes, togglePOIType, fitToAllLayers, deckRef } = useMapContext();
   const { isDarkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -135,6 +136,11 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
     if (section === 'historico') {
       onHistoryClick?.();
       setStage('half');
+      return;
+    }
+
+    if (section === 'location') {
+      forceToCenter();
       return;
     }
 

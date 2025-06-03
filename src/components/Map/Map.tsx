@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, MutableRefObject } from 'react';
 import DeckGL from '@deck.gl/react';
 import { IconLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
@@ -10,19 +10,9 @@ const MAPBOX_STYLE_DARK = 'mapbox://styles/geovista-fdte/clu7c9nmj00vs01pad3m97q
 const MAPBOX_STYLE_LIGHT = 'mapbox://styles/geovista-fdte/clon6qm3o008t01peeqk31rg7';
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZ2VvdmlzdGEtZmR0ZSIsImEiOiJja3plOG9wM2UzNmdkMnZuZnkzdHhrY3N1In0.8FxWCItNfns7J7hXCt-tFQ';
 
-const INITIAL_VIEW_STATE = {
-  longitude: -46.6388,
-  latitude: -23.5489,
-  zoom: 12,
-  pitch: 0,
-  bearing: 0
-};
-
 const ICON_MAPPING = {
   marker: { x: 0, y: -0, width: 26, height: 26, mask: true }
 };
-
-interface MapComponentProps {}
 
 interface POIData {
   id: string;
@@ -47,68 +37,58 @@ const isValidCoordinate = (poi: any): poi is POIData => {
   );
 };
 
-export const MapComponent: React.FC<MapComponentProps> = () => {
-  const { isDarkMode } = useTheme()
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
+export const MapComponent: React.FC = () => {
+  const { isDarkMode } = useTheme();
   const [pois, setPois] = useState<POIData[]>([]);
-  const { setZoomToLocation, hiddenPOITypes } = useMapContext();
+  const {
+    setZoomToLocation,
+    hiddenPOITypes,
+    viewState,
+    setViewState,
+    fitToAllLayers,
+    deckRef
+  } = useMapContext();
 
   const fetchPOIs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('pois')
-        .select(`
-          id,
+    const { data, error } = await supabase
+      .from('pois')
+      .select(`
+        id,
+        name,
+        latitude,
+        longitude,
+        type_id,
+        poi_types (
           name,
-          latitude,
-          longitude,
-          type_id,
-          poi_types (
-            name,
-            color
-          )
-        `);
+          color
+        )
+      `);
+    if (error) return;
 
-      if (error) throw error;
+    const formattedData = data
+      .map(poi => ({
+        id: poi.id,
+        name: poi.name,
+        latitude: Number(poi.latitude),
+        longitude: Number(poi.longitude),
+        type_id: poi.type_id,
+        type_name: poi.poi_types.name,
+        type_color: poi.poi_types.color
+      }))
+      .filter(isValidCoordinate);
 
-      const formattedData = data
-        .map(poi => ({
-          id: poi.id,
-          name: poi.name,
-          latitude: Number(poi.latitude),
-          longitude: Number(poi.longitude),
-          type_id: poi.type_id,
-          type_name: poi.poi_types.name,
-          type_color: poi.poi_types.color
-        }))
-        .filter(isValidCoordinate);
-
-      setPois(formattedData);
-    } catch (error) {
-      console.error('Error fetching POIs:', error);
-    }
+    setPois(formattedData);
   };
 
   const updateMapLocation = useCallback((latitude: number, longitude: number) => {
-    if (
-      typeof latitude === 'number' &&
-      typeof longitude === 'number' &&
-      !isNaN(latitude) &&
-      !isNaN(longitude) &&
-      latitude >= -90 &&
-      latitude <= 90 &&
-      longitude >= -180 &&
-      longitude <= 180
-    ) {
-      setViewState(prevState => ({
-        ...prevState,
-        latitude,
-        longitude,
-        zoom: 16,
-        transitionDuration: 1500,
-      }));
-    }
-  }, []);
+    setViewState(prev => ({
+      ...prev,
+      latitude,
+      longitude,
+      zoom: 16,
+      transitionDuration: 1500
+    }));
+  }, [setViewState]);
 
   useEffect(() => {
     setZoomToLocation(() => updateMapLocation);
@@ -116,19 +96,12 @@ export const MapComponent: React.FC<MapComponentProps> = () => {
 
   useEffect(() => {
     fetchPOIs();
-
     const channel = supabase
       .channel('poi_changes')
       .on(
         'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'pois'
-        },
-        () => {
-          fetchPOIs();
-        }
+        { event: '*', schema: 'public', table: 'pois' },
+        fetchPOIs
       )
       .subscribe();
 
@@ -149,23 +122,23 @@ export const MapComponent: React.FC<MapComponentProps> = () => {
       getPosition: d => [d.longitude, d.latitude],
       getSize: d => 8,
       getColor: d => {
-        const color = d.type_color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)?.[0] || '#000000';
-        const r = parseInt(color.slice(1, 3), 16);
-        const g = parseInt(color.slice(3, 5), 16);
-        const b = parseInt(color.slice(5, 7), 16);
+        const hex = d.type_color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)?.[0] || '#000000';
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
         return [r, g, b, 255];
-      },
-      onHover: ({ object }) => {
-        if (object) {
-          console.log(`Hovering over ${object.name} (${object.type_name})`);
-        }
       }
     })
   ];
 
+  const handleCentralizeAll = () => {
+    fitToAllLayers();
+  };
+
   return (
     <div className="relative w-full h-full" onContextMenu={(e) => e.preventDefault()}>
       <DeckGL
+        ref={deckRef}
         viewState={viewState}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         controller={true}
@@ -179,11 +152,15 @@ export const MapComponent: React.FC<MapComponentProps> = () => {
           attributionControl={false}
         />
       </DeckGL>
-      <div className={`absolute bottom-0 right-0 p-2 z-10 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-        © <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer">Mapbox</a> |
-        © <a href="https://www.openstreetmap.org/about/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> |
-        <a href="https://www.mapbox.com/map-feedback/" target="_blank" rel="noopener noreferrer">Improve this map</a>
-      </div>
+      <button
+        id='centerButton'
+        className="display-none"
+        onClick={handleCentralizeAll}
+      />
     </div>
   );
 };
+
+export const forceToCenter = () => {
+  document.getElementById('centerButton')?.click();
+}
