@@ -264,7 +264,9 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
                   ? 'bg-zinc-800 border-zinc-700'
                   : 'bg-white border-gray-200'
                   } border-b`}>
-                  <th className="px-3 py-2 text-left w-8"></th>
+                  {!isMobile && (
+                    <th className="px-3 py-2 text-left w-8"></th>
+                  )}
                   <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
                     }`}>ID</th>
                   <th className={`px-3 py-2 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
@@ -299,16 +301,16 @@ export const VideoHistory: React.FC<VideoHistoryProps> = ({ onClose }) => {
                         : ''
                       }`}
                   >
-                    <td className="px-3 py-3">
-                      {!isMobile && (
+                    {!isMobile && (
+                      <td className="px-3 py-3">
                         <Checkbox
                           checked={selectedItems.includes(item.id)}
                           onCheckedChange={() => handleSelectItem(item.id)}
                           isDarkMode={isDarkMode}
                           size="sm"
                         />
-                      )}
-                    </td>
+                      </td>
+                    )}
                     <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'
                       }`}>{item.id}</td>
                     <td className={`px-3 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'

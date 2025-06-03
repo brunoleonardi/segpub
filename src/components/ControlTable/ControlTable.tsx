@@ -22,6 +22,7 @@ import {
 } from "../ui/alert-dialog";
 import { useTheme } from '../../contexts/ThemeContext';
 import { Checkbox } from '../ui/checkbox';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface ControlTableProps {
   isDarkMode?: boolean;
@@ -48,6 +49,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
   const [data, setData] = useState<EmailReport[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const isMobile = useIsMobile()
 
   const fetchEmailReports = async () => {
     try {
@@ -132,20 +134,20 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
 
   return (
     <div className={`w-full h-full p-6 ${isDarkMode ? 'bg-[#353535]' : 'bg-[#EEF3FA]'}`}>
-      <div className="max-w-[80dvw] mx-auto relative">
-        <h2 onClick={() => navigate('/')} className={`cursor-pointer text-lg font-semibold absolute flex gap-2 items-center pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+      <div className={`${isMobile ? 'max-w-[90dvw]' : 'max-w-[80dvw]'} mx-auto relative`}>
+        <h2 onClick={() => navigate('/')} className={`cursor-pointer text-lg font-semibold absolute flex gap-2 items-center pt-4 left-0 top-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} ${isMobile ? 'relative mt-[90px]' : ''}`}>
           <ChevronLeft size={23} className='pt-0.5' /> {title}
         </h2>
 
         <div className="flex flex-col">
-          <div className="flex justify-center mb-3">
-            <div className="relative">
+          <div className={`flex justify-center mb-3  ${isMobile ? 'mt-6' : ''}`}>
+            <div className={`relative ${isMobile ? 'w-full' : ''}`}>
               <input
                 type="text"
                 placeholder="Busque por Palavras-chave"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-[300px] h-10 pl-4 pr-8 text-xs rounded-full ${isDarkMode ? 'bg-zinc-800 text-gray-200 placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'}`}
+                className={`${isMobile ? 'w-full' : 'w-[300px]'} h-10 pl-4 pr-8 text-xs rounded-full ${isDarkMode ? 'bg-zinc-800 text-gray-200 placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'}`}
               />
               <SearchIcon className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
             </div>
@@ -155,64 +157,74 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
             <button onClick={() => navigate(`/register/${title}`)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 text-xs rounded-full flex items-center gap-2">
               <Plus size={14} /> {title}
             </button>
-            <button onClick={handleSelectAll} className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}>
-              <SquareCheckBigIcon size={14} /> Marcar Tudo
-            </button>
-            <button onClick={() => setSelectedItems([])} className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}>
-              <SquareIcon size={14} /> Desmarcar Tudo
-            </button>
+            {!isMobile && (
+              <>
+                <button onClick={handleSelectAll} className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}>
+                  <SquareCheckBigIcon size={14} /> Marcar Tudo
+                </button>
+                <button onClick={() => setSelectedItems([])} className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}>
+                  <SquareIcon size={14} /> Desmarcar Tudo
+                </button>
+              </>
+            )}
           </div>
 
           <div className={`rounded-lg overflow-hidden shadow-lg ${isDarkMode ? 'bg-zinc-800' : 'bg-white'}`}>
-            <table className="w-full">
-              <thead>
-                <tr className={`${isDarkMode ? 'bg-zinc-800' : 'bg-white'} border-b ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
-                  <th className="w-12 px-4 py-3"></th>
-                  {emailReportColumns.map(col => (
-                    <th key={col.key} className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{col.label}</th>
-                  ))}
-                  <th className={`px-4 py-3 text-center text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedData.length > 0 ? paginatedData.map((item, index) => (
-                  <motion.tr key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className={`border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
-                    <td className="px-4 py-3">
-                      <Checkbox
-                        checked={selectedItems.includes(item.id)}
-                        onCheckedChange={() => handleSelectItem(item.id)}
-                        isDarkMode={isDarkMode}
-                        size="sm"
-                      />
-                    </td>
-                    {emailReportColumns.map((col) => (
-                      <td key={col.key} className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
-                        {col.customRender ? col.customRender(item[col.key as keyof EmailReport]) : item[col.key as keyof EmailReport]}
-                      </td>
+            <div className={`overflow-auto flex-1 shadow-md ${isMobile ? 'no-scrollbar' : ''}`}>
+              <table className="w-full overflow-auto">
+                <thead>
+                  <tr className={`${isDarkMode ? 'bg-zinc-800' : 'bg-white'} border-b ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
+                    {!isMobile && (
+                      <th className="w-12 px-4 py-3"></th>
+                    )}
+                    {emailReportColumns.map(col => (
+                      <th key={col.key} className={`px-4 py-3 text-left text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{col.label}</th>
                     ))}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`} onClick={() => handleViewDetails(item)}>
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`} onClick={() => handleEdit(item)}>
-                          <PencilIcon className="w-4 h-4" />
-                        </button>
-                        <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`} onClick={() => handleDeleteClick(item.id)}>
-                          <Trash2Icon className="w-4 h-4 text-destructive" />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                )) : (
-                  <tr>
-                    <td colSpan={emailReportColumns.length + 2} className={`text-center text-sm py-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      Nenhum dado encontrado na tabela.
-                    </td>
+                    <th className={`px-4 py-3 text-center text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Ações</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedData.length > 0 ? paginatedData.map((item, index) => (
+                    <motion.tr key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className={`border-t ${isDarkMode ? 'border-zinc-700' : 'border-gray-200'}`}>
+                      {!isMobile && (
+                        <td className="px-4 py-3">
+                          <Checkbox
+                            checked={selectedItems.includes(item.id)}
+                            onCheckedChange={() => handleSelectItem(item.id)}
+                            isDarkMode={isDarkMode}
+                            size="sm"
+                          />
+                        </td>
+                      )}
+                      {emailReportColumns.map((col) => (
+                        <td key={col.key} className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+                          {col.customRender ? col.customRender(item[col.key as keyof EmailReport]) : item[col.key as keyof EmailReport]}
+                        </td>
+                      ))}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center gap-2">
+                          <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`} onClick={() => handleViewDetails(item)}>
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'text-white hover:bg-zinc-700' : 'hover:bg-gray-100'}`} onClick={() => handleEdit(item)}>
+                            <PencilIcon className="w-4 h-4" />
+                          </button>
+                          <button className={`p-1.5 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-zinc-700' : 'hover:bg-gray-100'}`} onClick={() => handleDeleteClick(item.id)}>
+                            <Trash2Icon className="w-4 h-4 text-destructive" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  )) : (
+                    <tr>
+                      <td colSpan={emailReportColumns.length + 2} className={`text-center text-sm py-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Nenhum dado encontrado na tabela.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {paginatedData.length > 0 && (
@@ -265,6 +277,6 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </div >
   );
 };
