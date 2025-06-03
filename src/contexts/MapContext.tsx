@@ -89,7 +89,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       zoom = Math.max(zoom - 1, 3); // afasta um nível, mas garante mínimo
     }
 
-    console.log("✅ Centralizando para:", { centerLat, centerLng, zoom });
+    // console.log("✅ Centralizando para:", { centerLat, centerLng, zoom });
 
     setViewState(prev => ({
       ...prev,
@@ -115,7 +115,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hiddenPOITypes,
       togglePOIType,
       fitToCoordinates: () => { },
-      fitToAllLayers, // <-- agora não precisa passar layers
+      fitToAllLayers,
       viewState,
       setViewState,
       deckRef

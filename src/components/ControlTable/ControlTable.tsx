@@ -251,7 +251,7 @@ export const ControlTable: React.FC<ControlTableProps> = ({ title }) => {
       </div>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : ''}>
+        <AlertDialogContent className={isDarkMode ? 'bg-zinc-800 border-zinc-700 w-[90dvw] rounded-lg' : 'w-[90dvw] rounded-lg'}>
           <AlertDialogHeader>
             <AlertDialogTitle className={isDarkMode ? 'text-gray-200' : ''}>Confirmar exclusão</AlertDialogTitle>
             <AlertDialogDescription className={isDarkMode ? 'text-gray-400' : ''}>

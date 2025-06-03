@@ -1,4 +1,4 @@
-import { ChevronLeft, Edit, Pencil, PencilIcon, Plus, Trash2, X } from 'lucide-react';
+import { Edit, Pencil, PencilIcon, Plus, Trash2 } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { cn, removeFinalSFromFirstAndSecondWord } from '../../lib/utils';
@@ -149,7 +149,7 @@ export const DetailsPage = () => {
       </div>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className={isDarkMode ? 'bg-zinc-800 border-zinc-700' : ''}>
+        <AlertDialogContent className={isDarkMode ? 'bg-zinc-800 border-zinc-700 w-[90dvw] rounded-lg' : 'w-[90dvw] rounded-lg'}>
           <AlertDialogHeader>
             <AlertDialogTitle className={isDarkMode ? 'text-gray-200' : ''}>Confirmar exclusão</AlertDialogTitle>
             <AlertDialogDescription className={isDarkMode ? 'text-gray-400' : ''}>
