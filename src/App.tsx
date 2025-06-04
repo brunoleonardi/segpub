@@ -11,6 +11,7 @@ import { VideoHistory } from './components/VideoHistory/VideoHistory';
 import { useState } from 'react';
 import { Router } from './Routes';
 import { useIsMobile } from './hooks/useIsMobile';
+import { HistoryProvider } from './contexts/HistoryProvider';
 
 export default function App() {
   const [showVideoHistory, setShowVideoHistory] = useState(false);
@@ -23,27 +24,29 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <MapProvider>
-        <Router />
+      <HistoryProvider>
+        <MapProvider>
+          <Router />
 
-        {isMobile ? (
-          <MobileSidebar
-            onHistoryClick={() => setShowVideoHistory(true)}
-            onControlConsultarClick={handleControlConsultarClick}
-          />
-        ) : (
-          <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
-            <Sidebar
+          {isMobile ? (
+            <MobileSidebar
               onHistoryClick={() => setShowVideoHistory(true)}
               onControlConsultarClick={handleControlConsultarClick}
             />
-          </div>
-        )}
+          ) : (
+            <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
+              <Sidebar
+                onHistoryClick={() => setShowVideoHistory(true)}
+                onControlConsultarClick={handleControlConsultarClick}
+              />
+            </div>
+          )}
 
-        {showVideoHistory && (
-          <VideoHistory onClose={() => setShowVideoHistory(false)} />
-        )}
-      </MapProvider>
+          {showVideoHistory && (
+            <VideoHistory onClose={() => setShowVideoHistory(false)} />
+          )}
+        </MapProvider>
+      </HistoryProvider>
     </ThemeProvider>
   );
 }

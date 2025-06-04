@@ -1,4 +1,4 @@
-import { Edit, Pencil, PencilIcon, Plus, Trash2 } from 'lucide-react';
+import { Edit, Pencil, PencilIcon, Plus, Trash2, Undo } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { cn, removeFinalSFromFirstAndSecondWord } from '../../lib/utils';
@@ -7,6 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { useHistoryContext } from '../../contexts/HistoryProvider';
 
 const fieldConfigs = [
   { name: 'project', label: 'Projeto', colSpan: 1 },
@@ -24,6 +25,7 @@ export const DetailsPage = () => {
   const isMobile = useIsMobile();
   const { section } = useParams();
   const title = removeFinalSFromFirstAndSecondWord(section as string);
+  const { previousPath } = useHistoryContext();
 
   const handleEdit = () => {
     navigate(`/register/e-Mails Relatório`, {
@@ -57,6 +59,10 @@ export const DetailsPage = () => {
 
   const handleAddNew = () => {
     navigate('/register/e-Mails Relatório');
+  };
+
+  const handleBack = () => {
+    navigate(previousPath || '/');
   };
 
   return (
@@ -140,6 +146,19 @@ export const DetailsPage = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                  <div className="flex mb-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className={`px-3 py-1.5 text-sm rounded-full ${isDarkMode
+                        ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600'
+                        : 'bg-[#F3F4F6] text-[#656565] hover:bg-[#E5E7EB]'
+                        }`}
+                    >
+                      <Undo size={14} className="inline-block mr-1 pb-0.5" />
+                      Voltar
+                    </button>
                   </div>
                 </div>
               </div>

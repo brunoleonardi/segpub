@@ -2,13 +2,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '../../compone
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, PencilIcon } from 'lucide-react';
+import { Check, PencilIcon, Undo } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Checkbox } from '../../components/ui/checkbox';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { removeFinalSFromFirstAndSecondWord } from '../../lib/utils';
+import { useHistoryContext } from '../../contexts/HistoryProvider';
 
 const fieldConfigs = [
   { name: 'projeto', label: 'Projeto', placeholder: 'Insira o Projeto', type: 'text', colSpan: 1, validation: z.string().min(1, 'Projeto é obrigatório'), defaultValue: '' },
@@ -36,6 +37,7 @@ export const RegisterPage = () => {
   const { section } = useParams();
   const isMobile = useIsMobile()
   const title = removeFinalSFromFirstAndSecondWord(section as string);
+  const { previousPath } = useHistoryContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,6 +80,10 @@ export const RegisterPage = () => {
     } catch (error) {
       console.error('Error saving email report:', error);
     }
+  };
+
+  const handleBack = () => {
+    navigate(previousPath || '/');
   };
 
   return (
@@ -155,17 +161,17 @@ export const RegisterPage = () => {
                   </Form>
                 </div>
                 <div className="flex justify-end gap-3">
-                  {/* <button
+                  <button
                     type="button"
-                    onClick={() => navigate('/')}
+                    onClick={handleBack}
                     className={`px-3 py-1.5 text-sm rounded-full ${isDarkMode
                       ? 'bg-zinc-700 text-gray-200 hover:bg-zinc-600'
                       : 'bg-[#F3F4F6] text-[#656565] hover:bg-[#E5E7EB]'
                       }`}
                   >
-                    <X size={14} className="inline-block mr-1 pb-0.5" />
-                    Cancelar
-                  </button> */}
+                    <Undo size={14} className="inline-block mr-1 pb-0.5" />
+                    Voltar
+                  </button>
                   <button
                     onClick={form.handleSubmit(onSubmit)}
                     className="px-3 py-1.5 text-sm rounded-full bg-[#4D94FF] text-white hover:bg-[#3B82F6]"
