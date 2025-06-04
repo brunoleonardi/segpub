@@ -13,6 +13,7 @@ import { MonitoringContent } from './MonitoringContent';
 import { ControlContent } from './ControlContent';
 import { PointsOfInterestContent } from './PointsOfInterestContent';
 import { forceToCenter } from '../Map/Map';
+import { NotificationCenterContent } from './NotificationsContent';
 
 interface MobileSidebarProps {
   onHistoryClick?: () => void;
@@ -125,7 +126,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
 
   const getIconForNavItem = (id: string) => { return navIcons[id] || null };
 
-  const fullOpenSections = ['monitoramento', 'controle', 'pontosInteresse'];
+  const fullOpenSections = ['monitoramento', 'controle', 'pontosInteresse', 'notifications'];
   const handleSectionClick = (section: string) => {
     if (section === 'darkMode') {
       toggleDarkMode();
@@ -179,7 +180,12 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
         onPOITypeCreated={fetchPOITypes}
         setContentMode={setContentMode}
       />
-    )
+    ),
+    notifications: (
+      <NotificationCenterContent
+        setContentMode={setContentMode}
+      />
+    ),
   };
 
   const goToHomepage = () => {
@@ -255,11 +261,11 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
             />
           </div>
         </div>
-          {!isHome && (
-            <div className="my-2 px-3 w-full absolute left-0 top-[90px]">
-              <div className="theme-aware-divider h-[1px] w-full" />
-            </div>
-          )}
+        {!isHome && (
+          <div className="my-2 px-3 w-full absolute left-0 top-[90px]">
+            <div className="theme-aware-divider h-[1px] w-full" />
+          </div>
+        )}
       </div>
 
       <AnimatePresence>
@@ -370,7 +376,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                   </div>
                   <div className="mx-2 mb-4">
                     <div className="theme-aware-card flex items-center justify-between px-3 py-1.5 rounded-lg">
-                      {bottomNavItems.map((item) => {
+                      {bottomNavItems.map((item, index) => {
                         if (item.id === 'home' && isHome) return null;
                         if (item.id === 'location' && !isHome) return null;
 
@@ -379,6 +385,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                             className={cn(
                               "p-1.5 rounded-lg cursor-pointer transition-colors theme-aware-text",
                             )}
+                            key={index}
                             onClick={() => handleSectionClick(item.id)}
                           >
                             {getIconForNavItem(item.id)}

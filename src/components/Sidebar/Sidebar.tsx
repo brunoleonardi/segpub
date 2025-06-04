@@ -32,6 +32,7 @@ import { useMapContext } from "../../contexts/MapContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { forceToCenter } from "../Map/Map";
+import { NotificationCenterContent } from "./NotificationsContent";
 
 interface POIType {
   id: string;
@@ -120,7 +121,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
     setExpandedItems({});
   };
 
-  const fullOpenSections = ['monitoramento', 'controle', 'pontosInteresse'];
+  const fullOpenSections = ['monitoramento', 'controle', 'pontosInteresse', 'notifications'];
 
   const handleSectionClick = (section: string) => {
     if (section === 'darkMode') {
@@ -172,7 +173,10 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
       <PointsOfInterestContent
         onPOITypeCreated={fetchPOITypes}
       />
-    )
+    ),
+    notifications: (
+      <NotificationCenterContent />
+    ),
   };
 
   const renderContent = () => {
