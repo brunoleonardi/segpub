@@ -22,11 +22,11 @@ export default function App() {
     navigate(`/control/${itemLabel}`);
   };
 
-  useEffect(() => {
-    if (isMobile) {
-      navigate('/')
-    }
-  }, [isMobile])
+  // useEffect(() => {
+  //   if (isMobile) {
+  //     navigate('/')
+  //   }
+  // }, [isMobile])
 
   return (
     <ThemeProvider>

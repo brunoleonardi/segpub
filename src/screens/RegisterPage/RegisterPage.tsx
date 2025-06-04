@@ -89,7 +89,7 @@ export const RegisterPage = () => {
   return (
     <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'} ${isMobile ? 'pt-[100px]' : ''}`}>
       <div className='flex flex-col justify-between h-full py-7 gap-7'>
-        <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>
+        <h2 className={`text-xl flex justify-center font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>
           {editMode ? 'Editar ' : 'Cadastrar '}
           {title}
         </h2>

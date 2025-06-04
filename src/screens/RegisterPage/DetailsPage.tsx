@@ -103,7 +103,7 @@ export const DetailsPage = () => {
 
             {/* Main Content */}
             <div className={`flex-1 ${isMobile ? 'p-5' : 'p-8'} flex justify-center ${isDarkMode ? 'bg-zinc-800' : 'bg-[#fff]'}`}>
-              <div className='w-full max-w-[900px]'>
+              <div className='w-full max-w-[900px] mx-auto'>
                 <h1 className={`text-xl font-semibold mb-6 ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'}`}>Dados Cadastrais</h1>
                 <div className='justify-between flex flex-col h-full pb-10'>
                   <div
