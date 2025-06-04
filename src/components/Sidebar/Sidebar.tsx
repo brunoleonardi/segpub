@@ -124,6 +124,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const fullOpenSections = ['monitoramento', 'controle', 'pontosInteresse', 'notifications'];
 
   const handleSectionClick = (section: string) => {
+    setActiveSection(null)
     if (section === 'darkMode') {
       toggleDarkMode();
       return;
@@ -150,7 +151,8 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
       setActiveSection(section);
     } else {
       setStage('half');
-      setActiveSection(section);
+      alert('Esta seção ainda não está implementada.');
+      // setActiveSection(section);
     }
   };
 
