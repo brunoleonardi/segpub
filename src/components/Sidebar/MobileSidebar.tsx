@@ -158,6 +158,12 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
     }
   };
 
+  const openNotificationCenter = () => {
+    setActiveSection('notifications');
+    setIsOpen(true);
+    setContentMode(true)
+  }
+
   const sectionComponents: Record<string, JSX.Element> = {
     monitoramento: (
       <MonitoringContent
@@ -247,9 +253,10 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
               handleClick={toggleDarkMode}
               label={isDarkMode ? 'Modo Claro' : 'Modo Escuro'}
               isDarkMode={isDarkMode}
-            />
+              />
             <ActionButton
               icon={<Bell size={16} />}
+              handleClick={openNotificationCenter}
               label="Notificações"
               isDarkMode={isDarkMode}
             />
