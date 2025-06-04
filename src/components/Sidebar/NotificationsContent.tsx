@@ -22,7 +22,7 @@ export const NotificationCenterContent: React.FC<NotificationCenterContentProps>
     useEffect(() => {
         const fakeData: NotificationItem[] = Array.from({ length: 7 }, (_, i) => ({
             id: `${i}`,
-            title: "O Carro P01 está sem sinal",
+            title: "O Carro P01 está sem sinal de GPS", 
             subtitle: "GRVT-P01 - Item Monitorado",
             time: "14:02",
         }));
@@ -50,7 +50,7 @@ export const NotificationCenterContent: React.FC<NotificationCenterContentProps>
                 </p>
             </div>
             <div className={`h-[1px] ${isDarkMode ? 'bg-gray-700' : 'bg-[#00000029]'}`} />
-            <div className={`space-y-1 mt-4 ${isMobile ? 'px-2' : ''}`}>
+            <div className={`space-y-2 mt-4 ${isMobile ? 'px-2' : ''}`}>
                 {notifications.map((notif) => (
                     <div className={`flex flex-row items-center ${isMobile ? 'gap-4' : 'gap-3'}`} key={notif.id}>
                         <p className={`${isMobile ? 'text-xs' : 'text-[10px]'} text-gray-400`}>{notif.time}</p>
