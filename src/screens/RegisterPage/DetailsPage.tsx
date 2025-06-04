@@ -70,7 +70,7 @@ export const DetailsPage = () => {
       <div className={`w-[100dvw] h-[100dvh] flex justify-center items-center ${isDarkMode ? 'bg-[#353535]' : 'bg-[#F3F7FE]'} ${isMobile ? 'pt-[100px]' : ''}`}>
         <div className={`flex flex-col justify-between h-full py-7 ${isMobile ? 'gap-3' : 'gap-7'} `}>
           <h2 className={`text-xl absolute font-semibold ${isDarkMode ? 'text-gray-200' : 'text-[#656565]'} ${isMobile ? 'text-center w-[100%] justify-center items-center relative mb-3' : ''}`}>Detalhes do {title}</h2>
-          <div className="flex justify-center gap-3">
+          <div className={`flex justify-center ${isMobile ? 'gap-1' : 'gap-3'}`}>
             <button
               onClick={handleEdit}
               className={`px-4 py-1.5 text-xs rounded-full flex items-center gap-2 ${isDarkMode ? 'bg-zinc-800 text-gray-300 hover:bg-zinc-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
