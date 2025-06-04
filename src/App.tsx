@@ -8,7 +8,7 @@ import { DetailsPage } from './screens/RegisterPage/DetailsPage';
 import { Sidebar } from './components/Sidebar';
 import { MobileSidebar } from './components/Sidebar/MobileSidebar';
 import { VideoHistory } from './components/VideoHistory/VideoHistory';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Router } from './Routes';
 import { useIsMobile } from './hooks/useIsMobile';
 import { HistoryProvider } from './contexts/HistoryProvider';
@@ -21,6 +21,12 @@ export default function App() {
   const handleControlConsultarClick = (itemLabel: string) => {
     navigate(`/control/${itemLabel}`);
   };
+
+  useEffect(() => {
+    if (isMobile) {
+      navigate('/')
+    }
+  }, [isMobile])
 
   return (
     <ThemeProvider>
