@@ -51,7 +51,9 @@ export const MapComponent: React.FC = () => {
 
   useEffect(() => {
     if (pois.length > 0) {
-      forceToCenter();
+      setTimeout(() => {
+        forceToCenter();
+      }, 500);
     }
   }, [pois]);
 
