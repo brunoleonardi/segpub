@@ -49,6 +49,12 @@ export const MapComponent: React.FC = () => {
     deckRef
   } = useMapContext();
 
+  useEffect(() => {
+    if (pois.length > 0) {
+      forceToCenter();
+    }
+  }, [pois]);
+
   const fetchPOIs = async () => {
     const { data, error } = await supabase
       .from('pois')
