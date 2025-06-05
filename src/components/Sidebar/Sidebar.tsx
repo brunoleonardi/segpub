@@ -34,6 +34,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { forceToCenter } from "../Map/Map";
 import { NotificationCenterContent } from "./NotificationsContent";
+import { MAPBOX_TOKEN } from "../Map/Map";
 
 interface POIType {
   id: string;
