@@ -52,6 +52,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
   const { hiddenPOITypes, togglePOIType, fitToAllLayers } = useMapContext();
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const [address, setAddress] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
@@ -141,6 +142,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
 
     if (section === 'location') {
       fitToAllLayers();
+      setAddress('')
       setStage('half');
       return;
     }
@@ -206,7 +208,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
 
   return (
     <>
-      <SearchInput />
+      <SearchInput address={address} setAddress={setAddress} />
 
       <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
         <TooltipProvider>

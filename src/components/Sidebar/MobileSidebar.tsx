@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, MapPinIcon, BellIcon, Locate, Home, SunIcon, MoonIcon, LogOutIcon, MonitorIcon, SettingsIcon, VideoIcon, PieChartIcon, MapIcon, ChevronLeftIcon, Moon, Bell, Video } from 'lucide-react';
+import { MapPinIcon, BellIcon, Locate, Home, SunIcon, MoonIcon, LogOutIcon, MonitorIcon, SettingsIcon, VideoIcon, PieChartIcon, MapIcon, ChevronLeftIcon, Moon, Bell, Video } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
 import { menuItems, bottomNavItems, monitoringData, controlData } from './data';
@@ -41,6 +41,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [contentMode, setContentMode] = useState<boolean>(false);
+  const [address, setAddress] = useState("");
 
   const toggleExpand = (key: string) => {
     const parts = key.split('_');
@@ -146,6 +147,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
 
     if (section === 'location') {
       fitToAllLayers();
+      setAddress('')
       return;
     }
 
@@ -203,13 +205,14 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
   };
 
   const handleCentralizeAll = () => {
+    setAddress('')
     fitToAllLayers()
   };
 
   return (
     <>
       <div className={`flex z-30  ${isHome ? 'justify-center' : 'pl-[20px]'} w-full fixed top-4`}>
-        <SearchInput setIsOpen={setIsOpen} />
+        <SearchInput setIsOpen={setIsOpen} address={address} setAddress={setAddress} />
 
         {/* Barra de ações */}
         <div className="absolute left-0 top-14 z-30 w-full overflow-x-auto no-scrollbar">
