@@ -4,7 +4,6 @@ import { point, featureCollection, bbox, center as turfCenter } from '@turf/turf
 
 interface MapContextType {
   zoomToLocation: (latitude: number, longitude: number, zoom: number) => void;
-  // setZoomToLocation: React.Dispatch<React.SetStateAction<(latitude: number, longitude: number) => void>>;
   hiddenPOITypes: Set<string>;
   togglePOIType: (typeId: string) => void;
   fitToCoordinates: (coords: [number, number][]) => void;
@@ -26,7 +25,6 @@ const defaultZoomFunction = (latitude: number, longitude: number, zoom?: number)
 
 const MapContext = createContext<MapContextType>({
   zoomToLocation: defaultZoomFunction,
-  // setZoomToLocation: () => defaultZoomFunction,
   hiddenPOITypes: new Set(),
   togglePOIType: () => { },
   fitToCoordinates: () => { },
@@ -38,7 +36,6 @@ const MapContext = createContext<MapContextType>({
 
 export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
-  // const [zoomToLocation, setZoomToLocation] = useState<(latitude: number, longitude: number) => void>(() => defaultZoomFunction);
   const [hiddenPOITypes, setHiddenPOITypes] = useState<Set<string>>(new Set());
 
   const zoomToLocation = useCallback((latitude: number, longitude: number, zoom: number = 16) => {
@@ -119,7 +116,6 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <MapContext.Provider value={{
       zoomToLocation,
-      // setZoomToLocation,
       hiddenPOITypes,
       togglePOIType,
       fitToCoordinates: () => { },
