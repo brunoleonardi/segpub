@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, MutableRefObject } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DeckGL from '@deck.gl/react';
 import { IconLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
@@ -88,12 +88,12 @@ export const MapComponent: React.FC = () => {
     setPois(formattedData);
   };
 
-  const updateMapLocation = useCallback((latitude: number, longitude: number) => {
+  const updateMapLocation = useCallback((latitude: number, longitude: number, zoom: number = 16) => {
     setViewState(prev => ({
       ...prev,
       latitude,
       longitude,
-      zoom: 16,
+      zoom,
       transitionDuration: 1500
     }));
   }, [setViewState]);
@@ -162,7 +162,7 @@ export const MapComponent: React.FC = () => {
       </DeckGL>
       <button
         id='centerButton'
-        className="display-none"
+        className="hidden"
         onClick={handleCentralizeAll}
       />
     </div>
