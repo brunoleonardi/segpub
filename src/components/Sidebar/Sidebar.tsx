@@ -60,24 +60,20 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const [address, setAddress] = useState('');
 
   const handleSearch = async () => {
-    zoomToLocation(-23.55052, -46.633308, 16); // São Paulo centro
-    return
     if (!address.trim()) return;
 
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
-      const data = await res.json();
+      const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}`);
+      const data = await response.json();
 
-      if (data?.[0]) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        console.log("passei aqui")
-        zoomToLocation(lat, lon);
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        zoomToLocation(lat, lng, 16);
       } else {
-        alert('Endereço não encontrado.');
+        console.warn('No location found');
       }
     } catch (err) {
-      console.error('Erro ao buscar endereço:', err);
+      console.error('Error searching address:', err);
     }
   };
 
