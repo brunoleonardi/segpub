@@ -7,7 +7,6 @@ import {
   SettingsIcon,
   VideoIcon,
   BellIcon,
-  HomeIcon,
   MapPinIcon as LocationIcon,
   MoonIcon,
   LogOutIcon,
@@ -17,11 +16,10 @@ import {
   Home,
   Search,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
-import { Card, CardContent } from "../ui/card";
 import { MonitoringContent } from "./MonitoringContent";
 import { ControlContent } from "./ControlContent";
 import { PointsOfInterestContent } from "./PointsOfInterestContent";
@@ -32,8 +30,8 @@ import { supabase } from "../../lib/supabase";
 import { useMapContext } from "../../contexts/MapContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { forceToCenter } from "../Map/Map";
 import { NotificationCenterContent } from "./NotificationsContent";
+import { SearchInput } from "./SearchInput";
 
 interface POIType {
   id: string;
@@ -52,34 +50,11 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
-  const { hiddenPOITypes, togglePOIType, zoomToLocation } = useMapContext();
+  const { hiddenPOITypes, togglePOIType, fitToAllLayers } = useMapContext();
   const { isDarkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const [address, setAddress] = useState('');
-
-  const handleSearch = async () => {
-    zoomToLocation(-23.55052, -46.633308, 16); // São Paulo centro
-    return
-    if (!address.trim()) return;
-
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
-      const data = await res.json();
-
-      if (data?.[0]) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        console.log("passei aqui")
-        zoomToLocation(lat, lon);
-      } else {
-        alert('Endereço não encontrado.');
-      }
-    } catch (err) {
-      console.error('Erro ao buscar endereço:', err);
-    }
-  };
 
   const fetchPOITypes = async () => {
     try {
@@ -164,9 +139,9 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
       setStage('half');
       return;
     }
-    
+
     if (section === 'location') {
-      forceToCenter();
+      fitToAllLayers();
       setStage('half');
       return;
     }
@@ -231,30 +206,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
 
   return (
     <>
-      <div className={`absolute top-3 flex justify-center ${isHome ? 'w-full' : ''}`}>
-        {isHome && (
-          <div className="relative w-[25dvw]">
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch();
-              }}
-              placeholder="Buscar Endereço"
-              className={`w-full outline-none text-sm
-          ${isDarkMode ? 'text-gray-100 placeholder-gray-400' : 'text-gray-700 placeholder-gray-500'}
-          py-2.5 pl-4 pr-12 rounded-full shadow-md backdrop-blur-md theme-aware-sidebar`}
-            />
-            <button
-              onClick={handleSearch}
-              className="absolute inset-y-0 right-4 flex items-center justify-center text-gray-500"
-            >
-              <Search size={18} className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-            </button>
-          </div>
-        )}
-      </div>
+      <SearchInput />
 
       <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
         <TooltipProvider>

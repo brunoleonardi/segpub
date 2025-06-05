@@ -12,8 +12,8 @@ import { supabase } from '../../lib/supabase';
 import { MonitoringContent } from './MonitoringContent';
 import { ControlContent } from './ControlContent';
 import { PointsOfInterestContent } from './PointsOfInterestContent';
-import { forceToCenter } from '../Map/Map';
 import { NotificationCenterContent } from './NotificationsContent';
+import { SearchInput } from './SearchInput';
 
 interface MobileSidebarProps {
   onHistoryClick?: () => void;
@@ -37,7 +37,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
   const location = useLocation();
   const isHome = location.pathname === '/';
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
-  const { hiddenPOITypes, togglePOIType } = useMapContext();
+  const { hiddenPOITypes, togglePOIType, fitToAllLayers } = useMapContext();
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [contentMode, setContentMode] = useState<boolean>(false);
@@ -145,7 +145,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
     }
 
     if (section === 'location') {
-      forceToCenter();
+      fitToAllLayers();
       return;
     }
 
@@ -203,31 +203,13 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
   };
 
   const handleCentralizeAll = () => {
-    forceToCenter()
+    fitToAllLayers()
   };
 
   return (
     <>
       <div className={`flex z-30  ${isHome ? 'justify-center' : 'pl-[20px]'} w-full fixed top-4`}>
-        <div
-          className={`flex gap-2 px-4 py-3 ${isHome ? 'w-[90dvw]' : ''} rounded-full shadow-md backdrop-blur-md ${isDarkMode ? 'bg-zinc-700/40' : 'bg-[#D5E6FF]/40'}`}
-        >
-          <Menu
-            onClick={() => setIsOpen(true)}
-            size={20}
-            className={`${isDarkMode ? 'text-gray-200' : 'text-gray-600'} ${isHome ? 'mr-2' : ''}`}
-          />
-          {isHome && (
-            <input
-              type="text"
-              placeholder="Buscar Endereço"
-              className={`bg-transparent outline-none text-sm w-full ${isDarkMode
-                ? 'text-gray-100 placeholder-gray-400'
-                : 'text-gray-700 placeholder-gray-500'
-                }`}
-            />
-          )}
-        </div>
+        <SearchInput setIsOpen={setIsOpen} />
 
         {/* Barra de ações */}
         <div className="absolute left-0 top-14 z-30 w-full overflow-x-auto no-scrollbar">
@@ -253,7 +235,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
               handleClick={toggleDarkMode}
               label={isDarkMode ? 'Modo Claro' : 'Modo Escuro'}
               isDarkMode={isDarkMode}
-              />
+            />
             <ActionButton
               icon={<Bell size={16} />}
               handleClick={openNotificationCenter}

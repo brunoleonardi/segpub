@@ -41,7 +41,7 @@ export const MapComponent: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [pois, setPois] = useState<POIData[]>([]);
   const {
-    setZoomToLocation,
+    // setZoomToLocation,
     hiddenPOITypes,
     viewState,
     setViewState,
@@ -52,7 +52,7 @@ export const MapComponent: React.FC = () => {
   useEffect(() => {
     if (pois.length > 0) {
       setTimeout(() => {
-        forceToCenter();
+        fitToAllLayers();
       }, 500);
     }
   }, [pois]);
@@ -98,9 +98,9 @@ export const MapComponent: React.FC = () => {
     }));
   }, [setViewState]);
 
-  useEffect(() => {
-    setZoomToLocation(() => updateMapLocation);
-  }, [setZoomToLocation, updateMapLocation]);
+  // useEffect(() => {
+  //   setZoomToLocation(() => updateMapLocation);
+  // }, [setZoomToLocation, updateMapLocation]);
 
   useEffect(() => {
     fetchPOIs();
@@ -143,13 +143,22 @@ export const MapComponent: React.FC = () => {
     fitToAllLayers();
   };
 
+  useEffect(() => {
+  }, [viewState]);
+
   return (
     <div className="relative w-full h-full" onContextMenu={(e) => e.preventDefault()}>
       <DeckGL
         ref={deckRef}
         viewState={viewState}
-        onViewStateChange={({ viewState }) => setViewState(viewState)}
         controller={true}
+        onViewStateChange={({ viewState: next }) =>
+          setViewState(prev => ({
+            ...prev,
+            ...next,
+            transitionDuration: 0, // ← evita "sobrescrever" animações programadas
+          }))
+        }
         layers={layers}
         style={{ position: 'absolute', width: '100%', height: '100%' }}
       >
@@ -168,7 +177,3 @@ export const MapComponent: React.FC = () => {
     </div>
   );
 };
-
-export const forceToCenter = () => {
-  document.getElementById('centerButton')?.click();
-}
