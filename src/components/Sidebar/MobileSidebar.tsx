@@ -255,7 +255,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
         </div>
         {!isHome && (
           <div className="my-2 px-3 w-full absolute left-0 top-[90px]">
-            <div className="theme-aware-divider h-[1px] w-full" />
+            <div className="theme-aware-divider h-[1px] w-full shadow-md" style={{boxShadow: '0px 4px 8px #000000'}} />
           </div>
         )}
       </div>
