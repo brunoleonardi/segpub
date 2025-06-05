@@ -3,7 +3,7 @@ import deckRef from './DeckRef'; // opcional, para calcular zoom
 import { point, featureCollection, bbox, center as turfCenter } from '@turf/turf';
 
 interface MapContextType {
-  zoomToLocation: (latitude: number, longitude: number) => void;
+  zoomToLocation: (latitude: number, longitude: number, zoom: number) => void;
   setZoomToLocation: React.Dispatch<React.SetStateAction<(latitude: number, longitude: number) => void>>;
   hiddenPOITypes: Set<string>;
   togglePOIType: (typeId: string) => void;
@@ -37,7 +37,7 @@ const MapContext = createContext<MapContextType>({
 
 export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
-  const [zoomToLocation, setZoomToLocation] = useState<(lat: number, lon: number) => void>(() => () => { });
+  const [zoomToLocation, setZoomToLocation] = useState<(latitude: number, longitude: number) => void>(() => defaultZoomFunction);
   const [hiddenPOITypes, setHiddenPOITypes] = useState<Set<string>>(new Set());
 
   const fitToAllLayers = useCallback(() => {
@@ -83,10 +83,9 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const lngZoom = Math.log2(WORLD_DIM.width / 256 / lngFraction);
     let zoom = Math.min(ZOOM_MAX, Math.floor(Math.min(latZoom, lngZoom)));
 
-    // 📱 Afasta um pouco mais em telas pequenas
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
-      zoom = Math.max(zoom - 1, 3); // afasta um nível, mas garante mínimo
+      zoom = Math.max(zoom - 1, 3); 
     }
 
     // console.log("✅ Centralizando para:", { centerLat, centerLng, zoom });

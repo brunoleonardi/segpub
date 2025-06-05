@@ -40,12 +40,10 @@ export default function App() {
               onControlConsultarClick={handleControlConsultarClick}
             />
           ) : (
-            <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
-              <Sidebar
-                onHistoryClick={() => setShowVideoHistory(true)}
-                onControlConsultarClick={handleControlConsultarClick}
-              />
-            </div>
+            <Sidebar
+              onHistoryClick={() => setShowVideoHistory(true)}
+              onControlConsultarClick={handleControlConsultarClick}
+            />
           )}
 
           {showVideoHistory && (

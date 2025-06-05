@@ -15,6 +15,7 @@ import {
   SunIcon,
   Locate,
   Home,
+  Search,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -51,11 +52,34 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [poiTypes, setPoiTypes] = useState<POIType[]>([]);
-  const { hiddenPOITypes, togglePOIType, fitToAllLayers, deckRef } = useMapContext();
+  const { hiddenPOITypes, togglePOIType, zoomToLocation } = useMapContext();
   const { isDarkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const [address, setAddress] = useState('');
+
+  const handleSearch = async () => {
+    zoomToLocation(-23.55052, -46.633308, 16); // São Paulo centro
+    return
+    if (!address.trim()) return;
+
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+      const data = await res.json();
+
+      if (data?.[0]) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        console.log("passei aqui")
+        zoomToLocation(lat, lon);
+      } else {
+        alert('Endereço não encontrado.');
+      }
+    } catch (err) {
+      console.error('Erro ao buscar endereço:', err);
+    }
+  };
 
   const fetchPOITypes = async () => {
     try {
@@ -140,9 +164,10 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
       setStage('half');
       return;
     }
-
+    
     if (section === 'location') {
       forceToCenter();
+      setStage('half');
       return;
     }
 
@@ -205,194 +230,223 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
   const getIconForNavItem = (id: string) => { return navIcons[id] || null };
 
   return (
-    <TooltipProvider>
-      <motion.div
-        className={cn(
-          "theme-aware-sidebar rounded-[20px] shadow-[2px_2px_7px_#00000040] backdrop-blur-[2px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2px)_brightness(100%)] relative flex flex-col select-none",
-          isDarkMode ? "text-white" : ""
-        )}
-        animate={{ width: stage === 'closed' ? 66 : stage === 'half' ? 220 : 450 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className={`p-2 flex ${stage === 'closed' ? 'justify-center' : 'justify-between items-center'}`}>
-          <div className={`flex items-center ${stage === 'closed' ? '' : 'gap-3'}`}>
-            <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#272727]' : 'border-white'}`}>
-              <AvatarFallback className="bg-[#95C0FF] text-white text-lg font-semibold">BL</AvatarFallback>
-            </Avatar>
-            {stage !== 'closed' && (
-              <div className="flex flex-col">
-                <span className="theme-aware-text-secondary text-xs">Bem-vindo</span>
-                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Bruno Leonardi</span>
-              </div>
-            )}
+    <>
+      <div className={`absolute top-3 flex justify-center ${isHome ? 'w-full' : ''}`}>
+        {isHome && (
+          <div className="relative w-[25dvw]">
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSearch();
+              }}
+              placeholder="Buscar Endereço"
+              className={`w-full outline-none text-sm
+          ${isDarkMode ? 'text-gray-100 placeholder-gray-400' : 'text-gray-700 placeholder-gray-500'}
+          py-2.5 pl-4 pr-12 rounded-full shadow-md backdrop-blur-md theme-aware-sidebar`}
+            />
+            <button
+              onClick={handleSearch}
+              className="absolute inset-y-0 right-4 flex items-center justify-center text-gray-500"
+            >
+              <Search size={18} className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+            </button>
           </div>
-          {stage !== 'closed' && (
-            <TooltipRoot>
-              <TooltipTrigger asChild>
-                <button onClick={handleCloseSidebar} className="theme-aware-hover p-1 rounded-full transition-colors">
-                  <ChevronLeftIcon size={20} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="theme-aware-tooltip">
-                Fechar Menu
-              </TooltipContent>
-            </TooltipRoot>
-          )}
-        </div>
+        )}
+      </div>
 
-        <div className={`w-full flex ${stage === 'closed' ? 'flex-col items-center gap-2' : ''}`}>
-          <div className={`flex-1 ${stage === 'closed' ? 'flex flex-col items-center' : ''}`}>
-            <div className={`px-4 py-2 ${stage === 'closed' ? 'text-center' : 'flex items-center justify-between'}`}>
-              <span className="theme-aware-text-secondary text-xs">Menu</span>
-            </div>
-
-            {menuItems.map((item) => (
-              <TooltipRoot key={item.id}>
-                <TooltipTrigger asChild>
-                  <div
-                    className={cn(
-                      "flex items-center h-10 px-4 cursor-pointer rounded-lg mx-2",
-                      stage === 'closed' ? 'justify-center' : '',
-                      activeSection === item.id ? 'theme-aware-active' : 'theme-aware-hover'
-                    )}
-                    onClick={() => handleSectionClick(item.id)}
-                  >
-                    <div className="relative theme-aware-text">
-                      {getIconForMenuItem(item.id)}
-                      {item.badge && (
-                        <Badge className={`absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full flex items-center justify-center border ${isDarkMode ? 'bg-zinc-700 border-white text-white hover:bg-zinc-700' : 'bg-white border-black text-black hover:bg-white'}`}>
-                          <span className="text-[10px] font-semibold">{item.badge}</span>
-                        </Badge>
-                      )}
-                    </div>
-                    {stage !== 'closed' && <span className="theme-aware-text ml-3 text-sm">{item.label}</span>}
+      <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
+        <TooltipProvider>
+          <motion.div
+            className={cn(
+              "theme-aware-sidebar rounded-[20px] shadow-[2px_2px_7px_#00000040] backdrop-blur-[2px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2px)_brightness(100%)] relative flex flex-col select-none",
+              isDarkMode ? "text-white" : ""
+            )}
+            animate={{ width: stage === 'closed' ? 66 : stage === 'half' ? 220 : 450 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className={`p-2 flex ${stage === 'closed' ? 'justify-center' : 'justify-between items-center'}`}>
+              <div className={`flex items-center ${stage === 'closed' ? '' : 'gap-3'}`}>
+                <Avatar className={`w-[45px] h-[45px] border-2 ${isDarkMode ? 'border-[#272727]' : 'border-white'}`}>
+                  <AvatarFallback className="bg-[#95C0FF] text-white text-lg font-semibold">BL</AvatarFallback>
+                </Avatar>
+                {stage !== 'closed' && (
+                  <div className="flex flex-col">
+                    <span className="theme-aware-text-secondary text-xs">Bem-vindo</span>
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Bruno Leonardi</span>
                   </div>
-                </TooltipTrigger>
-                {stage === 'closed' && (
-                  <TooltipContent side="right" className="theme-aware-tooltip">
-                    {item.label}
-                  </TooltipContent>
                 )}
-              </TooltipRoot>
-            ))}
-
-            <div className="my-2 px-3 w-full">
-              <div className="theme-aware-divider h-[1px] w-full" />
-            </div>
-
-            <div className={`px-4 py-2 ${stage === 'closed' ? 'text-center' : 'flex items-center justify-between'}`}>
-              <span className="theme-aware-text-secondary text-xs">
-                {stage === 'closed' ? 'PIs: ' : 'Pontos de Interesse: '}<span className="font-bold">
-                  {poiTypes.reduce((acc, type) => acc + type.count, 0)}
-                </span>
-              </span>
-            </div>
-
-            <TooltipRoot>
-              <TooltipTrigger asChild>
-                <div
-                  className={cn(
-                    "flex items-center h-10 px-4 cursor-pointer rounded-lg mx-2",
-                    stage === 'closed' ? 'justify-center' : '',
-                    activeSection === "pontosInteresse" ? 'theme-aware-active' : 'theme-aware-hover'
-                  )}
-                  onClick={() => handleSectionClick("pontosInteresse")}
-                >
-                  <MapIcon size={20} strokeWidth={1.5} className="theme-aware-text" />
-                  {stage !== 'closed' && <span className="theme-aware-text ml-3 text-sm">Pontos de Interesse</span>}
-                </div>
-              </TooltipTrigger>
-              {stage === 'closed' && (
-                <TooltipContent side="right" className="theme-aware-tooltip">
-                  Pontos de Interesse
-                </TooltipContent>
-              )}
-            </TooltipRoot>
-
-            <div className="theme-aware-card mx-2 my-2 rounded-xl">
-              <div className="p-4">
-                {poiTypes.map((type) => (
-                  <div
-                    key={type.id}
-                    className={`flex items-center ${stage === 'closed' ? 'justify-center' : ''} gap-3 mb-5 last:mb-0 cursor-pointer`}
-                    onClick={() => togglePOIType(type.id)}
-                    style={{ opacity: hiddenPOITypes.has(type.id) ? 0.5 : 1 }}
-                  >
-                    <div className="relative">
-                      <MapPinIcon size={20} style={{ fill: type.color, color: type.color }} />
-                      <Badge className="absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full border border-white flex items-center justify-center" style={{ backgroundColor: type.color }}>
-                        <span className="text-[10px] text-white font-semibold">{type.count}</span>
-                      </Badge>
-                    </div>
-                    {stage !== 'closed' && <span className="theme-aware-text text-sm pl-3">{type.name}</span>}
-                  </div>
-                ))}
               </div>
+              {stage !== 'closed' && (
+                <TooltipRoot>
+                  <TooltipTrigger asChild>
+                    <button onClick={handleCloseSidebar} className="theme-aware-hover p-1 rounded-full transition-colors">
+                      <ChevronLeftIcon size={20} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="theme-aware-tooltip">
+                    Fechar Menu
+                  </TooltipContent>
+                </TooltipRoot>
+              )}
             </div>
 
-            {stage !== 'closed' ? (
-              <>
-                <div className="px-4 py-2">
-                  <span className="theme-aware-text-secondary text-xs">Atalhos e Notificações</span>
+            <div className={`w-full flex ${stage === 'closed' ? 'flex-col items-center gap-2' : ''}`}>
+              <div className={`flex-1 ${stage === 'closed' ? 'flex flex-col items-center' : ''}`}>
+                <div className={`px-4 py-2 ${stage === 'closed' ? 'text-center' : 'flex items-center justify-between'}`}>
+                  <span className="theme-aware-text-secondary text-xs">Menu</span>
                 </div>
-                <div className="mx-2 mb-4">
-                  <div className="theme-aware-card flex items-center justify-between px-3 py-1.5 rounded-lg">
-                    {bottomNavItems.map((item) => {
-                      if (item.id === 'home' && isHome) return null;
 
-                      return (
-                        <TooltipRoot key={item.id}>
-                          <TooltipTrigger asChild>
-                            <div
-                              className={cn(
-                                "p-1.5 rounded-lg cursor-pointer transition-colors",
-                                activeSection === item.id ? 'theme-aware-active' : 'theme-aware-hover theme-aware-text'
-                              )}
-                              onClick={() => handleSectionClick(item.id)}
-                            >
-                              {getIconForNavItem(item.id)}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent side="top" className="theme-aware-tooltip">
-                            {item.label}
-                          </TooltipContent>
-                        </TooltipRoot>
-                      );
-                    })}
-                  </div>
+                {menuItems.map((item) => (
+                  <TooltipRoot key={item.id}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          "flex items-center h-10 px-4 cursor-pointer rounded-lg mx-2",
+                          stage === 'closed' ? 'justify-center' : '',
+                          activeSection === item.id ? 'theme-aware-active' : 'theme-aware-hover'
+                        )}
+                        onClick={() => handleSectionClick(item.id)}
+                      >
+                        <div className="relative theme-aware-text">
+                          {getIconForMenuItem(item.id)}
+                          {item.badge && (
+                            <Badge className={`absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full flex items-center justify-center border ${isDarkMode ? 'bg-zinc-700 border-white text-white hover:bg-zinc-700' : 'bg-white border-black text-black hover:bg-white'}`}>
+                              <span className="text-[10px] font-semibold">{item.badge}</span>
+                            </Badge>
+                          )}
+                        </div>
+                        {stage !== 'closed' && <span className="theme-aware-text ml-3 text-sm">{item.label}</span>}
+                      </div>
+                    </TooltipTrigger>
+                    {stage === 'closed' && (
+                      <TooltipContent side="right" className="theme-aware-tooltip">
+                        {item.label}
+                      </TooltipContent>
+                    )}
+                  </TooltipRoot>
+                ))}
+
+                <div className="my-2 px-3 w-full">
+                  <div className="theme-aware-divider h-[1px] w-full" />
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="px-4 py-2 text-center">
-                  <span className="theme-aware-text-secondary text-xs">Mais</span>
+
+                <div className={`px-4 py-2 ${stage === 'closed' ? 'text-center' : 'flex items-center justify-between'}`}>
+                  <span className="theme-aware-text-secondary text-xs">
+                    {stage === 'closed' ? 'PIs: ' : 'Pontos de Interesse: '}<span className="font-bold">
+                      {poiTypes.reduce((acc, type) => acc + type.count, 0)}
+                    </span>
+                  </span>
                 </div>
+
                 <TooltipRoot>
                   <TooltipTrigger asChild>
                     <div
-                      className="theme-aware-hover flex justify-center p-2 mb-2 cursor-pointer rounded-lg mx-2"
-                      onClick={() => setStage('half')}
+                      className={cn(
+                        "flex items-center h-10 px-4 cursor-pointer rounded-lg mx-2",
+                        stage === 'closed' ? 'justify-center' : '',
+                        activeSection === "pontosInteresse" ? 'theme-aware-active' : 'theme-aware-hover'
+                      )}
+                      onClick={() => handleSectionClick("pontosInteresse")}
                     >
-                      <MoreHorizontalIcon size={20} className="theme-aware-text" />
+                      <MapIcon size={20} strokeWidth={1.5} className="theme-aware-text" />
+                      {stage !== 'closed' && <span className="theme-aware-text ml-3 text-sm">Pontos de Interesse</span>}
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent side="right" className="theme-aware-tooltip">
-                    Expandir Menu
-                  </TooltipContent>
+                  {stage === 'closed' && (
+                    <TooltipContent side="right" className="theme-aware-tooltip">
+                      Pontos de Interesse
+                    </TooltipContent>
+                  )}
                 </TooltipRoot>
-              </>
-            )}
-          </div>
 
-          {stage === 'full' && <div className="theme-aware-divider w-[1px] mx-2" />}
+                <div className="theme-aware-card mx-2 my-2 rounded-xl">
+                  <div className="p-4">
+                    {poiTypes.map((type) => (
+                      <div
+                        key={type.id}
+                        className={`flex items-center ${stage === 'closed' ? 'justify-center' : ''} gap-3 mb-5 last:mb-0 cursor-pointer`}
+                        onClick={() => togglePOIType(type.id)}
+                        style={{ opacity: hiddenPOITypes.has(type.id) ? 0.5 : 1 }}
+                      >
+                        <div className="relative">
+                          <MapPinIcon size={20} style={{ fill: type.color, color: type.color }} />
+                          <Badge className="absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full border border-white flex items-center justify-center" style={{ backgroundColor: type.color }}>
+                            <span className="text-[10px] text-white font-semibold">{type.count}</span>
+                          </Badge>
+                        </div>
+                        {stage !== 'closed' && <span className="theme-aware-text text-sm pl-3">{type.name}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-          {stage === 'full' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="flex-1">
-              {renderContent()}
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
-    </TooltipProvider>
+                {stage !== 'closed' ? (
+                  <>
+                    <div className="px-4 py-2">
+                      <span className="theme-aware-text-secondary text-xs">Atalhos e Notificações</span>
+                    </div>
+                    <div className="mx-2 mb-4">
+                      <div className="theme-aware-card flex items-center justify-between px-3 py-1.5 rounded-lg">
+                        {bottomNavItems.map((item) => {
+                          if (item.id === 'home' && isHome) return null;
+
+                          return (
+                            <TooltipRoot key={item.id}>
+                              <TooltipTrigger asChild>
+                                <div
+                                  className={cn(
+                                    "p-1.5 rounded-lg cursor-pointer transition-colors",
+                                    activeSection === item.id ? 'theme-aware-active' : 'theme-aware-hover theme-aware-text'
+                                  )}
+                                  onClick={() => handleSectionClick(item.id)}
+                                >
+                                  {getIconForNavItem(item.id)}
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="theme-aware-tooltip">
+                                {item.label}
+                              </TooltipContent>
+                            </TooltipRoot>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="px-4 py-2 text-center">
+                      <span className="theme-aware-text-secondary text-xs">Mais</span>
+                    </div>
+                    <TooltipRoot>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="theme-aware-hover flex justify-center p-2 mb-2 cursor-pointer rounded-lg mx-2"
+                          onClick={() => setStage('half')}
+                        >
+                          <MoreHorizontalIcon size={20} className="theme-aware-text" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="theme-aware-tooltip">
+                        Expandir Menu
+                      </TooltipContent>
+                    </TooltipRoot>
+                  </>
+                )}
+              </div>
+
+              {stage === 'full' && <div className="theme-aware-divider w-[1px] mx-2" />}
+
+              {stage === 'full' && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="flex-1">
+                  {renderContent()}
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        </TooltipProvider>
+      </div>
+    </>
   );
 };
