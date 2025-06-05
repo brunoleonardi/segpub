@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, MutableRefObject } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DeckGL from '@deck.gl/react';
 import { IconLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
@@ -8,7 +8,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 
 const MAPBOX_STYLE_DARK = 'mapbox://styles/geovista-fdte/clu7c9nmj00vs01pad3m97qqa';
 const MAPBOX_STYLE_LIGHT = 'mapbox://styles/geovista-fdte/clon6qm3o008t01peeqk31rg7';
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZ2VvdmlzdGEtZmR0ZSIsImEiOiJja3plOG9wM2UzNmdkMnZuZnkzdHhrY3N1In0.8FxWCItNfns7J7hXCt-tFQ';
+export const MAPBOX_TOKEN = 'pk.eyJ1IjoiZ2VvdmlzdGEtZmR0ZSIsImEiOiJja3plOG9wM2UzNmdkMnZuZnkzdHhrY3N1In0.8FxWCItNfns7J7hXCt-tFQ';
 
 const ICON_MAPPING = {
   marker: { x: 0, y: -0, width: 26, height: 26, mask: true }
@@ -88,12 +88,12 @@ export const MapComponent: React.FC = () => {
     setPois(formattedData);
   };
 
-  const updateMapLocation = useCallback((latitude: number, longitude: number) => {
+  const updateMapLocation = useCallback((latitude: number, longitude: number, zoom: number = 16) => {
     setViewState(prev => ({
       ...prev,
       latitude,
       longitude,
-      zoom: 16,
+      zoom,
       transitionDuration: 1500
     }));
   }, [setViewState]);
@@ -171,7 +171,7 @@ export const MapComponent: React.FC = () => {
       </DeckGL>
       <button
         id='centerButton'
-        className="display-none"
+        className="hidden"
         onClick={handleCentralizeAll}
       />
     </div>

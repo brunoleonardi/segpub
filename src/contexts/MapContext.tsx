@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-import deckRef from './DeckRef'; // opcional, para calcular zoom
+import deckRef from './DeckRef';
 import { point, featureCollection, bbox, center as turfCenter } from '@turf/turf';
 
 interface MapContextType {
@@ -21,7 +21,8 @@ const INITIAL_VIEW_STATE = {
   pitch: 0,
   bearing: 0
 };
-const defaultZoomFunction = (latitude: number, longitude: number) => { };
+
+const defaultZoomFunction = (latitude: number, longitude: number, zoom?: number) => { };
 
 const MapContext = createContext<MapContextType>({
   zoomToLocation: defaultZoomFunction,
@@ -69,7 +70,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     if (points.length === 0) {
-      console.warn('⚠️ Nenhum ponto para centralizar.');
+      console.warn('⚠️ No points to center.');
       return;
     }
 
@@ -98,8 +99,6 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       zoom = Math.max(zoom - 1, 3);
     }
 
-    // console.log("✅ Centralizando para:", { centerLat, centerLng, zoom });
-
     setViewState(prev => ({
       ...prev,
       latitude: centerLat,
@@ -107,7 +106,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       zoom,
       transitionDuration: 1000
     }));
-  }, [deckRef, setViewState]);
+  }, []);
 
   const togglePOIType = (typeId: string) => {
     setHiddenPOITypes(prev => {
@@ -133,6 +132,5 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     </MapContext.Provider>
   );
 };
-
 
 export const useMapContext = () => useContext(MapContext);
