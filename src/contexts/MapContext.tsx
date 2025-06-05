@@ -112,7 +112,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setZoomToLocation,
       hiddenPOITypes,
       togglePOIType,
-      fitToCo ordinates: () => { },
+      fitToCoordinates: () => { },
       fitToAllLayers,
       viewState,
       setViewState,
