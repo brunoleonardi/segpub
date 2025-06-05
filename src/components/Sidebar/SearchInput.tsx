@@ -121,7 +121,7 @@ export const SearchInput: React.FC<SearchInputType> = ({ setIsOpen }) => {
   const renderSuggestions = () => {
   const containerClass = isMobile
     ? `absolute left-[-50px] mt-5 w-[90dvw] z-50 rounded-md max-h-60 overflow-auto text-sm p-1 
-      ${isDarkMode ? "text-gray-200 shadow-md bg-zinc-700/80" : "text-gray-800 shadow-lg bg-white/80"}`
+      ${isDarkMode ? "text-gray-200 shadow-md bg-zinc-700" : "text-gray-800 shadow-lg bg-white"}`
     : `scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent 
       hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 
       dark:hover:scrollbar-thumb-gray-500 absolute left-0 mt-1 w-full z-50 
