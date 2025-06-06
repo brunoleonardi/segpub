@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { WebMercatorViewport } from '@deck.gl/core';
-import { X } from 'lucide-react';
+import { Clipboard, ClipboardCopy, X } from 'lucide-react';
 
 const ICON_MAPPING = {
   marker: { x: 0, y: -0, width: 26, height: 26, mask: true },
@@ -40,6 +40,7 @@ export const MapComponent: React.FC = () => {
   const [pois, setPois] = useState<POIData[]>([]);
   const [selectedPOI, setSelectedPOI] = useState<POIData | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const {
     hiddenPOITypes,
@@ -54,6 +55,13 @@ export const MapComponent: React.FC = () => {
   const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleCopy = () => {
+    const value = `${selectedPOI?.latitude}, ${selectedPOI?.longitude}`;
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  };
 
   useEffect(() => {
     if (pois.length > 0) {
@@ -138,11 +146,11 @@ export const MapComponent: React.FC = () => {
         viewState={viewState}
         controller={true}
         onClick={(info, event) => {
-          const clickedOnPOI = info?.object; 
+          const clickedOnPOI = info?.object;
           const clickedInsidePopup = (event.srcEvent?.target as HTMLElement)?.closest('.custom-popup');
 
           if (!clickedOnPOI && !clickedInsidePopup) {
-            setSelectedPOI(null); 
+            setSelectedPOI(null);
           }
         }}
         onViewStateChange={({ viewState: next }) => {
@@ -180,9 +188,25 @@ export const MapComponent: React.FC = () => {
           </button>
 
           <div className="font-semibold">{selectedPOI.name}</div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className={`text-xs mt-0.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Tipo: {selectedPOI.type_name}
           </div>
+
+          <div className={`text-xs mt-2 flex items-center gap-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            {selectedPOI.latitude}, {selectedPOI.longitude}
+            <button
+              onClick={handleCopy}
+              className="text-gray-400 hover:text-gray-600 ml-2"
+              aria-label="Copiar coordenadas"
+            >
+              <Clipboard size={14} />
+            </button>
+          </div>
+          {copied && (
+            <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              Conteúdo copiado!
+            </span>
+          )}
 
           <div
             className={
