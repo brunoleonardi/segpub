@@ -1,22 +1,20 @@
 import {
   MapIcon,
-  MapPinIcon,
   MonitorIcon,
   MoreHorizontalIcon,
   PieChartIcon,
   SettingsIcon,
   VideoIcon,
   BellIcon,
-  MapPinIcon as LocationIcon,
   MoonIcon,
   LogOutIcon,
   ChevronLeftIcon,
   SunIcon,
   Locate,
   Home,
-  Search,
+  MapPin,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
@@ -208,7 +206,9 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
 
   return (
     <>
-      <SearchInput address={address} setAddress={setAddress} />
+      <SearchInput address={address} setAddress={setAddress} setIsOpen={function (_value: SetStateAction<boolean>): void {
+        throw new Error("Function not implemented.");
+      } } />
 
       <div className="absolute top-[50%] left-[10px] -translate-y-1/2 z-10">
         <TooltipProvider>
@@ -325,7 +325,7 @@ export const Sidebar = ({ onHistoryClick, onControlConsultarClick }: SidebarProp
                         style={{ opacity: hiddenPOITypes.has(type.id) ? 0.5 : 1 }}
                       >
                         <div className="relative">
-                          <MapPinIcon size={20} style={{ fill: type.color, color: type.color }} />
+                          <MapPin size={20} style={{ fill: type.color, color: type.color }} />
                           <Badge className="absolute -top-2 -right-3 w-[18px] h-[16px] rounded-full border border-white flex items-center justify-center" style={{ backgroundColor: type.color }}>
                             <span className="text-[10px] text-white font-semibold">{type.count}</span>
                           </Badge>

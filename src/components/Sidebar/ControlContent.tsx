@@ -33,7 +33,7 @@ interface ControlContentProps {
   setContentMode?: (condition: boolean) => void;
   setIsOpen?: (condition: boolean) => void;
   onConsultarClick?: (itemLabel: string) => void;
-  handleClose?: (itemLabel: string) => void;
+  handleClose?: (stage: "closed" | "half" | "full") => void;
 }
 
 const iconMap: Record<string, React.ReactNode> = {

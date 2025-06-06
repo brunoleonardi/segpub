@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import deckRef from './DeckRef';
 import { point, featureCollection, bbox, center as turfCenter } from '@turf/turf';
+import { Feature, Geometry, GeoJsonProperties } from 'geojson';
 
 interface MapContextType {
   zoomToLocation: (latitude: number, longitude: number, zoom: number) => void;
@@ -33,7 +34,7 @@ const INITIAL_VIEW_STATE = {
   bearing: 0
 };
 
-const defaultZoomFunction = (latitude: number, longitude: number, zoom?: number) => { };
+const defaultZoomFunction = (_latitude: number, _longitude: number, _zoom?: number) => { };
 
 const MapContext = createContext<MapContextType>({
   zoomToLocation: defaultZoomFunction,
@@ -65,9 +66,9 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const fitToAllLayers = useCallback(() => {
     const layers = deckRef.current?.deck?.layerManager?.layers || [];
-    const points = [];
+    const points: Feature<Geometry, GeoJsonProperties>[] = [];
 
-    layers.forEach(layer => {
+    layers.forEach((layer: { props: { data: any; getPosition: any; }; }) => {
       const data = layer?.props?.data;
       const getPosition = layer?.props?.getPosition;
 

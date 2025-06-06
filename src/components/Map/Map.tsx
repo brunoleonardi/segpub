@@ -6,7 +6,7 @@ import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { WebMercatorViewport } from '@deck.gl/core';
-import { Clipboard, ClipboardCopy, X } from 'lucide-react';
+import { Clipboard, X } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 const ICON_MAPPING = {
@@ -49,7 +49,7 @@ export const MapComponent: React.FC = () => {
     setViewState,
     fitToAllLayers,
     deckRef,
-    selectedPOI, 
+    selectedPOI,
     setSelectedPOI
   } = useMapContext();
 
@@ -102,7 +102,9 @@ export const MapComponent: React.FC = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pois' }, fetchPOIs)
       .subscribe();
 
-    return () => supabase.removeChannel(channel);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const updatePopupPosition = () => {
@@ -126,16 +128,16 @@ export const MapComponent: React.FC = () => {
       iconMapping: ICON_MAPPING,
       getIcon: () => 'marker',
       sizeScale: 2,
-      getPosition: d => [d.longitude, d.latitude],
+      getPosition: (d: { longitude: any; latitude: any; }) => [d.longitude, d.latitude],
       getSize: () => 8,
-      getColor: d => {
+      getColor: (d: { type_color: string; }) => {
         const hex = d.type_color || '#000000';
         const r = parseInt(hex.slice(1, 3), 16);
         const g = parseInt(hex.slice(3, 5), 16);
         const b = parseInt(hex.slice(5, 7), 16);
         return [r, g, b, 255];
       },
-      onClick: ({ object }) => {
+      onClick: ({ object }: any) => {
         setSelectedPOI(object);
         updatePopupPosition();
       },
@@ -148,7 +150,7 @@ export const MapComponent: React.FC = () => {
         ref={deckRef}
         viewState={viewState}
         controller={true}
-        onClick={(info, event) => {
+        onClick={(info: { object: any; }, event: { srcEvent: { target: HTMLElement; }; }) => {
           const clickedOnPOI = info?.object;
           const clickedInsidePopup = (event.srcEvent?.target as HTMLElement)?.closest('.custom-popup');
 
@@ -156,8 +158,8 @@ export const MapComponent: React.FC = () => {
             setSelectedPOI(null);
           }
         }}
-        onViewStateChange={({ viewState: next }) => {
-          setViewState(prev => ({ ...prev, ...next, transitionDuration: 0 }));
+        onViewStateChange={({ viewState: next }: any) => {
+          setViewState((prev: any) => ({ ...prev, ...next, transitionDuration: 0 }));
         }}
         layers={layers}
         style={{ position: 'absolute', width: '100%', height: '100%' }}

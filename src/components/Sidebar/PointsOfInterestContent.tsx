@@ -84,7 +84,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
   }, []);
 
   const handlePOIClick = (latitude: number, longitude: number, POI: any) => {
-    zoomToLocation(latitude, longitude);
+    zoomToLocation(latitude, longitude, 16);
     setSelectedPOI(POI);
   };
 
