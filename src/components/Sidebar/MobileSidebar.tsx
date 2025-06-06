@@ -187,6 +187,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
       <PointsOfInterestContent
         onPOITypeCreated={fetchPOITypes}
         setContentMode={setContentMode}
+        handleCloseSidebar={handleCloseSidebar}
       />
     ),
     notifications: (

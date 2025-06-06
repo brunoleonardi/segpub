@@ -31,9 +31,10 @@ interface PointsOfInterestContentProps {
   isDarkMode?: boolean;
   onPOITypeCreated?: () => void;
   setContentMode?: (condition: boolean) => void;
+  handleCloseSidebar?: () => void;
 }
 
-export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ onPOITypeCreated, setContentMode }) => {
+export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = ({ onPOITypeCreated, setContentMode, handleCloseSidebar }) => {
   const { isDarkMode } = useTheme()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [poiData, setPoiData] = useState<POIType[]>([]);
@@ -86,6 +87,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
   const handlePOIClick = (latitude: number, longitude: number, POI: any) => {
     zoomToLocation(latitude, longitude, 16);
     setSelectedPOI(POI);
+    handleCloseSidebar?.()
   };
 
   return (
