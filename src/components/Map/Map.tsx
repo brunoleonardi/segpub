@@ -7,6 +7,7 @@ import { useMapContext } from '../../contexts/MapContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { WebMercatorViewport } from '@deck.gl/core';
 import { Clipboard, ClipboardCopy, X } from 'lucide-react';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 const ICON_MAPPING = {
   marker: { x: 0, y: -0, width: 26, height: 26, mask: true },
@@ -41,6 +42,7 @@ export const MapComponent: React.FC = () => {
   const [selectedPOI, setSelectedPOI] = useState<POIData | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [copied, setCopied] = useState(false);
+  const isMobile = useIsMobile();
 
   const {
     hiddenPOITypes,
@@ -202,7 +204,7 @@ export const MapComponent: React.FC = () => {
               <Clipboard size={14} />
             </button>
           </div>
-          {copied && (
+          {(copied && !isMobile) && (
             <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Conteúdo copiado!
             </span>
