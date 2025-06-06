@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DeckGL from '@deck.gl/react';
 import { IconLayer } from '@deck.gl/layers';
 import { Map } from 'react-map-gl';
 import { supabase } from '../../lib/supabase';
 import { useMapContext } from '../../contexts/MapContext';
 import { useTheme } from '../../contexts/ThemeContext';
-
-const MAPBOX_STYLE_DARK = 'mapbox://styles/geovista-fdte/clu7c9nmj00vs01pad3m97qqa';
-const MAPBOX_STYLE_LIGHT = 'mapbox://styles/geovista-fdte/clon6qm3o008t01peeqk31rg7';
-export const MAPBOX_TOKEN = 'pk.eyJ1IjoiZ2VvdmlzdGEtZmR0ZSIsImEiOiJja3plOG9wM2UzNmdkMnZuZnkzdHhrY3N1In0.8FxWCItNfns7J7hXCt-tFQ';
+import { WebMercatorViewport } from '@deck.gl/core';
+import { X } from 'lucide-react';
 
 const ICON_MAPPING = {
-  marker: { x: 0, y: -0, width: 26, height: 26, mask: true }
+  marker: { x: 0, y: -0, width: 26, height: 26, mask: true },
 };
 
 interface POIData {
@@ -40,14 +38,22 @@ const isValidCoordinate = (poi: any): poi is POIData => {
 export const MapComponent: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [pois, setPois] = useState<POIData[]>([]);
+  const [selectedPOI, setSelectedPOI] = useState<POIData | null>(null);
+  const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
+
   const {
-    // setZoomToLocation,
     hiddenPOITypes,
     viewState,
     setViewState,
     fitToAllLayers,
-    deckRef
+    deckRef,
   } = useMapContext();
+
+  const MAPBOX_STYLE_DARK = import.meta.env.VITE_MAPBOX_STYLE_DARK;
+  const MAPBOX_STYLE_LIGHT = import.meta.env.VITE_MAPBOX_STYLE_LIGHT;
+  const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (pois.length > 0) {
@@ -60,20 +66,10 @@ export const MapComponent: React.FC = () => {
   const fetchPOIs = async () => {
     const { data, error } = await supabase
       .from('pois')
-      .select(`
-        id,
-        name,
-        latitude,
-        longitude,
-        type_id,
-        poi_types (
-          name,
-          color
-        )
-      `);
+      .select(`id, name, latitude, longitude, type_id, poi_types (name, color)`);
     if (error) return;
 
-    const formattedData = data
+    const formatted = data
       .map(poi => ({
         id: poi.id,
         name: poi.name,
@@ -81,99 +77,124 @@ export const MapComponent: React.FC = () => {
         longitude: Number(poi.longitude),
         type_id: poi.type_id,
         type_name: poi.poi_types.name,
-        type_color: poi.poi_types.color
+        type_color: poi.poi_types.color,
       }))
       .filter(isValidCoordinate);
 
-    setPois(formattedData);
+    setPois(formatted);
   };
-
-  const updateMapLocation = useCallback((latitude: number, longitude: number, zoom: number = 16) => {
-    setViewState(prev => ({
-      ...prev,
-      latitude,
-      longitude,
-      zoom,
-      transitionDuration: 1500
-    }));
-  }, [setViewState]);
-
-  // useEffect(() => {
-  //   setZoomToLocation(() => updateMapLocation);
-  // }, [setZoomToLocation, updateMapLocation]);
 
   useEffect(() => {
     fetchPOIs();
     const channel = supabase
       .channel('poi_changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'pois' },
-        fetchPOIs
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pois' }, fetchPOIs)
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => supabase.removeChannel(channel);
   }, []);
+
+  const updatePopupPosition = () => {
+    if (selectedPOI && viewState) {
+      const viewport = new WebMercatorViewport(viewState);
+      const [x, y] = viewport.project([selectedPOI.longitude, selectedPOI.latitude]);
+      setPopupPos({ x, y });
+    }
+  };
+
+  useEffect(() => {
+    updatePopupPosition();
+  }, [viewState, selectedPOI]);
 
   const layers = [
     new IconLayer({
       id: 'poi-layer',
-      data: pois.filter(poi => !hiddenPOITypes.has(poi.type_id)),
+      data: pois.filter(p => !hiddenPOITypes.has(p.type_id)),
       pickable: true,
       iconAtlas: '/map-pin.svg',
       iconMapping: ICON_MAPPING,
-      getIcon: d => 'marker',
+      getIcon: () => 'marker',
       sizeScale: 2,
       getPosition: d => [d.longitude, d.latitude],
-      getSize: d => 8,
+      getSize: () => 8,
       getColor: d => {
-        const hex = d.type_color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)?.[0] || '#000000';
+        const hex = d.type_color || '#000000';
         const r = parseInt(hex.slice(1, 3), 16);
         const g = parseInt(hex.slice(3, 5), 16);
         const b = parseInt(hex.slice(5, 7), 16);
         return [r, g, b, 255];
-      }
-    })
+      },
+      onClick: ({ object }) => {
+        setSelectedPOI(object);
+        updatePopupPosition();
+      },
+    }),
   ];
 
-  const handleCentralizeAll = () => {
-    fitToAllLayers();
-  };
-
-  useEffect(() => {
-  }, [viewState]);
-
   return (
-    <div className="relative w-full h-full" onContextMenu={(e) => e.preventDefault()}>
+    <div ref={containerRef} className="relative w-full h-full" onContextMenu={e => e.preventDefault()}>
       <DeckGL
         ref={deckRef}
         viewState={viewState}
         controller={true}
-        onViewStateChange={({ viewState: next }) =>
-          setViewState(prev => ({
-            ...prev,
-            ...next,
-            transitionDuration: 0, // ← evita "sobrescrever" animações programadas
-          }))
-        }
+        onClick={(info, event) => {
+          const clickedOnPOI = info?.object; 
+          const clickedInsidePopup = (event.srcEvent?.target as HTMLElement)?.closest('.custom-popup');
+
+          if (!clickedOnPOI && !clickedInsidePopup) {
+            setSelectedPOI(null); 
+          }
+        }}
+        onViewStateChange={({ viewState: next }) => {
+          setViewState(prev => ({ ...prev, ...next, transitionDuration: 0 }));
+        }}
         layers={layers}
         style={{ position: 'absolute', width: '100%', height: '100%' }}
       >
         <Map
-          mapboxAccessToken={MAPBOX_TOKEN}
-          mapStyle={isDarkMode ? MAPBOX_STYLE_DARK : MAPBOX_STYLE_LIGHT}
           reuseMaps
           attributionControl={false}
+          mapboxAccessToken={MAPBOX_TOKEN}
+          mapStyle={isDarkMode ? MAPBOX_STYLE_DARK : MAPBOX_STYLE_LIGHT}
         />
       </DeckGL>
-      <button
-        id='centerButton'
-        className="hidden"
-        onClick={handleCentralizeAll}
-      />
+
+      {selectedPOI && popupPos && (
+        <div
+          className={
+            `custom-popup absolute text-sm shadow-md rounded-md px-4 py-3 pt-5
+            ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-black'}`
+          }
+          style={{
+            left: popupPos.x,
+            top: popupPos.y - 10,
+            pointerEvents: 'auto',
+            transform: 'translate(-50%, -100%)',
+          }}
+        >
+          <button
+            className="absolute top-1 right-1 text-xs text-red-500 hover:text-red-600"
+            onClick={() => setSelectedPOI(null)}
+          >
+            <X size={14} />
+          </button>
+
+          <div className="font-semibold">{selectedPOI.name}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            Tipo: {selectedPOI.type_name}
+          </div>
+
+          <div
+            className={
+              `absolute left-1/2 -bottom-2 w-0 h-0 
+              border-x-8 border-x-transparent 
+              ${isDarkMode ? 'border-t-zinc-800' : 'border-t-white'}
+              border-t-8 transform -translate-x-1/2`
+            }
+          />
+        </div>
+
+      )}
     </div>
   );
 };
