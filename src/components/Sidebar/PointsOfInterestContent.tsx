@@ -37,12 +37,11 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
   const { isDarkMode } = useTheme()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [poiData, setPoiData] = useState<POIType[]>([]);
-  const { zoomToLocation } = useMapContext();
+  const { zoomToLocation, setSelectedPOI } = useMapContext();
   const isMobile = useIsMobile();
 
   const fetchPOIData = async () => {
     try {
-      // Fetch POI types
       const { data: typesData, error: typesError } = await supabase
         .from('poi_types')
         .select('*')
@@ -50,7 +49,6 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
 
       if (typesError) throw typesError;
 
-      // Fetch POIs
       const { data: poisData, error: poisError } = await supabase
         .from('pois')
         .select('*')
@@ -58,7 +56,6 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
 
       if (poisError) throw poisError;
 
-      // Group POIs by type
       const groupedData = typesData.map(type => {
         const typeItems = poisData.filter(poi => poi.type_id === type.id);
         return {
@@ -70,7 +67,8 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
             id: item.id,
             name: item.name,
             latitude: item.latitude,
-            longitude: item.longitude
+            longitude: item.longitude,
+            type_name: type.name,
           }))
         };
       });
@@ -85,8 +83,9 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
     fetchPOIData();
   }, []);
 
-  const handlePOIClick = (latitude: number, longitude: number) => {
+  const handlePOIClick = (latitude: number, longitude: number, POI: any) => {
     zoomToLocation(latitude, longitude);
+    setSelectedPOI(POI);
   };
 
   return (
@@ -94,7 +93,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
       <div className="gap-3 mb-2">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
-            <div className="rounded-lg mr-2"> 
+            <div className="rounded-lg mr-2">
               {isMobile ? (
                 <ChevronLeft onClick={() => setContentMode?.(false)} size={22} strokeWidth={2} className={isDarkMode ? 'text-gray-300' : 'text-gray-900'} />
               ) : (
@@ -157,7 +156,7 @@ export const PointsOfInterestContent: React.FC<PointsOfInterestContentProps> = (
                   key={item.id}
                   className={`flex flex-col px-3 py-2 rounded-lg transition-colors cursor-pointer ${isDarkMode ? 'hover:bg-zinc-800' : 'hover:bg-gray-50'
                     }`}
-                  onClick={() => handlePOIClick(item.latitude, item.longitude)}
+                  onClick={() => handlePOIClick(item.latitude, item.longitude, item)}
                 >
                   <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     {item.name}

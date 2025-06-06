@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import deckRef from './DeckRef';
 import { point, featureCollection, bbox, center as turfCenter } from '@turf/turf';
 
@@ -11,6 +11,18 @@ interface MapContextType {
   viewState: any;
   setViewState: React.Dispatch<React.SetStateAction<any>>;
   deckRef: React.MutableRefObject<any>;
+  selectedPOI: any
+  setSelectedPOI: (selected: any) => void;
+}
+
+interface POIData {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  type_id: string;
+  type_name: string;
+  type_color: string;
 }
 
 const INITIAL_VIEW_STATE = {
@@ -32,11 +44,14 @@ const MapContext = createContext<MapContextType>({
   viewState: INITIAL_VIEW_STATE,
   setViewState: () => { },
   deckRef: { current: null },
+  selectedPOI: [],
+  setSelectedPOI: () => [],
 });
 
 export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [hiddenPOITypes, setHiddenPOITypes] = useState<Set<string>>(new Set());
+  const [selectedPOI, setSelectedPOI] = useState<POIData | null>(null);
 
   const zoomToLocation = useCallback((latitude: number, longitude: number, zoom: number = 16) => {
     setViewState(prev => ({
@@ -46,7 +61,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       zoom,
       transitionDuration: 1000
     }));
-  }, [setViewState]); // <-- ESSENCIAL
+  }, [setViewState]);
 
   const fitToAllLayers = useCallback(() => {
     const layers = deckRef.current?.deck?.layerManager?.layers || [];
@@ -122,7 +137,9 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       fitToAllLayers,
       viewState,
       setViewState,
-      deckRef
+      deckRef,
+      selectedPOI,
+      setSelectedPOI
     }}>
       {children}
     </MapContext.Provider>

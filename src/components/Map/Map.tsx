@@ -39,7 +39,6 @@ const isValidCoordinate = (poi: any): poi is POIData => {
 export const MapComponent: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [pois, setPois] = useState<POIData[]>([]);
-  const [selectedPOI, setSelectedPOI] = useState<POIData | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [copied, setCopied] = useState(false);
   const isMobile = useIsMobile();
@@ -50,6 +49,8 @@ export const MapComponent: React.FC = () => {
     setViewState,
     fitToAllLayers,
     deckRef,
+    selectedPOI, 
+    setSelectedPOI
   } = useMapContext();
 
   const MAPBOX_STYLE_DARK = import.meta.env.VITE_MAPBOX_STYLE_DARK;
